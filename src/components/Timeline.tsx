@@ -21,7 +21,9 @@ const Timeline = () => {
     plusFeeRate,
     basicMonthlyCost,
     effectivePlusMonthlyCost,
-    monthlyUpliftAverage
+    monthlyUpliftAverage,
+    checkoutReachedSessions,
+    checkoutCompletedSessions
   } = useCalculatorContext();
   
   // Calculate monthly values
@@ -59,6 +61,11 @@ const Timeline = () => {
   
   // Find breakeven point with uplift
   const breakevenWithUpliftMonth = data.findIndex(item => item.netWithUplift <= 0);
+  
+  // Calculate current conversion rate from checkout sessions
+  const currentConversionRate = checkoutReachedSessions > 0 
+    ? ((checkoutCompletedSessions / checkoutReachedSessions) * 100).toFixed(2) 
+    : "N/A";
   
   return (
     <div className="bg-gray-50 py-16">
@@ -151,11 +158,11 @@ const Timeline = () => {
                 <p className="text-xs text-gray-500 mt-1">Including conversion rate improvements</p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">Monthly Uplift</h4>
+                <h4 className="font-medium mb-1">Current Checkout Conversion</h4>
                 <p className="text-2xl font-bold text-amber-600">
-                  ${Math.round(monthlyUpliftAverage).toLocaleString()}
+                  {currentConversionRate}%
                 </p>
-                <p className="text-xs text-gray-500 mt-1">From improved conversion rate & AOV</p>
+                <p className="text-xs text-gray-500 mt-1">{checkoutCompletedSessions} completed / {checkoutReachedSessions} sessions</p>
               </div>
             </div>
           </CardContent>
