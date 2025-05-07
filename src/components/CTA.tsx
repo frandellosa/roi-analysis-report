@@ -16,9 +16,6 @@ const CTA = () => {
             <Button className="bg-white text-shopify-blue hover:bg-gray-100 px-8 py-6 text-lg font-medium">
               Schedule a Consultation
             </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-blue-700 px-8 py-6 text-lg">
-              Download Full Analysis
-            </Button>
           </div>
         </div>
       </div>

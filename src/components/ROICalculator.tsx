@@ -18,7 +18,6 @@ const ROICalculator = () => {
   const [plusAnnualCost, setPlusAnnualCost] = useState(0);
   const [annualSavings, setAnnualSavings] = useState(0);
   const [feeSavings, setFeeSavings] = useState(0);
-  const [breakevenSales, setBreakevenSales] = useState(0);
   
   // Calculate values when inputs change
   useEffect(() => {
@@ -34,16 +33,10 @@ const ROICalculator = () => {
     const processingFeeSavings = basicProcessingFee - plusProcessingFee;
     const totalSavings = basicAnnual - plusAnnual;
     
-    // Calculate breakeven
-    const monthlyFeeDifference = plusMonthlyCost - basicMonthlyCost;
-    const processingRateDifference = basicFeeRate - plusFeeRate;
-    const breakevenAmount = (monthlyFeeDifference * 12 * 100) / processingRateDifference;
-    
     setBasicAnnualCost(basicAnnual);
     setPlusAnnualCost(plusAnnual);
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
-    setBreakevenSales(breakevenAmount);
   }, [annualSales, basicFeeRate, plusFeeRate, basicMonthlyCost, plusMonthlyCost]);
   
   // Format currency
@@ -163,7 +156,7 @@ const ROICalculator = () => {
           
           <Card className="border-gray-100 shadow-md bg-gray-50">
             <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-6">Your ROI Results</h3>
+              <h3 className="text-xl font-semibold mb-6">ROI Results</h3>
               
               <div className="mb-8">
                 <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
@@ -178,22 +171,6 @@ const ROICalculator = () => {
                     {formatCurrency(annualSavings)}
                   </p>
                   <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
-                </div>
-                
-                <div className="bg-white p-6 rounded-lg border border-gray-200">
-                  <h4 className="text-lg font-medium mb-2">Breakeven Sales Volume</h4>
-                  <p className="text-3xl font-bold text-shopify-blue">{formatCurrency(breakevenSales)}</p>
-                  <p className="text-sm text-shopify-muted mt-1">Annual sales needed to justify Plus upgrade</p>
-                  
-                  {annualSales >= breakevenSales ? (
-                    <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded text-shopify-green text-sm">
-                      ✓ Your current sales volume justifies upgrading to Shopify Plus
-                    </div>
-                  ) : (
-                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded text-amber-700 text-sm">
-                      ! You need {formatCurrency(breakevenSales - annualSales)} more in annual sales to justify Plus
-                    </div>
-                  )}
                 </div>
               </div>
               

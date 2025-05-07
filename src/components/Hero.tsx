@@ -13,14 +13,6 @@ const Hero = () => {
             <p className="text-lg text-shopify-muted mb-8 max-w-lg">
               Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
             </p>
-            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
-              <Button className="bg-shopify-blue text-white px-8 py-6 rounded-md hover:bg-blue-600 text-lg">
-                View Full Analysis
-              </Button>
-              <Button variant="outline" className="border-shopify-blue text-shopify-blue px-8 py-6 rounded-md hover:bg-blue-50 text-lg">
-                Compare Plans
-              </Button>
-            </div>
           </div>
           <div className="lg:w-1/2">
             <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
