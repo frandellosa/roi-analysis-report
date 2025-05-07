@@ -152,8 +152,7 @@ const ROICalculator = () => {
     setVpfMonthly(totalVpfAmount);
 
     // Apply the correct pricing rule:
-    // IF [VPF*Monthly GMV] > Monthly Minimum --> price = [VPF*Monthly GMV]
-    // IF [VPF*Monthly GMV] < Monthly Minimum --> price = Monthly Minimum
+    // Base price/month OR variable platform fee (VPF), whichever is greater
     if (totalVpfAmount > plusMonthlyCost) {
       setEffectivePlusMonthlyCost(totalVpfAmount);
     } else {
@@ -360,7 +359,6 @@ const ROICalculator = () => {
                             <TooltipContent className="max-w-xs">
                               <p>Variable platform fee is calculated as a percentage of your monthly GMV, broken down by channel.</p>
                               <p className="mt-2">Plus pricing will be the monthly minimum fee OR the VPF, whichever is greater.</p>
-                              <p className="mt-2">VPF only applies if any channel's VPF exceeds the monthly minimum.</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
