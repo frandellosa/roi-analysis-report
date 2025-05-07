@@ -4,7 +4,6 @@ import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import ComparisonTable from "@/components/ComparisonTable";
 import ROICalculator from "@/components/ROICalculator";
-import CTA from "@/components/CTA";
 
 const Index = () => {
   return (
@@ -14,7 +13,6 @@ const Index = () => {
       <Stats />
       <ComparisonTable />
       <ROICalculator />
-      <CTA />
     </div>
   );
 };
