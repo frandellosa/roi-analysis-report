@@ -1,9 +1,15 @@
 
 import { useState } from 'react';
+import { useCalculatorContext } from '@/contexts/CalculatorContext';
+import { formatCurrency } from '@/utils/formatters';
 
 const Hero = () => {
   const [companyName, setCompanyName] = useState("Dually Wheels");
   const [isEditing, setIsEditing] = useState(false);
+  const { annualNetSavings, monthlyUpliftAverage } = useCalculatorContext();
+
+  // Calculate the last 90 days savings (quarterly) based on annual savings and average monthly uplift
+  const quarterlyValue = (annualNetSavings / 4) + (monthlyUpliftAverage * 3);
 
   const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompanyName(e.target.value);
@@ -65,15 +71,19 @@ const Hero = () => {
               </div>
               <div className="flex justify-center items-center mb-6">
                 <div className="text-center">
-                  <span className="block text-5xl font-bold text-shopify-green">$10,158.70</span>
+                  <span className="block text-5xl font-bold text-shopify-green">
+                    {formatCurrency(annualNetSavings)}
+                  </span>
                   <span className="text-gray-500">Est. Annual Savings</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="text-center">
-                    <span className="block text-2xl font-bold text-shopify-blue">$3,045.64</span>
-                    <span className="text-sm text-gray-500">Last 90 Days Savings</span>
+                    <span className="block text-2xl font-bold text-shopify-blue">
+                      {formatCurrency(quarterlyValue)}
+                    </span>
+                    <span className="text-sm text-gray-500">Last 90 Days Savings + Uplift</span>
                   </div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
