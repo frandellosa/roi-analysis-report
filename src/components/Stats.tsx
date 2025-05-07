@@ -88,8 +88,12 @@ const Stats = () => {
                   <Wallet className="h-6 w-6 text-shopify-green" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Annual Net Savings</h3>
-                <p className="text-3xl font-bold text-shopify-green">{formatCurrency(annualNetSavings)}</p>
-                <p className="text-shopify-muted mt-2 text-sm">After monthly plan costs</p>
+                <p className={`text-3xl font-bold ${annualNetSavings >= 0 ? "text-shopify-green" : "text-shopify-black"}`}>
+                  {formatCurrency(annualNetSavings)}
+                </p>
+                <p className={`text-sm mt-1 ${annualNetSavings >= 0 ? "text-shopify-muted" : "text-shopify-black"}`}>
+                  After new plan costs
+                </p>
               </div>
             </CardContent>
           </Card>
