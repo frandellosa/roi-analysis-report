@@ -2,32 +2,23 @@
 const Hero = () => {
   return (
     <div 
-      className="py-20 px-6 relative"
+      className="py-20 px-6 relative bg-black"
     >
-      {/* Background image with opacity overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{ 
-          backgroundImage: "url('/lovable-uploads/03b66191-3d85-43e3-9a45-db5d75e0f410.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          opacity: "0.3"
-        }}
-      />
+      {/* Background with black color */}
       <div className="container mx-auto relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="lg:w-1/2 mb-10 lg:mb-0">
             <div className="flex items-center mb-4">
               <img 
-                src="/lovable-uploads/f4f762b1-0283-4f61-9fc9-e55a43c895cd.png"
+                src="/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png"
                 alt="Dually Wheels Logo"
                 className="h-12 mr-4"
               />
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-shopify-black font-shopify mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-shopify mb-6 leading-tight">
               Maximize Your ROI with <span className="text-shopify-green font-bold">Shopify Plus</span>
             </h1>
-            <p className="text-lg text-shopify-muted mb-8 max-w-lg">
+            <p className="text-lg text-gray-300 mb-8 max-w-lg">
               Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
             </p>
           </div>
