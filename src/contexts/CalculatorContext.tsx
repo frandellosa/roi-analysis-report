@@ -11,6 +11,11 @@ type CalculatorContextType = {
   processingFeeSavings: number;
   annualNetSavings: number;
   projectedUplift: number;
+  monthlyUpliftLow: number;
+  monthlyUpliftAverage: number;
+  monthlyUpliftGood: number;
+  currentConversionRate: number;
+  currentAOV: number;
   updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => void;
 };
 
@@ -24,6 +29,11 @@ const defaultValues: CalculatorContextType = {
   processingFeeSavings: 0,
   annualNetSavings: 0,
   projectedUplift: 0,
+  monthlyUpliftLow: 0,
+  monthlyUpliftAverage: 0,
+  monthlyUpliftGood: 0,
+  currentConversionRate: 2.5,
+  currentAOV: 120,
   updateCalculatorValues: () => {},
 };
 
@@ -43,6 +53,11 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       processingFeeSavings: defaultValues.processingFeeSavings,
       annualNetSavings: defaultValues.annualNetSavings,
       projectedUplift: defaultValues.projectedUplift,
+      monthlyUpliftLow: defaultValues.monthlyUpliftLow,
+      monthlyUpliftAverage: defaultValues.monthlyUpliftAverage,
+      monthlyUpliftGood: defaultValues.monthlyUpliftGood,
+      currentConversionRate: defaultValues.currentConversionRate,
+      currentAOV: defaultValues.currentAOV,
     }
   );
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { 
   Select, 
   SelectContent, 
@@ -52,10 +51,10 @@ const ROICalculator = () => {
 
   // Project uplift metrics
   const [currentConversionRate, setCurrentConversionRate] = useState(2.5);
-  const [projectedConversionRate, setProjectedConversionRate] = useState(3.1);
   const [currentAOV, setCurrentAOV] = useState(120);
-  const [projectedAOV, setProjectedAOV] = useState(135);
-  const [totalUpliftRevenue, setTotalUpliftRevenue] = useState(0);
+  const [monthlyUpliftLow, setMonthlyUpliftLow] = useState(0);
+  const [monthlyUpliftAverage, setMonthlyUpliftAverage] = useState(0);
+  const [monthlyUpliftGood, setMonthlyUpliftGood] = useState(0);
 
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
@@ -183,26 +182,38 @@ const ROICalculator = () => {
     };
   };
   
-  // Calculate Revenue Uplift
+  // Calculate Revenue Uplift with different scenarios
   const calculateRevenueUplift = () => {
-    // Estimate annual visitors from annual sales, current conversion rate, and current AOV
-    const estimatedVisitors = annualSales / (currentAOV * (currentConversionRate / 100));
+    // Calculate monthly base metrics
+    const monthlyVisitors = (annualSales / 12) / (currentAOV * (currentConversionRate / 100));
+
+    // Low uplift scenario (5% improvement)
+    const lowCR = currentConversionRate * 1.05;
+    const lowAOV = currentAOV * 1.05;
+    const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
+    const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
+    const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
     
-    // Calculate revenue with improved conversion rate
-    const revenueWithImprovedCR = estimatedVisitors * projectedConversionRate / 100 * currentAOV;
+    // Average uplift scenario (10% improvement)
+    const avgCR = currentConversionRate * 1.1;
+    const avgAOV = currentAOV * 1.1;
+    const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
+    const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
     
-    // Calculate revenue with improved AOV
-    const revenueWithImprovedAOV = estimatedVisitors * currentConversionRate / 100 * projectedAOV;
+    // Good uplift scenario (20% improvement)
+    const goodCR = currentConversionRate * 1.2;
+    const goodAOV = currentAOV * 1.2;
+    const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
+    const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
     
-    // Calculate revenue with both improvements
-    const revenueWithBothImprovements = estimatedVisitors * projectedConversionRate / 100 * projectedAOV;
+    setMonthlyUpliftLow(lowUplift);
+    setMonthlyUpliftAverage(avgUplift);
+    setMonthlyUpliftGood(goodUplift);
     
-    // Calculate uplift (subtract original revenue)
-    const upliftAmount = revenueWithBothImprovements - annualSales;
+    // Annualized uplift (average scenario * 12) for the existing total calculation
+    const annualUplift = avgUplift * 12;
     
-    setTotalUpliftRevenue(upliftAmount);
-    
-    return upliftAmount;
+    return annualUplift;
   };
   
   // Calculate ROI
@@ -235,7 +246,12 @@ const ROICalculator = () => {
       effectivePlusMonthlyCost,
       processingFeeSavings,
       annualNetSavings: totalSavings,
-      projectedUplift: upliftRevenue
+      projectedUplift: upliftRevenue,
+      monthlyUpliftLow: monthlyUpliftLow,
+      monthlyUpliftAverage: monthlyUpliftAverage,
+      monthlyUpliftGood: monthlyUpliftGood,
+      currentConversionRate,
+      currentAOV
     });
 
     toast.success("ROI calculation complete", {
@@ -627,25 +643,6 @@ const ROICalculator = () => {
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <Label htmlFor="projected-cr" className="text-sm">Projected Conversion Rate (%)</Label>
-                      <span className="text-xs text-green-600 flex items-center">
-                        <ArrowUp className="h-3 w-3 mr-1" /> 
-                        {calculatePercentageIncrease(currentConversionRate, projectedConversionRate)}%
-                      </span>
-                    </div>
-                    <Input 
-                      id="projected-cr" 
-                      type="number" 
-                      value={projectedConversionRate}
-                      onChange={(e) => handleRateChange(e, setProjectedConversionRate)}
-                      step="0.1"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
                       <Label htmlFor="current-aov" className="text-sm">Current AOV ($)</Label>
                       <TooltipProvider>
                         <Tooltip>
@@ -665,30 +662,54 @@ const ROICalculator = () => {
                       onChange={(e) => handleRateChange(e, setCurrentAOV)}
                     />
                   </div>
-                  <div>
-                    <div className="flex justify-between items-center mb-1">
-                      <Label htmlFor="projected-aov" className="text-sm">Projected AOV ($)</Label>
-                      <span className="text-xs text-green-600 flex items-center">
-                        <ArrowUp className="h-3 w-3 mr-1" /> 
-                        {calculatePercentageIncrease(currentAOV, projectedAOV)}%
-                      </span>
-                    </div>
-                    <Input 
-                      id="projected-aov" 
-                      type="number" 
-                      value={projectedAOV}
-                      onChange={(e) => handleRateChange(e, setProjectedAOV)}
-                    />
-                  </div>
                 </div>
                 
                 <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium flex items-center">
-                      <DollarSign className="h-4 w-4 mr-1 text-green-600" />
-                      Projected Annual Revenue Uplift:
-                    </span>
-                    <span className="font-medium text-green-600">{formatCurrency(totalUpliftRevenue)}</span>
+                  <h5 className="font-medium mb-2">Projected Monthly Revenue Uplift</h5>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-sm font-medium flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1 text-amber-500" />
+                          Low Estimate (5% CR & AOV Improvement):
+                        </span>
+                        <div className="text-xs text-gray-500 ml-5">
+                          CR: {(currentConversionRate * 1.05).toFixed(2)}% | AOV: ${(currentAOV * 1.05).toFixed(0)}
+                        </div>
+                      </div>
+                      <span className="font-medium text-amber-500">{formatCurrency(monthlyUpliftLow)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-sm font-medium flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1 text-blue-500" />
+                          Average Estimate (10% CR & AOV Improvement):
+                        </span>
+                        <div className="text-xs text-gray-500 ml-5">
+                          CR: {(currentConversionRate * 1.1).toFixed(2)}% | AOV: ${(currentAOV * 1.1).toFixed(0)}
+                        </div>
+                      </div>
+                      <span className="font-medium text-blue-500">{formatCurrency(monthlyUpliftAverage)}</span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-sm font-medium flex items-center">
+                          <DollarSign className="h-4 w-4 mr-1 text-green-600" />
+                          Good Estimate (20% CR & AOV Improvement):
+                        </span>
+                        <div className="text-xs text-gray-500 ml-5">
+                          CR: {(currentConversionRate * 1.2).toFixed(2)}% | AOV: ${(currentAOV * 1.2).toFixed(0)}
+                        </div>
+                      </div>
+                      <span className="font-medium text-green-600">{formatCurrency(monthlyUpliftGood)}</span>
+                    </div>
+                    
+                    <div className="text-xs text-gray-500 mt-2">
+                      Based on your current monthly traffic and projected improvements in conversion rate and average order value.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -725,10 +746,25 @@ const ROICalculator = () => {
                   
                   <div className="bg-white p-6 rounded-lg border border-gray-200">
                     <h4 className="text-lg font-medium mb-2">Projected Revenue Uplift</h4>
-                    <p className="text-3xl font-bold text-shopify-green">{formatCurrency(totalUpliftRevenue)}</p>
+                    <div className="grid grid-cols-3 gap-3 mb-3">
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-amber-600 mb-1">Low</p>
+                        <p className="text-xl font-bold text-amber-600">{formatCurrency(monthlyUpliftLow)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-blue-600 mb-1">Average</p>
+                        <p className="text-xl font-bold text-blue-600">{formatCurrency(monthlyUpliftAverage)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-green-600 mb-1">Good</p>
+                        <p className="text-xl font-bold text-green-600">{formatCurrency(monthlyUpliftGood)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                    </div>
                     <p className="text-sm text-shopify-muted mt-1">
-                      From improved conversion rate ({currentConversionRate}% → {projectedConversionRate}%) 
-                      and AOV (${currentAOV} → ${projectedAOV})
+                      Based on your current metrics and projected improvements in conversion rate and AOV 
                     </p>
                   </div>
                 </div>
