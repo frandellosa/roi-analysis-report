@@ -617,7 +617,7 @@ const ROICalculator = () => {
               </div>
 
               <div className="mb-6 border-t border-gray-200 pt-6">
-                <h4 className="text-lg font-semibold mb-4">Project Uplift</h4>
+                <h4 className="text-lg font-semibold mb-4">Projected Uplift</h4>
                 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
