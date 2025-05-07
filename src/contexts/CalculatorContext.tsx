@@ -10,7 +10,7 @@ type CalculatorContextType = {
   effectivePlusMonthlyCost: number;
   processingFeeSavings: number;
   annualNetSavings: number;
-  projectedUplift: number;
+  projectedUplift: number; 
   monthlyUpliftLow: number;
   monthlyUpliftAverage: number;
   monthlyUpliftGood: number;
