@@ -383,15 +383,10 @@ const ROICalculator = () => {
     handleRateChange,
     formatCurrency,
     setMonthlyUpliftLow,
-    setMonthlyUpliftAverage, 
+    setMonthlyUpliftAverage,
     setMonthlyUpliftGood,
     currentConversionRate,
-    setCurrentConversionRate,
-    currentAOV,
-    setCurrentAOV,
-    monthlyUpliftLow,
-    monthlyUpliftAverage,
-    monthlyUpliftGood
+    currentAOV
   };
   
   return (

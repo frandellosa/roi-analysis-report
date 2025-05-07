@@ -4,9 +4,9 @@ import { Label } from "@/components/ui/label";
 import { Info, DollarSign } from "lucide-react";
 import {
   Tooltip,
-  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  TooltipContent,
 } from "@/components/ui/tooltip";
 
 interface UpliftProjectionsProps {
@@ -23,9 +23,6 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     handleRateChange,
     setCurrentConversionRate,
     setCurrentAOV,
-    setMonthlyUpliftLow,
-    setMonthlyUpliftAverage,
-    setMonthlyUpliftGood,
     formatCurrency
   } = calculatorState;
 
@@ -95,13 +92,9 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                 CR: {(currentConversionRate * 1.05).toFixed(2)}% | AOV: ${(currentAOV * 1.05).toFixed(0)}
               </div>
             </div>
-            <Input
-              type="number" 
-              value={monthlyUpliftLow}
-              onChange={(e) => handleRateChange(e, setMonthlyUpliftLow)}
-              className="w-32 text-right text-amber-500 font-medium"
-              min="0"
-            />
+            <div className="w-32 text-right text-amber-500 font-medium">
+              {formatCurrency(monthlyUpliftLow)}
+            </div>
           </div>
           
           <div className="flex justify-between items-center">
@@ -114,13 +107,9 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                 CR: {(currentConversionRate * 1.1).toFixed(2)}% | AOV: ${(currentAOV * 1.1).toFixed(0)}
               </div>
             </div>
-            <Input
-              type="number" 
-              value={monthlyUpliftAverage}
-              onChange={(e) => handleRateChange(e, setMonthlyUpliftAverage)}
-              className="w-32 text-right text-blue-500 font-medium"
-              min="0"
-            />
+            <div className="w-32 text-right text-blue-500 font-medium">
+              {formatCurrency(monthlyUpliftAverage)}
+            </div>
           </div>
           
           <div className="flex justify-between items-center">
@@ -133,13 +122,9 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                 CR: {(currentConversionRate * 1.2).toFixed(2)}% | AOV: ${(currentAOV * 1.2).toFixed(0)}
               </div>
             </div>
-            <Input
-              type="number" 
-              value={monthlyUpliftGood}
-              onChange={(e) => handleRateChange(e, setMonthlyUpliftGood)}
-              className="w-32 text-right text-green-600 font-medium"
-              min="0"
-            />
+            <div className="w-32 text-right text-green-600 font-medium">
+              {formatCurrency(monthlyUpliftGood)}
+            </div>
           </div>
           
           <div className="text-xs text-gray-500 mt-2">
