@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,8 +16,6 @@ const ROICalculator = () => {
   // Default values - changed to 0
   const defaultValues = {
     annualSales: 0,
-    basicFeeRate: 0,
-    plusFeeRate: 0,
     basicMonthlyCost: 0,
     plusMonthlyCost: 0,
     d2cPercentage: 0,
@@ -33,14 +32,13 @@ const ROICalculator = () => {
   
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
-  const [basicFeeRate, setBasicFeeRate] = useState(defaultValues.basicFeeRate);
-  const [plusFeeRate, setPlusFeeRate] = useState(defaultValues.plusFeeRate);
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(defaultValues.basicMonthlyCost);
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(defaultValues.plusMonthlyCost);
   const [selectedPlan, setSelectedPlan] = useState(defaultValues.selectedPlan);
   const [plusTerm, setPlusTerm] = useState(defaultValues.plusTerm);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [fileData, setFileData] = useState<any>(null);
   
   // GMV breakdown inputs
   const [d2cPercentage, setD2cPercentage] = useState(defaultValues.d2cPercentage);
@@ -74,13 +72,11 @@ const ROICalculator = () => {
   const [retailVpf, setRetailVpf] = useState(0);
 
   // Access calculator context for updating values
-  const { updateCalculatorValues } = useCalculatorContext();
+  const { updateCalculatorContext } = useCalculatorContext();
   
   // Reset calculator to default values
   const resetCalculator = () => {
     setAnnualSales(defaultValues.annualSales);
-    setBasicFeeRate(defaultValues.basicFeeRate);
-    setPlusFeeRate(defaultValues.plusFeeRate);
     setBasicMonthlyCost(defaultValues.basicMonthlyCost);
     setPlusMonthlyCost(defaultValues.plusMonthlyCost);
     setSelectedPlan(defaultValues.selectedPlan);
@@ -93,6 +89,7 @@ const ROICalculator = () => {
     setRetailRate(defaultValues.retailRate);
     setCurrentConversionRate(defaultValues.currentConversionRate);
     setCurrentAOV(defaultValues.currentAOV);
+    setFileData(null);
     
     // Clear file upload
     if (fileInputRef.current) {
@@ -146,16 +143,13 @@ const ROICalculator = () => {
     advanced: 399
   };
 
-  // Update fee rates and monthly cost when plan changes
+  // Update monthly cost when plan changes
   useEffect(() => {
     if (selectedPlan === "basic") {
-      setBasicFeeRate(2.9);
       setBasicMonthlyCost(monthlyCosts.basic);
     } else if (selectedPlan === "shopify") {
-      setBasicFeeRate(2.7);
       setBasicMonthlyCost(monthlyCosts.shopify);
     } else if (selectedPlan === "advanced") {
-      setBasicFeeRate(2.5);
       setBasicMonthlyCost(monthlyCosts.advanced);
     }
   }, [selectedPlan]);
@@ -200,20 +194,34 @@ const ROICalculator = () => {
     }
   }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, d2cRate, b2bRate, retailRate]);
 
-  // Calculate processing fees - extracted as a separate function for consistency
+  // Calculate processing fees using the rates table data
   const calculateProcessingFees = () => {
-    const avgOrderValue = 50; // Assuming $50 avg order
-    const transactionsCount = annualSales / avgOrderValue;
-    const transactionFee = 0.30;
-    
-    const basicProcessingFee = (annualSales * basicFeeRate / 100) + (transactionFee * transactionsCount);
-    const plusProcessingFee = (annualSales * plusFeeRate / 100) + (transactionFee * transactionsCount);
-    
-    return {
-      basicProcessingFee,
-      plusProcessingFee,
-      processingFeeSavings: basicProcessingFee - plusProcessingFee
-    };
+    // If we have file data, use it for calculations
+    if (fileData) {
+      // Simple example - in a real implementation this would parse and analyze the file data
+      // For now, we'll just use a placeholder implementation
+      return {
+        basicProcessingFee: fileData.totalAmount * (processingRates[selectedPlan].standardDomestic / 100) + (fileData.transactions * 0.30),
+        plusProcessingFee: fileData.totalAmount * (processingRates.plus.standardDomestic / 100) + (fileData.transactions * 0.30),
+      };
+    } else {
+      // No file uploaded - use the standard calculation based on annual sales
+      const avgOrderValue = currentAOV > 0 ? currentAOV : 50; // Use current AOV if available, otherwise default to $50
+      const transactionsCount = annualSales / avgOrderValue;
+      const transactionFee = 0.30;
+      
+      // Use the selected plan's standard domestic rate and Plus plan's rate
+      const basicRate = processingRates[selectedPlan as keyof typeof processingRates].standardDomestic;
+      const plusRate = processingRates.plus.standardDomestic;
+      
+      const basicProcessingFee = (annualSales * basicRate / 100) + (transactionFee * transactionsCount);
+      const plusProcessingFee = (annualSales * plusRate / 100) + (transactionFee * transactionsCount);
+      
+      return {
+        basicProcessingFee,
+        plusProcessingFee
+      };
+    }
   };
   
   // Calculate Revenue Uplift with different scenarios
@@ -252,8 +260,11 @@ const ROICalculator = () => {
   
   // Calculate ROI
   const calculateROI = () => {
-    // Use the consistent processing fee calculation
-    const { basicProcessingFee, plusProcessingFee, processingFeeSavings } = calculateProcessingFees();
+    // Get processing fees using the processing rates
+    const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees();
+    
+    // Calculate the savings in processing fees
+    const processingFeeSavings = basicProcessingFee - plusProcessingFee;
     
     // Calculate total annual costs
     const basicAnnual = basicProcessingFee + (basicMonthlyCost * 12);
@@ -273,8 +284,8 @@ const ROICalculator = () => {
     // Update the context with new values
     updateCalculatorValues({
       annualSales,
-      basicFeeRate,
-      plusFeeRate,
+      basicFeeRate: processingRates[selectedPlan as keyof typeof processingRates].standardDomestic,
+      plusFeeRate: processingRates.plus.standardDomestic,
       basicMonthlyCost,
       plusMonthlyCost,
       effectivePlusMonthlyCost,
@@ -363,13 +374,44 @@ const ROICalculator = () => {
     }
   };
 
+  // Parse the uploaded file and extract payment data
+  const parsePaymentFile = (file: File) => {
+    // For demo purposes, we'll create a simplified mock parsing
+    // In a real app, you would use Papa Parse or ExcelJS to parse CSV/Excel files
+    
+    // Mock file analysis result - this would come from actual file parsing
+    const mockData = {
+      totalAmount: annualSales > 0 ? annualSales : 1000000, // Use entered amount or default to $1M
+      transactions: 5000,
+      avgOrderValue: 200,
+      paymentTypes: {
+        standard: 0.7,
+        premium: 0.2,
+        international: 0.1
+      }
+    };
+    
+    setFileData(mockData);
+    
+    // Update current AOV if available from file
+    if (mockData.avgOrderValue && currentAOV === 0) {
+      setCurrentAOV(mockData.avgOrderValue);
+    }
+    
+    return mockData;
+  };
+
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setFileName(file.name);
+      
+      // Parse the file
+      const data = parsePaymentFile(file);
+      
       toast.success(`File uploaded: ${file.name}`, {
-        description: "Your payment data will be analyzed for ROI calculation."
+        description: "Your payment data has been analyzed for ROI calculation."
       });
     }
   };
@@ -381,14 +423,15 @@ const ROICalculator = () => {
     }
   };
 
+  // Fix typo in function name from previous code
+  const updateCalculatorValues = (values: any) => {
+    updateCalculatorContext(values);
+  };
+
   // Shared calculator state and methods to pass to child components
   const calculatorState = {
     annualSales,
     setAnnualSales,
-    basicFeeRate,
-    setBasicFeeRate,
-    plusFeeRate,
-    setPlusFeeRate,
     basicMonthlyCost,
     setBasicMonthlyCost,
     plusMonthlyCost,

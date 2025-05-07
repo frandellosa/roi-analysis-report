@@ -20,10 +20,6 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
     handlePlanChange, 
     annualSales, 
     handleSalesChange,
-    basicFeeRate, 
-    setBasicFeeRate, 
-    plusFeeRate, 
-    setPlusFeeRate,
     basicMonthlyCost,
     effectivePlusMonthlyCost
   } = calculatorState;
@@ -52,29 +48,6 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
           value={annualSales.toLocaleString()}
           onChange={handleSalesChange}
         />
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div>
-          <Label htmlFor="basic-fee" className="mb-2 block">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan Fee Rate (%)</Label>
-          <Input 
-            id="basic-fee" 
-            type="number" 
-            value={basicFeeRate} 
-            onChange={(e) => setBasicFeeRate(parseFloat(e.target.value))}
-            step="0.1"
-          />
-        </div>
-        <div>
-          <Label htmlFor="plus-fee" className="mb-2 block">Plus Plan Fee Rate (%)</Label>
-          <Input 
-            id="plus-fee" 
-            type="number" 
-            value={plusFeeRate} 
-            onChange={(e) => setPlusFeeRate(parseFloat(e.target.value))}
-            step="0.1"
-          />
-        </div>
       </div>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
