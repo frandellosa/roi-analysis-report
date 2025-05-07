@@ -45,12 +45,6 @@ const ComparisonTable = () => {
       basic: false,
       plus: true,
       highlight: false
-    },
-    {
-      name: "Launch Team",
-      basic: false,
-      plus: true,
-      highlight: false
     }
   ];
 

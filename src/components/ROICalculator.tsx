@@ -21,6 +21,7 @@ const ROICalculator = () => {
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(39);
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(2300);
   const [selectedPlan, setSelectedPlan] = useState("basic");
+  const [plusTerm, setPlusTerm] = useState("3year");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   
@@ -74,6 +75,15 @@ const ROICalculator = () => {
     // Plus rate stays constant
   }, [selectedPlan]);
 
+  // Update Plus monthly cost based on term selection
+  useEffect(() => {
+    if (plusTerm === "3year") {
+      setPlusMonthlyCost(2300);
+    } else if (plusTerm === "1year") {
+      setPlusMonthlyCost(2400);
+    }
+  }, [plusTerm]);
+
   // Calculate values when inputs change
   useEffect(() => {
     // Calculate processing fees
@@ -122,6 +132,11 @@ const ROICalculator = () => {
     setSelectedPlan(value);
   };
 
+  // Handle term selection change
+  const handleTermChange = (value: string) => {
+    setPlusTerm(value);
+  };
+
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -165,6 +180,19 @@ const ROICalculator = () => {
                     <SelectItem value="basic">Basic ($39/month)</SelectItem>
                     <SelectItem value="shopify">Shopify ($79/month)</SelectItem>
                     <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="mb-6">
+                <Label htmlFor="plus-term" className="mb-2 block">Plus Plan Term</Label>
+                <Select value={plusTerm} onValueChange={handleTermChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Plus plan term" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="3year">3 Year Term ($2,300/month)</SelectItem>
+                    <SelectItem value="1year">1 Year Term ($2,400/month)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -263,6 +291,8 @@ const ROICalculator = () => {
                     type="number" 
                     value={plusMonthlyCost} 
                     onChange={(e) => setPlusMonthlyCost(parseFloat(e.target.value))}
+                    disabled
+                    className="bg-gray-100"
                   />
                 </div>
               </div>
