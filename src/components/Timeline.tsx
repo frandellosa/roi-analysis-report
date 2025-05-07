@@ -10,6 +10,8 @@ import {
   ResponsiveContainer,
   ReferenceLine,
   Legend,
+  Area,
+  ComposedChart,
 } from "recharts";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
@@ -43,6 +45,7 @@ const Timeline = () => {
     const netCost = plusCost - basicCost;
     const uplift = month * monthlyUpliftAverage;
     const netWithUplift = netCost - uplift;
+    const projectedRevenueUplift = month > 0 ? monthlyUpliftAverage : 0;
     
     return {
       month: month === 0 ? "Start" : `Month ${month}`,
@@ -50,6 +53,7 @@ const Timeline = () => {
       uplift: Math.round(uplift),
       netWithUplift: Math.round(netWithUplift),
       savings: Math.round(month * monthlyProcessingSavings),
+      projectedRevenueUplift: Math.round(projectedRevenueUplift),
     };
   });
   
@@ -81,7 +85,7 @@ const Timeline = () => {
             
             <div className="h-80 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart
+                <ComposedChart
                   data={data}
                   margin={{
                     top: 5,
@@ -93,14 +97,25 @@ const Timeline = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis 
+                    yAxisId="left"
+                    tickFormatter={(value) => `$${Math.abs(Number(value) / 1000)}k`}
+                  />
+                  <YAxis 
+                    yAxisId="right"
+                    orientation="right"
                     tickFormatter={(value) => `$${Math.abs(Number(value) / 1000)}k`}
                   />
                   <Tooltip 
-                    formatter={(value) => [`$${Math.abs(Number(value)).toLocaleString()}`, Number(value) < 0 ? "Net Savings" : "Net Cost"]}
+                    formatter={(value, name) => {
+                      if (name === "Projected Monthly Revenue Uplift") {
+                        return [`$${Math.abs(Number(value)).toLocaleString()}`, name];
+                      }
+                      return [`$${Math.abs(Number(value)).toLocaleString()}`, Number(value) < 0 ? "Net Savings" : "Net Cost"];
+                    }}
                     labelFormatter={(label) => `Time: ${label}`}
                   />
                   <Legend />
-                  <ReferenceLine y={0} stroke="#000" strokeDasharray="3 3" />
+                  <ReferenceLine yAxisId="left" y={0} stroke="#000" strokeDasharray="3 3" />
                   <ReferenceLine 
                     x={`Month ${breakevenMonth}${breakevenMonth <= 0 || !isFinite(breakevenMonth) ? ' (N/A)' : ''}`} 
                     stroke="#008060" 
@@ -116,6 +131,7 @@ const Timeline = () => {
                     />
                   )}
                   <Line
+                    yAxisId="left"
                     type="monotone"
                     dataKey="netCost"
                     stroke="#008060"
@@ -123,13 +139,23 @@ const Timeline = () => {
                     strokeWidth={2}
                   />
                   <Line
+                    yAxisId="left"
                     type="monotone"
                     dataKey="netWithUplift"
                     stroke="#0069FF"
                     name="With Conversion Uplift"
                     strokeWidth={2}
                   />
-                </LineChart>
+                  <Area
+                    yAxisId="right"
+                    type="monotone"
+                    dataKey="projectedRevenueUplift"
+                    fill="#FFC859"
+                    fillOpacity={0.6}
+                    stroke="#F49342"
+                    name="Projected Monthly Revenue Uplift"
+                  />
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
             
@@ -150,7 +176,7 @@ const Timeline = () => {
                 </p>
                 <p className="text-xs text-gray-500 mt-1">Including conversion rate improvements</p>
               </div>
-              <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="bg-amber-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">Monthly Uplift</h4>
                 <p className="text-2xl font-bold text-amber-600">
                   ${Math.round(monthlyUpliftAverage).toLocaleString()}
