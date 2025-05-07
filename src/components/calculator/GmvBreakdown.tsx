@@ -119,7 +119,7 @@ export const GmvBreakdown = ({ calculatorState }: GmvBreakdownProps) => {
                 id="d2c-rate"
                 type="number"
                 value={d2cRate}
-                onChange={(e) => handleRateChange(e, setD2cRate)}
+                onChange={(e) => handleRateChange(e, calculatorState.setD2cRate)}
                 className="w-20 text-right"
                 step="0.01"
               />
@@ -147,7 +147,7 @@ export const GmvBreakdown = ({ calculatorState }: GmvBreakdownProps) => {
                 id="b2b-rate"
                 type="number"
                 value={b2bRate}
-                onChange={(e) => handleRateChange(e, setB2bRate)}
+                onChange={(e) => handleRateChange(e, calculatorState.setB2bRate)}
                 className="w-20 text-right"
                 step="0.01"
               />
@@ -173,7 +173,7 @@ export const GmvBreakdown = ({ calculatorState }: GmvBreakdownProps) => {
                 id="retail-rate"
                 type="number"
                 value={retailRate}
-                onChange={(e) => handleRateChange(e, setRetailRate)}
+                onChange={(e) => handleRateChange(e, calculatorState.setRetailRate)}
                 className="w-20 text-right"
                 step="0.01"
               />

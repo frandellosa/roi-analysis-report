@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   TrendingUp, 
@@ -58,7 +57,7 @@ const Stats = () => {
           
           <StatCard 
             icon={Wallet} 
-            title={annualNetSavings >= 0 ? "Annual Net Savings" : "True Cost of Upgrade"} 
+            title={annualNetSavings >= 0 ? "Annual Net Savings" : "Annual Cost to Upgrade"} 
             value={formatCurrency(Math.abs(annualNetSavings))}
             previousValue="After new plan costs"
             valueColor={annualNetSavings >= 0 ? "text-shopify-green" : "text-shopify-black"}

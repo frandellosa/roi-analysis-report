@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -382,7 +381,17 @@ const ROICalculator = () => {
     handleD2CChange,
     handleB2BChange,
     handleRateChange,
-    formatCurrency
+    formatCurrency,
+    setMonthlyUpliftLow,
+    setMonthlyUpliftAverage, 
+    setMonthlyUpliftGood,
+    currentConversionRate,
+    setCurrentConversionRate,
+    currentAOV,
+    setCurrentAOV,
+    monthlyUpliftLow,
+    monthlyUpliftAverage,
+    monthlyUpliftGood
   };
   
   return (
