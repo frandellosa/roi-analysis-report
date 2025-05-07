@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -91,7 +90,7 @@ const ROICalculator = () => {
     if (plusTerm === "3year") {
       setPlusMonthlyCost(2300);
     } else if (plusTerm === "1year") {
-      setPlusMonthlyCost(2400);
+      setPlusMonthlyCost(2500);
     }
   }, [plusTerm]);
 
@@ -216,7 +215,7 @@ const ROICalculator = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="3year">3 Year Term ($2,300/month)</SelectItem>
-                    <SelectItem value="1year">1 Year Term ($2,400/month)</SelectItem>
+                    <SelectItem value="1year">1 Year Term ($2,500/month)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
