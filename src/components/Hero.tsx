@@ -1,5 +1,24 @@
 
+import { useState } from 'react';
+
 const Hero = () => {
+  const [companyName, setCompanyName] = useState("Dually Wheels");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCompanyName(e.target.value);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <div className="bg-gradient-to-br from-white to-blue-50 py-20 px-6">
       <div className="container mx-auto">
@@ -16,7 +35,26 @@ const Hero = () => {
               Maximize Your ROI with <span className="text-shopify-blue font-bold">Shopify Plus</span>
             </h1>
             <p className="text-lg text-shopify-muted mb-8 max-w-lg">
-              Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
+              Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for{' '}
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={handleCompanyNameChange}
+                  onBlur={handleBlur}
+                  onKeyDown={handleKeyDown}
+                  autoFocus
+                  className="bg-transparent border-b border-gray-300 focus:outline-none focus:border-shopify-blue px-1 inline-block w-40"
+                />
+              ) : (
+                <span 
+                  onClick={() => setIsEditing(true)} 
+                  className="cursor-text hover:border-b hover:border-gray-200"
+                >
+                  {companyName}
+                </span>
+              )}{' '}
+              through reduced processing fees and enhanced features.
             </p>
           </div>
           <div className="lg:w-1/2">
