@@ -25,6 +25,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useCalculatorContext } from '@/contexts/CalculatorContext';
+import { Slider } from "@/components/ui/slider";
 
 const ROICalculator = () => {
   // Basic inputs
