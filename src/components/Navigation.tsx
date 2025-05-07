@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -24,15 +23,6 @@ const Navigation = () => {
 
   return (
     <nav className="border-b border-gray-200 py-4 bg-white">
-      {/* Main Logo */}
-      <div className="w-full flex justify-center mb-2">
-        <img 
-          src="/lovable-uploads/f4f762b1-0283-4f61-9fc9-e55a43c895cd.png"
-          alt="Dually Wheels Logo"
-          className="h-12"
-        />
-      </div>
-      
       <div className="container mx-auto flex justify-between items-center px-4">
         <div className="flex-1"></div>
         <div className="flex items-center">

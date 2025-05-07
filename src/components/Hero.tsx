@@ -5,6 +5,13 @@ const Hero = () => {
       <div className="container mx-auto">
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="lg:w-1/2 mb-10 lg:mb-0">
+            <div className="flex items-center mb-4">
+              <img 
+                src="/lovable-uploads/f4f762b1-0283-4f61-9fc9-e55a43c895cd.png"
+                alt="Dually Wheels Logo"
+                className="h-12 mr-4"
+              />
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-shopify-black font-shopify mb-6 leading-tight">
               Maximize Your ROI with <span className="text-shopify-blue font-bold">Shopify Plus</span>
             </h1>
