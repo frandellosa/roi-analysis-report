@@ -39,9 +39,9 @@ const Stats = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard 
             icon={BadgeDollarSign} 
-            title="Total Sales (90 days)" 
+            title="Quarterly Sales" 
             value={formatCurrency(quarterlySales)}
-            previousValue="Based on last 365 days"
+            previousValue="Based on last 90 days"
           />
           
           <StatCard 
