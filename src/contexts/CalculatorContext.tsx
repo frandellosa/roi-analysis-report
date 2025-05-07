@@ -16,8 +16,6 @@ type CalculatorContextType = {
   monthlyUpliftGood: number;
   currentConversionRate: number;
   currentAOV: number;
-  checkoutReachedSessions: number;
-  checkoutCompletedSessions: number;
   updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => void;
 };
 
@@ -36,8 +34,6 @@ const defaultValues: CalculatorContextType = {
   monthlyUpliftGood: 0,
   currentConversionRate: 2.5,
   currentAOV: 120,
-  checkoutReachedSessions: 5000,
-  checkoutCompletedSessions: 125,
   updateCalculatorValues: () => {},
 };
 
@@ -62,8 +58,6 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       monthlyUpliftGood: defaultValues.monthlyUpliftGood,
       currentConversionRate: defaultValues.currentConversionRate,
       currentAOV: defaultValues.currentAOV,
-      checkoutReachedSessions: defaultValues.checkoutReachedSessions,
-      checkoutCompletedSessions: defaultValues.checkoutCompletedSessions,
     }
   );
 

@@ -56,8 +56,6 @@ const ROICalculator = () => {
   const [monthlyUpliftLow, setMonthlyUpliftLow] = useState(0);
   const [monthlyUpliftAverage, setMonthlyUpliftAverage] = useState(0);
   const [monthlyUpliftGood, setMonthlyUpliftGood] = useState(0);
-  const [checkoutReachedSessions, setCheckoutReachedSessions] = useState(5000);
-  const [checkoutCompletedSessions, setCheckoutCompletedSessions] = useState(125);
 
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
@@ -185,14 +183,6 @@ const ROICalculator = () => {
     };
   };
   
-  // Update conversion rate based on checkout sessions
-  useEffect(() => {
-    if (checkoutReachedSessions > 0) {
-      const calculatedConversionRate = (checkoutCompletedSessions / checkoutReachedSessions) * 100;
-      setCurrentConversionRate(parseFloat(calculatedConversionRate.toFixed(2)));
-    }
-  }, [checkoutReachedSessions, checkoutCompletedSessions]);
-  
   // Calculate Revenue Uplift with different scenarios
   const calculateRevenueUplift = () => {
     // Calculate monthly base metrics
@@ -262,9 +252,7 @@ const ROICalculator = () => {
       monthlyUpliftAverage: monthlyUpliftAverage,
       monthlyUpliftGood: monthlyUpliftGood,
       currentConversionRate,
-      currentAOV,
-      checkoutReachedSessions,
-      checkoutCompletedSessions
+      currentAOV
     });
 
     toast.success("ROI calculation complete", {
@@ -631,61 +619,17 @@ const ROICalculator = () => {
               <div className="mb-6 border-t border-gray-200 pt-6">
                 <h4 className="text-lg font-semibold mb-4">Project Uplift</h4>
                 
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <Label htmlFor="checkout-sessions" className="text-sm">Checkout Reached Sessions</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-4 w-4 text-gray-400" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>Number of sessions where users reached the checkout page</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <Input 
-                    id="checkout-sessions" 
-                    type="number" 
-                    value={checkoutReachedSessions}
-                    onChange={(e) => setCheckoutReachedSessions(parseInt(e.target.value) || 0)}
-                  />
-                </div>
-                
-                <div className="mb-4">
-                  <div className="flex justify-between items-center mb-1">
-                    <Label htmlFor="completed-sessions" className="text-sm">Checkout Completed Sessions</Label>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="h-4 w-4 text-gray-400" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>Number of sessions where checkout was successfully completed</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                  <Input 
-                    id="completed-sessions" 
-                    type="number" 
-                    value={checkoutCompletedSessions}
-                    onChange={(e) => setCheckoutCompletedSessions(parseInt(e.target.value) || 0)}
-                  />
-                </div>
-                
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <div className="flex justify-between items-center mb-1">
-                      <Label htmlFor="current-cr" className="text-sm">Calculated Conversion Rate (%)</Label>
+                      <Label htmlFor="current-cr" className="text-sm">Current Conversion Rate (%)</Label>
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger>
                             <Info className="h-4 w-4 text-gray-400" />
                           </TooltipTrigger>
                           <TooltipContent className="max-w-xs">
-                            <p>Your store's current checkout conversion rate (auto-calculated from sessions)</p>
+                            <p>Your store's current checkout conversion rate.</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -696,8 +640,6 @@ const ROICalculator = () => {
                       value={currentConversionRate}
                       onChange={(e) => handleRateChange(e, setCurrentConversionRate)}
                       step="0.1"
-                      className="bg-gray-50"
-                      readOnly
                     />
                   </div>
                   <div>
@@ -791,4 +733,103 @@ const ROICalculator = () => {
                 <div className="mb-8">
                   <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
                     <h4 className="text-lg font-medium mb-2">Annual Processing Fee Savings</h4>
-                    <p className
+                    <p className="text-3xl font-bold text-shopify-green">{formatCurrency(feeSavings)}</p>
+                    <p className="text-sm text-shopify-muted mt-1">Difference in transaction fees only</p>
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+                    <h4 className="text-lg font-medium mb-2">Net Annual Savings</h4>
+                    <p className={`text-3xl font-bold ${annualSavings > 0 ? 'text-shopify-green' : 'text-red-500'}`}>
+                      {formatCurrency(annualSavings)}
+                    </p>
+                    <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg border border-gray-200">
+                    <h4 className="text-lg font-medium mb-2">Projected Revenue Uplift</h4>
+                    <div className="grid grid-cols-3 gap-3 mb-3">
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-amber-600 mb-1">Low</p>
+                        <p className="text-xl font-bold text-amber-600">{formatCurrency(monthlyUpliftLow)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-blue-600 mb-1">Average</p>
+                        <p className="text-xl font-bold text-blue-600">{formatCurrency(monthlyUpliftAverage)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                      <div className="bg-gray-50 p-3 rounded text-center">
+                        <p className="text-sm font-semibold text-green-600 mb-1">Good</p>
+                        <p className="text-xl font-bold text-green-600">{formatCurrency(monthlyUpliftGood)}</p>
+                        <p className="text-xs text-gray-500">Per Month</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-shopify-muted mt-1">
+                      Based on your current metrics and projected improvements in conversion rate and AOV 
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-gray-100 shadow-md">
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-semibold mb-4">Processing Rate Comparison</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Card Type</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plus</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Savings</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Standard Domestic</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.standardDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardDomestic - processingRates.plus.standardDomestic).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Standard International</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.standardInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardInternational - processingRates.plus.standardInternational).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Premium Domestic</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.premiumDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Premium International</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.premiumInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumInternational - processingRates.plus.premiumInternational).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Shop Pay Installments</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.shopPayInstallments}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-4 text-xs text-gray-500">
+                  <p>* Additional rates for Shop Pay Express and other payment methods apply.</p>
+                  <p>* All rates shown are for USA market.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ROICalculator;
