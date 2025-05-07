@@ -10,7 +10,7 @@ const Hero = () => {
           <div className="lg:w-1/2 mb-10 lg:mb-0">
             <div className="flex items-center mb-4">
               <img 
-                src="/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png"
+                src="/lovable-uploads/40fb231f-d9f0-412b-95cf-9eee7450bba6.png"
                 alt="Dually Wheels Logo"
                 className="h-12 mr-4"
               />
