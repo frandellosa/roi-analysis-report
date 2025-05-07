@@ -87,11 +87,13 @@ const Stats = () => {
                 <div className="bg-green-50 p-3 rounded-full mb-4">
                   <Wallet className="h-6 w-6 text-shopify-green" />
                 </div>
-                <h3 className="text-lg font-medium mb-1">Annual Net Savings</h3>
+                <h3 className="text-lg font-medium mb-1">
+                  {annualNetSavings >= 0 ? "Annual Net Savings" : "True Cost of Upgrade"}
+                </h3>
                 <p className={`text-3xl font-bold ${annualNetSavings >= 0 ? "text-shopify-green" : "text-shopify-black"}`}>
-                  {formatCurrency(annualNetSavings)}
+                  {formatCurrency(Math.abs(annualNetSavings))}
                 </p>
-                <p className={`text-sm mt-1 ${annualNetSavings >= 0 ? "text-shopify-muted" : "text-shopify-black"}`}>
+                <p className="text-shopify-muted mt-1 text-sm">
                   After new plan costs
                 </p>
               </div>
