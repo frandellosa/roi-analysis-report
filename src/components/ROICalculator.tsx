@@ -511,24 +511,7 @@ const ROICalculator = () => {
                   type="text"
                   value={annualSales.toLocaleString()}
                   onChange={handleSalesChange}
-                  className="mb-2"
                 />
-                <div className="py-4">
-                  <Slider 
-                    defaultValue={[1562954]} 
-                    max={5000000}
-                    min={100000}
-                    step={50000}
-                    value={[annualSales]}
-                    onValueChange={handleSliderChange}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-shopify-muted mt-2">
-                    <span>$100k</span>
-                    <span>$2.5M</span>
-                    <span>$5M</span>
-                  </div>
-                </div>
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-6">
