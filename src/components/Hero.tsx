@@ -32,9 +32,9 @@ const Hero = () => {
           <div className="lg:w-1/2 mb-10 lg:mb-0">
             <div className="flex items-center mb-4">
               <img 
-                src="/lovable-uploads/f4f762b1-0283-4f61-9fc9-e55a43c895cd.png"
-                alt="Dually Wheels Logo"
-                className="h-12 mr-4"
+                src="/lovable-uploads/159ace76-cc26-4d1f-8264-fea974b64662.png"
+                alt="Shopify Plus Logo"
+                className="h-16 mr-4"
               />
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold font-shopify mb-6 leading-tight">
