@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,23 +12,23 @@ import { ROIResults } from './calculator/ROIResults';
 import { ProcessingRatesTable } from './calculator/ProcessingRatesTable';
 
 const ROICalculator = () => {
-  // Default values
+  // Default values - changed to 0
   const defaultValues = {
-    annualSales: 1562954,
-    basicFeeRate: 2.9,
-    plusFeeRate: 2.25,
-    basicMonthlyCost: 39,
-    plusMonthlyCost: 2300,
-    d2cPercentage: 70,
-    b2bPercentage: 20,
-    retailPercentage: 10,
-    currentConversionRate: 2.5,
-    currentAOV: 120,
+    annualSales: 0,
+    basicFeeRate: 0,
+    plusFeeRate: 0,
+    basicMonthlyCost: 0,
+    plusMonthlyCost: 0,
+    d2cPercentage: 0,
+    b2bPercentage: 0,
+    retailPercentage: 0,
+    currentConversionRate: 0,
+    currentAOV: 0,
     selectedPlan: "basic",
     plusTerm: "3year",
-    d2cRate: 0.35,
-    b2bRate: 0.18,
-    retailRate: 0.25
+    d2cRate: 0,
+    b2bRate: 0,
+    retailRate: 0
   };
   
   // Basic inputs

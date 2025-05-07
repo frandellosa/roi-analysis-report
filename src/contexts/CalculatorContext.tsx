@@ -20,20 +20,20 @@ type CalculatorContextType = {
 };
 
 const defaultValues: CalculatorContextType = {
-  annualSales: 1562954,
-  basicFeeRate: 2.9,
-  plusFeeRate: 2.25,
-  basicMonthlyCost: 39,
-  plusMonthlyCost: 2300,
-  effectivePlusMonthlyCost: 2300,
+  annualSales: 0,
+  basicFeeRate: 0,
+  plusFeeRate: 0,
+  basicMonthlyCost: 0,
+  plusMonthlyCost: 0,
+  effectivePlusMonthlyCost: 0,
   processingFeeSavings: 0,
   annualNetSavings: 0,
   projectedUplift: 0,
   monthlyUpliftLow: 0,
   monthlyUpliftAverage: 0,
   monthlyUpliftGood: 0,
-  currentConversionRate: 2.5,
-  currentAOV: 120,
+  currentConversionRate: 0,
+  currentAOV: 0,
   updateCalculatorValues: () => {},
 };
 
