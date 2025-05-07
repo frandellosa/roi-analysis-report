@@ -11,7 +11,8 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Upload, File } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Upload, File, Calculator } from 'lucide-react';
 import { toast } from 'sonner';
 
 const ROICalculator = () => {
@@ -63,14 +64,24 @@ const ROICalculator = () => {
     }
   };
 
-  // Update fee rates when plan changes
+  // Monthly costs by plan
+  const monthlyCosts = {
+    basic: 39,
+    shopify: 79,
+    advanced: 399
+  };
+
+  // Update fee rates and monthly cost when plan changes
   useEffect(() => {
     if (selectedPlan === "basic") {
       setBasicFeeRate(2.9);
+      setBasicMonthlyCost(monthlyCosts.basic);
     } else if (selectedPlan === "shopify") {
       setBasicFeeRate(2.7);
+      setBasicMonthlyCost(monthlyCosts.shopify);
     } else if (selectedPlan === "advanced") {
       setBasicFeeRate(2.5);
+      setBasicMonthlyCost(monthlyCosts.advanced);
     }
     // Plus rate stays constant
   }, [selectedPlan]);
@@ -84,8 +95,8 @@ const ROICalculator = () => {
     }
   }, [plusTerm]);
 
-  // Calculate values when inputs change
-  useEffect(() => {
+  // Calculate ROI
+  const calculateROI = () => {
     // Calculate processing fees
     const basicProcessingFee = (annualSales * basicFeeRate / 100) + (0.30 * (annualSales / 50)); // Assuming $50 avg order
     const plusProcessingFee = (annualSales * plusFeeRate / 100) + (0.30 * (annualSales / 50));
@@ -102,7 +113,20 @@ const ROICalculator = () => {
     setPlusAnnualCost(plusAnnual);
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
-  }, [annualSales, basicFeeRate, plusFeeRate, basicMonthlyCost, plusMonthlyCost]);
+
+    toast.success("ROI calculation complete", {
+      description: `Annual savings with Shopify Plus: ${formatCurrency(totalSavings)}`
+    });
+  };
+
+  // Calculate values when inputs change
+  useEffect(() => {
+    // We'll only auto-calculate on initial load but not on every input change
+    // User needs to click the Calculate ROI button for updates
+    if (basicAnnualCost === 0) {
+      calculateROI();
+    }
+  }, []);
   
   // Format currency
   const formatCurrency = (amount: number) => {
@@ -282,6 +306,8 @@ const ROICalculator = () => {
                     type="number" 
                     value={basicMonthlyCost} 
                     onChange={(e) => setBasicMonthlyCost(parseFloat(e.target.value))}
+                    disabled
+                    className="bg-gray-100"
                   />
                 </div>
                 <div>
@@ -296,6 +322,14 @@ const ROICalculator = () => {
                   />
                 </div>
               </div>
+
+              <Button 
+                onClick={calculateROI} 
+                className="w-full"
+                size="lg"
+              >
+                <Calculator className="mr-2" /> Calculate ROI
+              </Button>
             </CardContent>
           </Card>
           
