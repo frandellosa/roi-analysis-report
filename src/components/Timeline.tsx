@@ -117,6 +117,7 @@ const Timeline = () => {
                   <Legend />
                   <ReferenceLine yAxisId="left" y={0} stroke="#000" strokeDasharray="3 3" />
                   <ReferenceLine 
+                    yAxisId="left"
                     x={`Month ${breakevenMonth}${breakevenMonth <= 0 || !isFinite(breakevenMonth) ? ' (N/A)' : ''}`} 
                     stroke="#008060" 
                     strokeDasharray="3 3" 
@@ -124,6 +125,7 @@ const Timeline = () => {
                   />
                   {breakevenWithUpliftMonth > 0 && breakevenWithUpliftMonth < 12 && (
                     <ReferenceLine 
+                      yAxisId="left"
                       x={`Month ${breakevenWithUpliftMonth}`}
                       stroke="#0069FF" 
                       strokeDasharray="3 3" 
