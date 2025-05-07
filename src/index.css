@@ -126,3 +126,13 @@
 .font-shopify {
   font-family: 'ShopifyDisplay', sans-serif;
 }
+
+/* Shopify-inspired theme additions */
+.shopify-gradient {
+  background: linear-gradient(135deg, #0d2027 0%, #173642 100%);
+}
+
+.shopify-card {
+  @apply bg-[#173642] border border-gray-700 rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(122,181,92,0.3)] transition-shadow;
+}
+
