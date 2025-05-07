@@ -11,7 +11,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Upload, File, Calculator, Info } from 'lucide-react';
+import { Upload, File, Calculator, Info, ArrowUp, DollarSign } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Tooltip,
@@ -49,6 +49,13 @@ const ROICalculator = () => {
   const [b2bRate, setB2bRate] = useState(0.18);
   const [retailRate, setRetailRate] = useState(0.25);
   const [transactionRate, setTransactionRate] = useState(0.2);
+
+  // Project uplift metrics
+  const [currentConversionRate, setCurrentConversionRate] = useState(2.5);
+  const [projectedConversionRate, setProjectedConversionRate] = useState(3.1);
+  const [currentAOV, setCurrentAOV] = useState(120);
+  const [projectedAOV, setProjectedAOV] = useState(135);
+  const [totalUpliftRevenue, setTotalUpliftRevenue] = useState(0);
 
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
@@ -176,6 +183,28 @@ const ROICalculator = () => {
     };
   };
   
+  // Calculate Revenue Uplift
+  const calculateRevenueUplift = () => {
+    // Estimate annual visitors from annual sales, current conversion rate, and current AOV
+    const estimatedVisitors = annualSales / (currentAOV * (currentConversionRate / 100));
+    
+    // Calculate revenue with improved conversion rate
+    const revenueWithImprovedCR = estimatedVisitors * projectedConversionRate / 100 * currentAOV;
+    
+    // Calculate revenue with improved AOV
+    const revenueWithImprovedAOV = estimatedVisitors * currentConversionRate / 100 * projectedAOV;
+    
+    // Calculate revenue with both improvements
+    const revenueWithBothImprovements = estimatedVisitors * projectedConversionRate / 100 * projectedAOV;
+    
+    // Calculate uplift (subtract original revenue)
+    const upliftAmount = revenueWithBothImprovements - annualSales;
+    
+    setTotalUpliftRevenue(upliftAmount);
+    
+    return upliftAmount;
+  };
+  
   // Calculate ROI
   const calculateROI = () => {
     // Use the consistent processing fee calculation
@@ -187,6 +216,9 @@ const ROICalculator = () => {
     
     // Calculate savings
     const totalSavings = basicAnnual - plusAnnual;
+    
+    // Calculate projected revenue uplift
+    const upliftRevenue = calculateRevenueUplift();
     
     setBasicAnnualCost(basicAnnual);
     setPlusAnnualCost(plusAnnual);
@@ -202,7 +234,8 @@ const ROICalculator = () => {
       plusMonthlyCost,
       effectivePlusMonthlyCost,
       processingFeeSavings,
-      annualNetSavings: totalSavings
+      annualNetSavings: totalSavings,
+      projectedUplift: upliftRevenue
     });
 
     toast.success("ROI calculation complete", {
@@ -278,6 +311,11 @@ const ROICalculator = () => {
     if (!isNaN(value) && value >= 0) {
       setter(value);
     }
+  };
+
+  // Calculate percentage increase
+  const calculatePercentageIncrease = (current: number, projected: number) => {
+    return ((projected - current) / current * 100).toFixed(1);
   };
 
   // Handle file upload
@@ -561,6 +599,100 @@ const ROICalculator = () => {
                 </div>
               </div>
 
+              <div className="mb-6 border-t border-gray-200 pt-6">
+                <h4 className="text-lg font-semibold mb-4">Project Uplift</h4>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <Label htmlFor="current-cr" className="text-sm">Current Conversion Rate (%)</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>Your store's current checkout conversion rate.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <Input 
+                      id="current-cr" 
+                      type="number" 
+                      value={currentConversionRate}
+                      onChange={(e) => handleRateChange(e, setCurrentConversionRate)}
+                      step="0.1"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <Label htmlFor="projected-cr" className="text-sm">Projected Conversion Rate (%)</Label>
+                      <span className="text-xs text-green-600 flex items-center">
+                        <ArrowUp className="h-3 w-3 mr-1" /> 
+                        {calculatePercentageIncrease(currentConversionRate, projectedConversionRate)}%
+                      </span>
+                    </div>
+                    <Input 
+                      id="projected-cr" 
+                      type="number" 
+                      value={projectedConversionRate}
+                      onChange={(e) => handleRateChange(e, setProjectedConversionRate)}
+                      step="0.1"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <Label htmlFor="current-aov" className="text-sm">Current AOV ($)</Label>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-gray-400" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>Your store's current Average Order Value.</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <Input 
+                      id="current-aov" 
+                      type="number" 
+                      value={currentAOV}
+                      onChange={(e) => handleRateChange(e, setCurrentAOV)}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <Label htmlFor="projected-aov" className="text-sm">Projected AOV ($)</Label>
+                      <span className="text-xs text-green-600 flex items-center">
+                        <ArrowUp className="h-3 w-3 mr-1" /> 
+                        {calculatePercentageIncrease(currentAOV, projectedAOV)}%
+                      </span>
+                    </div>
+                    <Input 
+                      id="projected-aov" 
+                      type="number" 
+                      value={projectedAOV}
+                      onChange={(e) => handleRateChange(e, setProjectedAOV)}
+                    />
+                  </div>
+                </div>
+                
+                <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium flex items-center">
+                      <DollarSign className="h-4 w-4 mr-1 text-green-600" />
+                      Projected Annual Revenue Uplift:
+                    </span>
+                    <span className="font-medium text-green-600">{formatCurrency(totalUpliftRevenue)}</span>
+                  </div>
+                </div>
+              </div>
+
               <Button 
                 onClick={calculateROI} 
                 className="w-full"
@@ -589,6 +721,15 @@ const ROICalculator = () => {
                       {formatCurrency(annualSavings)}
                     </p>
                     <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg border border-gray-200">
+                    <h4 className="text-lg font-medium mb-2">Projected Revenue Uplift</h4>
+                    <p className="text-3xl font-bold text-shopify-green">{formatCurrency(totalUpliftRevenue)}</p>
+                    <p className="text-sm text-shopify-muted mt-1">
+                      From improved conversion rate ({currentConversionRate}% → {projectedConversionRate}%) 
+                      and AOV (${currentAOV} → ${projectedAOV})
+                    </p>
                   </div>
                 </div>
               </CardContent>

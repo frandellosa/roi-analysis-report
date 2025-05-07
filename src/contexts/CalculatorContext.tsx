@@ -10,6 +10,7 @@ type CalculatorContextType = {
   effectivePlusMonthlyCost: number;
   processingFeeSavings: number;
   annualNetSavings: number;
+  projectedUplift: number;
   updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => void;
 };
 
@@ -22,6 +23,7 @@ const defaultValues: CalculatorContextType = {
   effectivePlusMonthlyCost: 2300,
   processingFeeSavings: 0,
   annualNetSavings: 0,
+  projectedUplift: 0,
   updateCalculatorValues: () => {},
 };
 
@@ -40,6 +42,7 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       effectivePlusMonthlyCost: defaultValues.effectivePlusMonthlyCost,
       processingFeeSavings: defaultValues.processingFeeSavings,
       annualNetSavings: defaultValues.annualNetSavings,
+      projectedUplift: defaultValues.projectedUplift,
     }
   );
 
