@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ImagePlus } from "lucide-react";
 
 const Navigation = () => {
-  const [logoSrc, setLogoSrc] = useState("/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png");
+  const [logoSrc, setLogoSrc] = useState("/lovable-uploads/f594998b-e274-48be-92cc-36c02430d926.png");
   const [isUploading, setIsUploading] = useState(false);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +23,7 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="border-b border-gray-200 py-4 bg-white">
+    <nav className="border-b border-gray-200 py-4 bg-black">
       <div className="container mx-auto flex justify-between items-center px-4">
         <div className="flex-1"></div>
         <div className="flex items-center">
@@ -37,7 +38,7 @@ const Navigation = () => {
         <div className="flex-1 flex justify-end">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 opacity-10 hover:opacity-100 transition-opacity">
+              <Button variant="outline" size="sm" className="gap-2 opacity-10 hover:opacity-100 transition-opacity text-white border-gray-700">
                 <ImagePlus className="h-4 w-4" />
                 Change Logo
               </Button>

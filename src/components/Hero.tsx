@@ -6,7 +6,7 @@ const Hero = () => {
     >
       {/* Background image with opacity overlay */}
       <div 
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-0 bg-black"
         style={{ 
           backgroundImage: "url('/lovable-uploads/03b66191-3d85-43e3-9a45-db5d75e0f410.png')",
           backgroundSize: "cover",
@@ -24,10 +24,10 @@ const Hero = () => {
                 className="h-12 mr-4"
               />
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-shopify-black font-shopify mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-shopify mb-6 leading-tight">
               Maximize Your ROI with <span className="text-shopify-green font-bold">Shopify Plus</span>
             </h1>
-            <p className="text-lg text-shopify-muted mb-8 max-w-lg">
+            <p className="text-lg text-gray-200 mb-8 max-w-lg">
               Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
             </p>
           </div>
