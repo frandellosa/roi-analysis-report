@@ -6,29 +6,20 @@ import {
   ChartBarIncreasing, 
   Wallet 
 } from "lucide-react";
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
 const Stats = () => {
-  // Use the same constants as in ROICalculator for consistency
-  const annualSales = 1562954;
-  const basicFeeRate = 2.9;
-  const plusFeeRate = 2.25;
-  
-  // Calculate processing fee savings using the same logic
-  const avgOrderValue = 50;
-  const transactionsCount = annualSales / avgOrderValue;
-  const transactionFee = 0.30;
-  
-  const basicProcessingFee = (annualSales * basicFeeRate / 100) + (transactionFee * transactionsCount);
-  const plusProcessingFee = (annualSales * plusFeeRate / 100) + (transactionFee * transactionsCount);
-  const processingFeeSavings = basicProcessingFee - plusProcessingFee;
+  // Use values from calculator context
+  const { 
+    annualSales, 
+    basicFeeRate, 
+    plusFeeRate, 
+    processingFeeSavings, 
+    annualNetSavings 
+  } = useCalculatorContext();
   
   // Calculate savings rate for display
   const savingsRate = ((basicFeeRate - plusFeeRate) * 100) / basicFeeRate;
-  
-  // Calculate annual net savings (after considering monthly costs)
-  const basicMonthlyCost = 39;
-  const plusMonthlyCost = 2300;
-  const annualNetSavings = processingFeeSavings - ((plusMonthlyCost - basicMonthlyCost) * 12);
 
   // Format currency
   const formatCurrency = (amount: number) => {

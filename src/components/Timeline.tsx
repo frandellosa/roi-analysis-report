@@ -10,14 +10,17 @@ import {
   ResponsiveContainer,
   ReferenceLine,
 } from "recharts";
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
 const Timeline = () => {
-  // Use the same constants and calculations as in ROICalculator for consistency
-  const annualSales = 1562954;
-  const basicFeeRate = 2.9;
-  const plusFeeRate = 2.25;
-  const basicMonthly = 39;
-  const plusMonthly = 2300;
+  // Use values from calculator context
+  const { 
+    annualSales, 
+    basicFeeRate, 
+    plusFeeRate,
+    basicMonthlyCost,
+    effectivePlusMonthlyCost
+  } = useCalculatorContext();
   
   // Calculate monthly values
   const monthlySales = annualSales / 12;
@@ -33,8 +36,8 @@ const Timeline = () => {
   // Create data for the chart
   const data = Array.from({ length: 13 }, (_, i) => {
     const month = i;
-    const basicCost = month * (basicMonthly + basicMonthlyProcessingFee);
-    const plusCost = month * (plusMonthly + plusMonthlyProcessingFee);
+    const basicCost = month * (basicMonthlyCost + basicMonthlyProcessingFee);
+    const plusCost = month * (effectivePlusMonthlyCost + plusMonthlyProcessingFee);
     const netCost = plusCost - basicCost;
     
     return {
@@ -45,7 +48,7 @@ const Timeline = () => {
   });
   
   // Find breakeven point - the month where cumulative savings exceed the additional monthly cost
-  const monthlyAdditionalCost = plusMonthly - basicMonthly;
+  const monthlyAdditionalCost = effectivePlusMonthlyCost - basicMonthlyCost;
   const breakevenMonth = Math.ceil(monthlyAdditionalCost / monthlyProcessingSavings);
   
   return (
@@ -63,7 +66,7 @@ const Timeline = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-2">Projected ROI Timeline</h3>
               <p className="text-shopify-muted">
-                Based on your current sales volume of $1.56M annually, this chart shows when you'll reach the breakeven point.
+                Based on your current sales volume of ${(annualSales / 1000000).toFixed(2)}M annually, this chart shows when you'll reach the breakeven point.
               </p>
             </div>
             
@@ -89,10 +92,10 @@ const Timeline = () => {
                   />
                   <ReferenceLine y={0} stroke="#000" strokeDasharray="3 3" />
                   <ReferenceLine 
-                    x={`Month ${breakevenMonth}`} 
+                    x={`Month ${breakevenMonth}${breakevenMonth <= 0 || !isFinite(breakevenMonth) ? ' (N/A)' : ''}`} 
                     stroke="#008060" 
                     strokeDasharray="3 3" 
-                    label={{ value: "Breakeven Point", position: "top", fill: "#008060" }}
+                    label={{ value: breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "No Breakeven" : "Breakeven Point", position: "top", fill: "#008060" }}
                   />
                   <Line
                     type="monotone"
@@ -108,7 +111,9 @@ const Timeline = () => {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">Breakeven Point</h4>
-                <p className="text-2xl font-bold text-shopify-blue">Month {breakevenMonth}</p>
+                <p className="text-2xl font-bold text-shopify-blue">
+                  {breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "Not Applicable" : `Month ${breakevenMonth}`}
+                </p>
               </div>
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">Monthly Savings</h4>
@@ -117,7 +122,7 @@ const Timeline = () => {
               <div className="bg-yellow-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">First Year Net Savings</h4>
                 <p className="text-2xl font-bold text-amber-600">
-                  ${Math.round(monthlyProcessingSavings * 12 - (plusMonthly - basicMonthly) * 12).toLocaleString()}
+                  ${Math.round(monthlyProcessingSavings * 12 - (effectivePlusMonthlyCost - basicMonthlyCost) * 12).toLocaleString()}
                 </p>
               </div>
             </div>

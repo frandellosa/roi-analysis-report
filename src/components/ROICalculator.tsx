@@ -25,6 +25,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { useCalculatorContext } from '@/contexts/CalculatorContext';
 
 const ROICalculator = () => {
   // Basic inputs
@@ -61,6 +62,9 @@ const ROICalculator = () => {
   const [d2cVpf, setD2cVpf] = useState(0);
   const [b2bVpf, setB2bVpf] = useState(0);
   const [retailVpf, setRetailVpf] = useState(0);
+
+  // Access calculator context for updating values
+  const { updateCalculatorValues } = useCalculatorContext();
   
   // Processing rates based on the image
   const processingRates = {
@@ -188,6 +192,18 @@ const ROICalculator = () => {
     setPlusAnnualCost(plusAnnual);
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
+
+    // Update the context with new values
+    updateCalculatorValues({
+      annualSales,
+      basicFeeRate,
+      plusFeeRate,
+      basicMonthlyCost,
+      plusMonthlyCost,
+      effectivePlusMonthlyCost,
+      processingFeeSavings,
+      annualNetSavings: totalSavings
+    });
 
     toast.success("ROI calculation complete", {
       description: `Annual savings with Shopify Plus: ${formatCurrency(totalSavings)}`
