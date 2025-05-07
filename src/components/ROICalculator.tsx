@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -147,10 +146,6 @@ const ROICalculator = () => {
                   />
                 </div>
               </div>
-              
-              <Button className="w-full bg-shopify-blue text-white hover:bg-blue-700">
-                Calculate ROI
-              </Button>
             </CardContent>
           </Card>
           
@@ -173,10 +168,6 @@ const ROICalculator = () => {
                   <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
                 </div>
               </div>
-              
-              <Button className="w-full bg-shopify-green text-white hover:bg-green-700">
-                Download Full ROI Report
-              </Button>
             </CardContent>
           </Card>
         </div>

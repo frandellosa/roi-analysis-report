@@ -1,6 +1,4 @@
 
-import { Button } from "@/components/ui/button";
-
 const Hero = () => {
   return (
     <div className="bg-gradient-to-br from-white to-blue-50 py-20 px-6">

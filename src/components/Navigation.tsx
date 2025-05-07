@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
   return (
@@ -9,7 +8,6 @@ const Navigation = () => {
         <div className="flex items-center space-x-2">
           <span className="text-xl font-bold text-shopify-blue">Dually ROI</span>
         </div>
-        <Button className="bg-shopify-blue text-white hover:bg-blue-600">Get Started</Button>
       </div>
     </nav>
   );

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
 
@@ -139,12 +139,6 @@ const ComparisonTable = () => {
             </div>
           </CardContent>
         </Card>
-        
-        <div className="mt-8 text-center">
-          <Button className="bg-shopify-blue text-white px-8 py-6 rounded-md hover:bg-blue-600 text-lg">
-            View Detailed ROI Analysis
-          </Button>
-        </div>
       </div>
     </div>
   );
