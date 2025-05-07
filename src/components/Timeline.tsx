@@ -12,29 +12,41 @@ import {
 } from "recharts";
 
 const Timeline = () => {
-  // Calculate monthly costs and savings
+  // Use the same constants and calculations as in ROICalculator for consistency
+  const annualSales = 1562954;
+  const basicFeeRate = 2.9;
+  const plusFeeRate = 2.25;
   const basicMonthly = 39;
   const plusMonthly = 2300;
-  const monthlySales = 1562954 / 12; // Annual sales divided by 12
-  const monthlySavingRate = 0.0065; // 0.65% savings (2.9% - 2.25%)
+  
+  // Calculate monthly values
+  const monthlySales = annualSales / 12;
+  const avgOrderValue = 50;
+  const monthlyTransactions = monthlySales / avgOrderValue;
+  const transactionFee = 0.30;
+  
+  // Calculate monthly processing fees
+  const basicMonthlyProcessingFee = (monthlySales * basicFeeRate / 100) + (transactionFee * monthlyTransactions);
+  const plusMonthlyProcessingFee = (monthlySales * plusFeeRate / 100) + (transactionFee * monthlyTransactions);
+  const monthlyProcessingSavings = basicMonthlyProcessingFee - plusMonthlyProcessingFee;
   
   // Create data for the chart
   const data = Array.from({ length: 13 }, (_, i) => {
     const month = i;
-    const basicCost = month * basicMonthly;
-    const plusCost = month * plusMonthly;
-    const processingFeeSavings = month * (monthlySales * monthlySavingRate);
-    const netCost = plusCost - basicCost - processingFeeSavings;
+    const basicCost = month * (basicMonthly + basicMonthlyProcessingFee);
+    const plusCost = month * (plusMonthly + plusMonthlyProcessingFee);
+    const netCost = plusCost - basicCost;
     
     return {
       month: month === 0 ? "Start" : `Month ${month}`,
       netCost: Math.round(netCost),
-      savings: Math.round(processingFeeSavings),
+      savings: Math.round(month * monthlyProcessingSavings),
     };
   });
   
-  // Find breakeven point
-  const breakevenMonth = Math.ceil((plusMonthly - basicMonthly) / (monthlySales * monthlySavingRate));
+  // Find breakeven point - the month where cumulative savings exceed the additional monthly cost
+  const monthlyAdditionalCost = plusMonthly - basicMonthly;
+  const breakevenMonth = Math.ceil(monthlyAdditionalCost / monthlyProcessingSavings);
   
   return (
     <div className="bg-gray-50 py-16">
@@ -100,12 +112,12 @@ const Timeline = () => {
               </div>
               <div className="bg-green-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">Monthly Savings</h4>
-                <p className="text-2xl font-bold text-shopify-green">${Math.round(monthlySales * monthlySavingRate).toLocaleString()}</p>
+                <p className="text-2xl font-bold text-shopify-green">${Math.round(monthlyProcessingSavings).toLocaleString()}</p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg">
                 <h4 className="font-medium mb-1">First Year Net Savings</h4>
                 <p className="text-2xl font-bold text-amber-600">
-                  ${Math.round((monthlySales * monthlySavingRate * 12) - ((plusMonthly - basicMonthly) * 12)).toLocaleString()}
+                  ${Math.round(monthlyProcessingSavings * 12 - (plusMonthly - basicMonthly) * 12).toLocaleString()}
                 </p>
               </div>
             </div>

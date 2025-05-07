@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -157,18 +156,32 @@ const ROICalculator = () => {
     }
   }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, d2cRate, b2bRate, retailRate]);
 
+  // Calculate processing fees - extracted as a separate function for consistency
+  const calculateProcessingFees = () => {
+    const avgOrderValue = 50; // Assuming $50 avg order
+    const transactionsCount = annualSales / avgOrderValue;
+    const transactionFee = 0.30;
+    
+    const basicProcessingFee = (annualSales * basicFeeRate / 100) + (transactionFee * transactionsCount);
+    const plusProcessingFee = (annualSales * plusFeeRate / 100) + (transactionFee * transactionsCount);
+    
+    return {
+      basicProcessingFee,
+      plusProcessingFee,
+      processingFeeSavings: basicProcessingFee - plusProcessingFee
+    };
+  };
+  
   // Calculate ROI
   const calculateROI = () => {
-    // Calculate processing fees
-    const basicProcessingFee = (annualSales * basicFeeRate / 100) + (0.30 * (annualSales / 50)); // Assuming $50 avg order
-    const plusProcessingFee = (annualSales * plusFeeRate / 100) + (0.30 * (annualSales / 50));
+    // Use the consistent processing fee calculation
+    const { basicProcessingFee, plusProcessingFee, processingFeeSavings } = calculateProcessingFees();
     
     // Calculate total annual costs
     const basicAnnual = basicProcessingFee + (basicMonthlyCost * 12);
     const plusAnnual = plusProcessingFee + (effectivePlusMonthlyCost * 12);
     
     // Calculate savings
-    const processingFeeSavings = basicProcessingFee - plusProcessingFee;
     const totalSavings = basicAnnual - plusAnnual;
     
     setBasicAnnualCost(basicAnnual);

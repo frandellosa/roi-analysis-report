@@ -8,6 +8,38 @@ import {
 } from "lucide-react";
 
 const Stats = () => {
+  // Use the same constants as in ROICalculator for consistency
+  const annualSales = 1562954;
+  const basicFeeRate = 2.9;
+  const plusFeeRate = 2.25;
+  
+  // Calculate processing fee savings using the same logic
+  const avgOrderValue = 50;
+  const transactionsCount = annualSales / avgOrderValue;
+  const transactionFee = 0.30;
+  
+  const basicProcessingFee = (annualSales * basicFeeRate / 100) + (transactionFee * transactionsCount);
+  const plusProcessingFee = (annualSales * plusFeeRate / 100) + (transactionFee * transactionsCount);
+  const processingFeeSavings = basicProcessingFee - plusProcessingFee;
+  
+  // Calculate savings rate for display
+  const savingsRate = ((basicFeeRate - plusFeeRate) * 100) / basicFeeRate;
+  
+  // Calculate annual net savings (after considering monthly costs)
+  const basicMonthlyCost = 39;
+  const plusMonthlyCost = 2300;
+  const annualNetSavings = processingFeeSavings - ((plusMonthlyCost - basicMonthlyCost) * 12);
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
   return (
     <div className="bg-white py-16">
       <div className="container mx-auto px-4">
@@ -26,8 +58,8 @@ const Stats = () => {
                   <BadgeDollarSign className="h-6 w-6 text-shopify-blue" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Total Sales (90 days)</h3>
-                <p className="text-3xl font-bold text-shopify-black">$468,559.37</p>
-                <p className="text-shopify-muted mt-2 text-sm">Previous Period: $356,389.21</p>
+                <p className="text-3xl font-bold text-shopify-black">$468,559</p>
+                <p className="text-shopify-muted mt-2 text-sm">Previous Period: $356,389</p>
               </div>
             </CardContent>
           </Card>
@@ -39,7 +71,7 @@ const Stats = () => {
                   <TrendingUp className="h-6 w-6 text-shopify-blue" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Annual Sales</h3>
-                <p className="text-3xl font-bold text-shopify-black">$1,562,953.62</p>
+                <p className="text-3xl font-bold text-shopify-black">{formatCurrency(annualSales)}</p>
                 <p className="text-shopify-muted mt-2 text-sm">Based on last 365 days</p>
               </div>
             </CardContent>
@@ -52,7 +84,7 @@ const Stats = () => {
                   <ChartBarIncreasing className="h-6 w-6 text-shopify-green" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Fee Savings Rate</h3>
-                <p className="text-3xl font-bold text-shopify-green">0.65%</p>
+                <p className="text-3xl font-bold text-shopify-green">{(basicFeeRate - plusFeeRate).toFixed(2)}%</p>
                 <p className="text-shopify-muted mt-2 text-sm">Plus vs Basic Plan Difference</p>
               </div>
             </CardContent>
@@ -65,7 +97,7 @@ const Stats = () => {
                   <Wallet className="h-6 w-6 text-shopify-green" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Annual Net Savings</h3>
-                <p className="text-3xl font-bold text-shopify-green">$10,158.70</p>
+                <p className="text-3xl font-bold text-shopify-green">{formatCurrency(annualNetSavings)}</p>
                 <p className="text-shopify-muted mt-2 text-sm">After monthly plan costs</p>
               </div>
             </CardContent>
