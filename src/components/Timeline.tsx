@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   ReferenceLine,
+  Legend,
 } from "recharts";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
@@ -19,7 +20,8 @@ const Timeline = () => {
     basicFeeRate, 
     plusFeeRate,
     basicMonthlyCost,
-    effectivePlusMonthlyCost
+    effectivePlusMonthlyCost,
+    monthlyUpliftAverage
   } = useCalculatorContext();
   
   // Calculate monthly values
@@ -33,23 +35,30 @@ const Timeline = () => {
   const plusMonthlyProcessingFee = (monthlySales * plusFeeRate / 100) + (transactionFee * monthlyTransactions);
   const monthlyProcessingSavings = basicMonthlyProcessingFee - plusMonthlyProcessingFee;
   
-  // Create data for the chart
+  // Create data for the chart, now incorporating uplift
   const data = Array.from({ length: 13 }, (_, i) => {
     const month = i;
     const basicCost = month * (basicMonthlyCost + basicMonthlyProcessingFee);
     const plusCost = month * (effectivePlusMonthlyCost + plusMonthlyProcessingFee);
     const netCost = plusCost - basicCost;
+    const uplift = month * monthlyUpliftAverage;
+    const netWithUplift = netCost - uplift;
     
     return {
       month: month === 0 ? "Start" : `Month ${month}`,
       netCost: Math.round(netCost),
+      uplift: Math.round(uplift),
+      netWithUplift: Math.round(netWithUplift),
       savings: Math.round(month * monthlyProcessingSavings),
     };
   });
   
-  // Find breakeven point - the month where cumulative savings exceed the additional monthly cost
+  // Find breakeven point without uplift
   const monthlyAdditionalCost = effectivePlusMonthlyCost - basicMonthlyCost;
   const breakevenMonth = Math.ceil(monthlyAdditionalCost / monthlyProcessingSavings);
+  
+  // Find breakeven point with uplift
+  const breakevenWithUpliftMonth = data.findIndex(item => item.netWithUplift <= 0);
   
   return (
     <div className="bg-gray-50 py-16">
@@ -57,7 +66,7 @@ const Timeline = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-shopify-black mb-4 font-shopify">ROI Timeline</h2>
           <p className="text-shopify-muted max-w-2xl mx-auto">
-            See how your investment in Shopify Plus pays off over time as transaction fee savings accumulate.
+            See how your investment in Shopify Plus pays off over time as transaction fee savings and conversion uplift accumulate.
           </p>
         </div>
         
@@ -90,6 +99,7 @@ const Timeline = () => {
                     formatter={(value) => [`$${Math.abs(Number(value)).toLocaleString()}`, Number(value) < 0 ? "Net Savings" : "Net Cost"]}
                     labelFormatter={(label) => `Time: ${label}`}
                   />
+                  <Legend />
                   <ReferenceLine y={0} stroke="#000" strokeDasharray="3 3" />
                   <ReferenceLine 
                     x={`Month ${breakevenMonth}${breakevenMonth <= 0 || !isFinite(breakevenMonth) ? ' (N/A)' : ''}`} 
@@ -97,11 +107,26 @@ const Timeline = () => {
                     strokeDasharray="3 3" 
                     label={{ value: breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "No Breakeven" : "Breakeven Point", position: "top", fill: "#008060" }}
                   />
+                  {breakevenWithUpliftMonth > 0 && breakevenWithUpliftMonth < 12 && (
+                    <ReferenceLine 
+                      x={`Month ${breakevenWithUpliftMonth}`}
+                      stroke="#0069FF" 
+                      strokeDasharray="3 3" 
+                      label={{ value: "Breakeven With Uplift", position: "insideTopRight", fill: "#0069FF" }}
+                    />
+                  )}
                   <Line
                     type="monotone"
                     dataKey="netCost"
+                    stroke="#008060"
+                    name="Processing Savings Only"
+                    strokeWidth={2}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="netWithUplift"
                     stroke="#0069FF"
-                    name="ROI"
+                    name="With Conversion Uplift"
                     strokeWidth={2}
                   />
                 </LineChart>
@@ -114,16 +139,23 @@ const Timeline = () => {
                 <p className="text-2xl font-bold text-shopify-blue">
                   {breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "Not Applicable" : `Month ${breakevenMonth}`}
                 </p>
+                <p className="text-xs text-gray-500 mt-1">Based on processing savings only</p>
               </div>
               <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">Monthly Savings</h4>
-                <p className="text-2xl font-bold text-shopify-green">${Math.round(monthlyProcessingSavings).toLocaleString()}</p>
+                <h4 className="font-medium mb-1">Breakeven With Uplift</h4>
+                <p className="text-2xl font-bold text-shopify-green">
+                  {breakevenWithUpliftMonth <= 0 ? "Immediate" : 
+                   breakevenWithUpliftMonth >= 12 ? "Beyond 1 Year" : 
+                   `Month ${breakevenWithUpliftMonth}`}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">Including conversion rate improvements</p>
               </div>
               <div className="bg-yellow-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">First Year Net Savings</h4>
+                <h4 className="font-medium mb-1">Monthly Uplift</h4>
                 <p className="text-2xl font-bold text-amber-600">
-                  ${Math.round(monthlyProcessingSavings * 12 - (effectivePlusMonthlyCost - basicMonthlyCost) * 12).toLocaleString()}
+                  ${Math.round(monthlyUpliftAverage).toLocaleString()}
                 </p>
+                <p className="text-xs text-gray-500 mt-1">From improved conversion rate & AOV</p>
               </div>
             </div>
           </CardContent>
