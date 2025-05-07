@@ -112,7 +112,7 @@ const ComparisonTable = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-shopify-muted">{feature.basic}</p>
+                    <p className="text-shopify-muted">{String(feature.basic)}</p>
                   )}
                 </div>
                 <div className="p-6 border-l flex items-center justify-center bg-blue-50">
@@ -129,7 +129,7 @@ const ComparisonTable = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="font-medium text-shopify-blue">{feature.plus}</p>
+                    <p className="font-medium text-shopify-blue">{String(feature.plus)}</p>
                   )}
                 </div>
               </div>
