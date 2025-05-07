@@ -1,13 +1,32 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
 const ComparisonTable = () => {
+  const { processingFeeSavings, annualNetSavings } = useCalculatorContext();
+  
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+  
   const features = [
     {
       name: "Transaction Fee",
-      basic: "2.9% + 30¢",
-      plus: "2.25% + 30¢",
+      basic: {
+        label: "Standard (Domestic): 2.9% + 30¢\nStandard (Int'l): 3.9% + 30¢\nPremium (Domestic): 3.5% + 30¢\nPremium (Int'l): 4.5% + 30¢",
+        isList: true
+      },
+      plus: {
+        label: "Standard (Domestic): 2.25% + 30¢\nStandard (Int'l): 3.25% + 30¢\nPremium (Domestic): 2.95% + 30¢\nPremium (Int'l): 3.95% + 30¢",
+        isList: true
+      },
       highlight: true
     },
     {
@@ -86,6 +105,12 @@ const ComparisonTable = () => {
                     ) : (
                       <X className="h-5 w-5 text-red-400" />
                     )
+                  ) : typeof feature.basic === 'object' && feature.basic.isList ? (
+                    <div className="text-sm text-shopify-muted">
+                      {feature.basic.label.split('\n').map((item, i) => (
+                        <p key={i} className="mb-1">{item}</p>
+                      ))}
+                    </div>
                   ) : (
                     <p className="text-shopify-muted">{feature.basic}</p>
                   )}
@@ -97,6 +122,12 @@ const ComparisonTable = () => {
                     ) : (
                       <X className="h-5 w-5 text-red-400" />
                     )
+                  ) : typeof feature.plus === 'object' && feature.plus.isList ? (
+                    <div className="text-sm font-medium text-shopify-blue">
+                      {feature.plus.label.split('\n').map((item, i) => (
+                        <p key={i} className="mb-1">{item}</p>
+                      ))}
+                    </div>
                   ) : (
                     <p className="font-medium text-shopify-blue">{feature.plus}</p>
                   )}
@@ -127,7 +158,7 @@ const ComparisonTable = () => {
                 <p className="font-bold text-xl text-shopify-black">$0</p>
               </div>
               <div className="p-6 border-l text-center bg-blue-50">
-                <p className="font-bold text-xl text-shopify-green">$7,814.77</p>
+                <p className="font-bold text-xl text-shopify-green">{formatCurrency(processingFeeSavings)}</p>
                 <p className="text-sm text-shopify-muted mt-1">Annual processing fee savings</p>
               </div>
             </div>
