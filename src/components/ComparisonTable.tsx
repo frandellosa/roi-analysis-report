@@ -20,11 +20,11 @@ const ComparisonTable = () => {
     {
       name: "Transaction Fee",
       basic: {
-        label: "Standard (Domestic): 2.9% + 30¢\nStandard (Int'l): 3.9% + 30¢\nPremium (Domestic): 3.5% + 30¢\nPremium (Int'l): 4.5% + 30¢",
+        label: "Credit card rates: 2.9% + 30¢ USD online\nAdditional fees using all payment providers other than Shopify Payments",
         isList: true
       },
       plus: {
-        label: "Standard (Domestic): 2.25% + 30¢\nStandard (Int'l): 3.25% + 30¢\nPremium (Domestic): 2.95% + 30¢\nPremium (Int'l): 3.95% + 30¢",
+        label: "Credit card rates: 2.4% + 30¢ USD online\nNo additional fees using all payment providers other than Shopify Payments",
         isList: true
       },
       highlight: true
@@ -32,7 +32,7 @@ const ComparisonTable = () => {
     {
       name: "Monthly Cost",
       basic: "$39",
-      plus: "$2,300",
+      plus: "$2,000",
       highlight: true
     },
     {
@@ -146,7 +146,7 @@ const ComparisonTable = () => {
               </div>
               <div className="p-6 border-l text-center bg-blue-50">
                 <p className="font-bold text-xl text-shopify-blue">$37,816.99</p>
-                <p className="text-sm text-shopify-muted mt-1">+ $27,600/year plan cost</p>
+                <p className="text-sm text-shopify-muted mt-1">+ $24,000/year plan cost</p>
               </div>
             </div>
             
