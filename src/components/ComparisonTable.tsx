@@ -13,8 +13,8 @@ const ComparisonTable = () => {
     <div className="bg-gray-50 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-shopify-black mb-4 font-shopify">Plan Comparison</h2>
-          <p className="text-shopify-muted max-w-2xl mx-auto">
+          <h2 className="shopify-heading">Plan Comparison</h2>
+          <p className="shopify-subheading">
             Compare the features and costs between Shopify Basic and Shopify Plus to see where you can benefit most.
           </p>
         </div>

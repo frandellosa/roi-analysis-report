@@ -30,7 +30,13 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				shopify: {
 					blue: '#0069FF',
-					green: '#008060',
+					green: '#7AB55C',
+					darkgreen: '#008060',
+					teal: {
+						DEFAULT: '#173642',
+						dark: '#0d2027',
+						light: '#224955'
+					},
 					black: '#212326',
 					muted: '#616166',
 					light: '#F3FCF4',

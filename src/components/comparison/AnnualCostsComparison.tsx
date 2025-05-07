@@ -38,7 +38,7 @@ export const AnnualCostsComparison = () => {
           + {formatCurrency(basicAnnualPlanCost)}/year plan cost
         </p>
       </div>
-      <div className="p-6 border-l text-center bg-blue-50">
+      <div className="p-6 border-l text-center bg-shopify-light">
         <p className="font-bold text-xl text-shopify-blue">
           {formatCurrency(plusProcessingCost)}
         </p>

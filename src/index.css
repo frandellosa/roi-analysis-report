@@ -133,6 +133,38 @@
 }
 
 .shopify-card {
-  @apply bg-[#173642] border border-gray-700 rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(122,181,92,0.3)] transition-shadow;
+  @apply bg-shopify-teal border border-gray-700 rounded-xl shadow-lg hover:shadow-[0_0_15px_rgba(122,181,92,0.3)] transition-shadow;
 }
 
+/* Additional Shopify-themed utility classes */
+.text-shopify-gradient {
+  @apply bg-gradient-to-r from-shopify-green to-shopify-darkgreen bg-clip-text text-transparent;
+}
+
+.btn-shopify-primary {
+  @apply bg-shopify-blue text-white hover:bg-blue-700 transition-colors;
+}
+
+.btn-shopify-secondary {
+  @apply bg-shopify-green text-white hover:bg-green-700 transition-colors;
+}
+
+.shopify-stats-card {
+  @apply bg-white border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6;
+}
+
+.shopify-highlight {
+  @apply text-shopify-green font-bold;
+}
+
+.shopify-section {
+  @apply py-16 px-4;
+}
+
+.shopify-heading {
+  @apply text-3xl font-bold text-shopify-black mb-4 font-shopify;
+}
+
+.shopify-subheading {
+  @apply text-shopify-muted max-w-2xl mx-auto;
+}

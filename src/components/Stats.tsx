@@ -30,8 +30,8 @@ const Stats = () => {
     <div className="bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-shopify-black mb-4 font-shopify">Your Business at a Glance</h2>
-          <p className="text-shopify-muted max-w-2xl mx-auto">
+          <h2 className="shopify-heading">Your Business at a Glance</h2>
+          <p className="shopify-subheading">
             Based on your actual sales data and transaction history, we've analyzed the potential impact of switching to Shopify Plus.
           </p>
         </div>

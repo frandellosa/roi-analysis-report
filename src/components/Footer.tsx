@@ -3,7 +3,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-shopify-black text-white py-12">
+    <footer className="bg-shopify-teal-dark text-white py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -15,18 +15,18 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-medium mb-4">Resources</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white">ROI Calculator</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Plan Comparison</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Case Studies</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">FAQ</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">ROI Calculator</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">Plan Comparison</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">Case Studies</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">FAQ</a></li>
             </ul>
           </div>
           <div>
             <h3 className="text-lg font-medium mb-4">Contact</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white">Schedule a Call</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Email Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Support</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">Schedule a Call</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">Email Us</a></li>
+              <li><a href="#" className="text-gray-400 hover:text-shopify-green transition-colors">Support</a></li>
             </ul>
           </div>
         </div>

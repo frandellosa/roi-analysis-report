@@ -14,7 +14,7 @@ export const FeeSavingsComparison = ({ processingFeeSavings }: FeeSavingsCompari
       <div className="p-6 border-l text-center">
         <p className="font-bold text-xl text-shopify-black">$0</p>
       </div>
-      <div className="p-6 border-l text-center bg-blue-50">
+      <div className="p-6 border-l text-center bg-shopify-light">
         <p className="font-bold text-xl text-shopify-green">{formatCurrency(processingFeeSavings)}</p>
         <p className="text-sm text-shopify-muted mt-1">Annual processing fee savings</p>
       </div>
