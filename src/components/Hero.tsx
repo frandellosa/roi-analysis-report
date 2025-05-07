@@ -41,7 +41,7 @@ const Hero = () => {
               Maximize Your ROI with <span className="text-shopify-green font-bold">Shopify Plus</span>
             </h1>
             <p className="text-lg text-gray-300 mb-8 max-w-lg">
-              Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for{' '}
+              Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings + grow revenue for{' '}
               {isEditing ? (
                 <input
                   type="text"

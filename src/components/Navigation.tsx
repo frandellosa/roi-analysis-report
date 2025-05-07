@@ -1,12 +1,24 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ImagePlus } from "lucide-react";
+import { ImagePlus, RotateCcw } from "lucide-react";
+
+const LOGO_STORAGE_KEY = 'shopify-roi-logo';
+const DEFAULT_LOGO = "/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png";
 
 const Navigation = () => {
-  const [logoSrc, setLogoSrc] = useState("/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png");
+  const [logoSrc, setLogoSrc] = useState(DEFAULT_LOGO);
   const [isUploading, setIsUploading] = useState(false);
+
+  // Load saved logo on component mount
+  useEffect(() => {
+    const savedLogo = localStorage.getItem(LOGO_STORAGE_KEY);
+    if (savedLogo) {
+      setLogoSrc(savedLogo);
+    }
+  }, []);
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -14,11 +26,19 @@ const Navigation = () => {
       setIsUploading(true);
       const reader = new FileReader();
       reader.onload = (event) => {
-        setLogoSrc(event.target?.result as string);
+        const newLogoSrc = event.target?.result as string;
+        setLogoSrc(newLogoSrc);
+        // Save to localStorage
+        localStorage.setItem(LOGO_STORAGE_KEY, newLogoSrc);
         setIsUploading(false);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleResetLogo = () => {
+    setLogoSrc(DEFAULT_LOGO);
+    localStorage.removeItem(LOGO_STORAGE_KEY);
   };
 
   return (
@@ -60,6 +80,15 @@ const Navigation = () => {
                     onChange={handleLogoChange}
                     disabled={isUploading}
                   />
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    onClick={handleResetLogo}
+                    className="flex items-center gap-2"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset to Default
+                  </Button>
                   <p className="text-xs text-gray-500 text-center">
                     Recommended size: 512x128px. SVG, PNG or JPG formats preferred.
                   </p>
