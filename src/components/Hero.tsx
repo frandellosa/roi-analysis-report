@@ -6,7 +6,7 @@ const Hero = () => {
         <div className="flex flex-col lg:flex-row items-center justify-between">
           <div className="lg:w-1/2 mb-10 lg:mb-0">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-shopify-black font-shopify mb-6 leading-tight">
-              Maximize Your <span className="text-shopify-blue">ROI</span> with Shopify Plus
+              Maximize Your ROI with <span className="text-shopify-blue font-bold">Shopify Plus</span>
             </h1>
             <p className="text-lg text-shopify-muted mb-8 max-w-lg">
               Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
