@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -11,10 +12,23 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Upload, File, Calculator } from 'lucide-react';
+import { Upload, File, Calculator, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 const ROICalculator = () => {
+  // Basic inputs
   const [annualSales, setAnnualSales] = useState(1562954);
   const [basicFeeRate, setBasicFeeRate] = useState(2.9);
   const [plusFeeRate, setPlusFeeRate] = useState(2.25);
@@ -25,11 +39,35 @@ const ROICalculator = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   
+  // GMV breakdown inputs
+  const [d2cPercentage, setD2cPercentage] = useState(70);
+  const [b2bPercentage, setB2bPercentage] = useState(20);
+  const [retailPercentage, setRetailPercentage] = useState(10);
+  const [useVpf, setUseVpf] = useState(false);
+
+  // Variable platform fee rates
+  const vpfRates = {
+    '1year': {
+      d2c: 0.4,
+      b2b: 0.18,
+      retail: 0.25,
+      transaction: 0.20
+    },
+    '3year': {
+      d2c: 0.35,
+      b2b: 0.18,
+      retail: 0.25,
+      transaction: 0.20
+    }
+  };
+  
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
   const [plusAnnualCost, setPlusAnnualCost] = useState(0);
   const [annualSavings, setAnnualSavings] = useState(0);
   const [feeSavings, setFeeSavings] = useState(0);
+  const [vpfMonthly, setVpfMonthly] = useState(0);
+  const [effectivePlusMonthlyCost, setEffectivePlusMonthlyCost] = useState(plusMonthlyCost);
   
   // Processing rates based on the image
   const processingRates = {
@@ -94,6 +132,31 @@ const ROICalculator = () => {
     }
   }, [plusTerm]);
 
+  // Calculate Variable Platform Fee
+  useEffect(() => {
+    const monthlyGMV = annualSales / 12;
+    const d2cGMV = monthlyGMV * (d2cPercentage / 100);
+    const b2bGMV = monthlyGMV * (b2bPercentage / 100);
+    const retailGMV = monthlyGMV * (retailPercentage / 100);
+
+    const rates = vpfRates[plusTerm as keyof typeof vpfRates];
+    
+    const vpfAmount = (
+      (d2cGMV * rates.d2c / 100) + 
+      (b2bGMV * rates.b2b / 100) + 
+      (retailGMV * rates.retail / 100)
+    );
+    
+    setVpfMonthly(vpfAmount);
+
+    // Apply the pricing rule: VPF or minimum monthly, whichever is greater
+    if (useVpf && vpfAmount > plusMonthlyCost) {
+      setEffectivePlusMonthlyCost(vpfAmount);
+    } else {
+      setEffectivePlusMonthlyCost(plusMonthlyCost);
+    }
+  }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, useVpf]);
+
   // Calculate ROI
   const calculateROI = () => {
     // Calculate processing fees
@@ -102,7 +165,7 @@ const ROICalculator = () => {
     
     // Calculate total annual costs
     const basicAnnual = basicProcessingFee + (basicMonthlyCost * 12);
-    const plusAnnual = plusProcessingFee + (plusMonthlyCost * 12);
+    const plusAnnual = plusProcessingFee + (effectivePlusMonthlyCost * 12);
     
     // Calculate savings
     const processingFeeSavings = basicProcessingFee - plusProcessingFee;
@@ -160,6 +223,23 @@ const ROICalculator = () => {
     setPlusTerm(value);
   };
 
+  // Handle GMV percentage changes
+  const handleD2CChange = (value: number) => {
+    const newD2C = Math.min(100, value);
+    const remaining = 100 - newD2C;
+    const ratio = b2bPercentage / (b2bPercentage + retailPercentage) || 0.5;
+    
+    setD2cPercentage(newD2C);
+    setB2bPercentage(Math.round(remaining * ratio));
+    setRetailPercentage(100 - newD2C - Math.round(remaining * ratio));
+  };
+
+  const handleB2BChange = (value: number) => {
+    const newB2B = Math.min(100 - d2cPercentage, value);
+    setB2bPercentage(newB2B);
+    setRetailPercentage(100 - d2cPercentage - newB2B);
+  };
+
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -207,18 +287,127 @@ const ROICalculator = () => {
                 </Select>
               </div>
 
-              <div className="mb-6">
-                <Label htmlFor="plus-term" className="mb-2 block">Plus Plan Term</Label>
-                <Select value={plusTerm} onValueChange={handleTermChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Plus plan term" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3year">3 Year Term ($2,300/month)</SelectItem>
-                    <SelectItem value="1year">1 Year Term ($2,500/month)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Tabs defaultValue="standard" className="mb-6">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="standard">Standard</TabsTrigger>
+                  <TabsTrigger value="variable">Variable Platform Fee</TabsTrigger>
+                </TabsList>
+                <TabsContent value="standard">
+                  <div className="mb-6">
+                    <Label htmlFor="plus-term" className="mb-2 block">Plus Plan Term</Label>
+                    <Select value={plusTerm} onValueChange={handleTermChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select Plus plan term" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="3year">3 Year Term ($2,300/month)</SelectItem>
+                        <SelectItem value="1year">1 Year Term ($2,500/month)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </TabsContent>
+                <TabsContent value="variable">
+                  <div className="mb-6 space-y-4">
+                    <div>
+                      <div className="flex justify-between items-center mb-2">
+                        <Label>Plus Plan Term & VPF Rates</Label>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="h-4 w-4 text-gray-400" />
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p>Variable platform fee is calculated as a percentage of your monthly GMV, broken down by channel.</p>
+                              <p className="mt-2">Plus pricing will be either the monthly minimum fee OR the VPF, whichever is greater.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                      <Select value={plusTerm} onValueChange={handleTermChange}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select Plus plan term" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="3year">
+                            3 Year Term ($2,300/mo min or VPF)
+                          </SelectItem>
+                          <SelectItem value="1year">
+                            1 Year Term ($2,500/mo min or VPF)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <Label>D2C Sales ({plusTerm === '3year' ? '0.35%' : '0.40%'})</Label>
+                        <span className="text-sm">{d2cPercentage}%</span>
+                      </div>
+                      <Slider
+                        defaultValue={[70]}
+                        max={100}
+                        min={0}
+                        step={1}
+                        value={[d2cPercentage]}
+                        onValueChange={(val) => handleD2CChange(val[0])}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <Label>B2B Sales (0.18%)</Label>
+                        <span className="text-sm">{b2bPercentage}%</span>
+                      </div>
+                      <Slider
+                        defaultValue={[20]}
+                        max={100-d2cPercentage}
+                        min={0}
+                        step={1}
+                        value={[b2bPercentage]}
+                        onValueChange={(val) => handleB2BChange(val[0])}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <Label>Retail Sales (0.25%)</Label>
+                        <span className="text-sm">{retailPercentage}%</span>
+                      </div>
+                      <Input
+                        type="text"
+                        value={retailPercentage + "%"}
+                        disabled
+                        className="bg-gray-100"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Calculated VPF (Monthly):</span>
+                      <span className="font-medium">{formatCurrency(vpfMonthly)}</span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-sm font-medium">Monthly Minimum:</span>
+                      <span className="font-medium">{formatCurrency(plusMonthlyCost)}</span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-sm font-medium">Effective Monthly Cost:</span>
+                      <span className="font-semibold text-shopify-green">{formatCurrency(effectivePlusMonthlyCost)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id="use-vpf"
+                        checked={useVpf}
+                        onChange={(e) => setUseVpf(e.target.checked)}
+                        className="h-4 w-4"
+                      />
+                      <Label htmlFor="use-vpf" className="text-sm">
+                        Use Variable Platform Fee in calculations
+                      </Label>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
 
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
@@ -314,8 +503,7 @@ const ROICalculator = () => {
                   <Input 
                     id="plus-monthly" 
                     type="number" 
-                    value={plusMonthlyCost} 
-                    onChange={(e) => setPlusMonthlyCost(parseFloat(e.target.value))}
+                    value={effectivePlusMonthlyCost.toFixed(2)} 
                     disabled
                     className="bg-gray-100"
                   />
