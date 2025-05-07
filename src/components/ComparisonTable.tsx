@@ -24,7 +24,7 @@ const ComparisonTable = () => {
         isList: true
       },
       plus: {
-        label: "Credit card rates: 2.4% + 30¢ USD online\nNo additional fees using all payment providers other than Shopify Payments",
+        label: "Credit card rates: 2.25% + 30¢ USD online\nNo additional fees using all payment providers other than Shopify Payments",
         isList: true
       },
       highlight: true
@@ -32,7 +32,7 @@ const ComparisonTable = () => {
     {
       name: "Monthly Cost",
       basic: "$39",
-      plus: "$2,000",
+      plus: "$2,300",
       highlight: true
     },
     {
@@ -146,7 +146,7 @@ const ComparisonTable = () => {
               </div>
               <div className="p-6 border-l text-center bg-blue-50">
                 <p className="font-bold text-xl text-shopify-blue">$37,816.99</p>
-                <p className="text-sm text-shopify-muted mt-1">+ $24,000/year plan cost</p>
+                <p className="text-sm text-shopify-muted mt-1">+ $27,600/year plan cost</p>
               </div>
             </div>
             

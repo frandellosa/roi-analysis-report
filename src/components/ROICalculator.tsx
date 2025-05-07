@@ -31,9 +31,9 @@ const ROICalculator = () => {
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(1562954);
   const [basicFeeRate, setBasicFeeRate] = useState(2.9);
-  const [plusFeeRate, setPlusFeeRate] = useState(2.4);
+  const [plusFeeRate, setPlusFeeRate] = useState(2.25);
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(39);
-  const [plusMonthlyCost, setPlusMonthlyCost] = useState(2000);
+  const [plusMonthlyCost, setPlusMonthlyCost] = useState(2300);
   const [selectedPlan, setSelectedPlan] = useState("basic");
   const [plusTerm, setPlusTerm] = useState("3year");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,7 +73,7 @@ const ROICalculator = () => {
   // Access calculator context for updating values
   const { updateCalculatorValues } = useCalculatorContext();
   
-  // Processing rates based on the updated pricing from Shopify's website
+  // Processing rates based on Shopify's website
   const processingRates = {
     basic: {
       standardDomestic: 2.9,
@@ -97,10 +97,10 @@ const ROICalculator = () => {
       shopPayInstallments: 5.9
     },
     plus: {
-      standardDomestic: 2.4,
-      standardInternational: 3.4,
-      premiumDomestic: 2.8,
-      premiumInternational: 3.8,
+      standardDomestic: 2.25,
+      standardInternational: 3.25,
+      premiumDomestic: 2.95,
+      premiumInternational: 3.95,
       shopPayInstallments: 5.0
     }
   };
@@ -108,7 +108,7 @@ const ROICalculator = () => {
   // Monthly costs by plan
   const monthlyCosts = {
     basic: 39,
-    shopify: 105,
+    shopify: 79,
     advanced: 399
   };
 
@@ -130,7 +130,7 @@ const ROICalculator = () => {
   // Update Plus monthly cost based on term selection
   useEffect(() => {
     if (plusTerm === "3year") {
-      setPlusMonthlyCost(2000);
+      setPlusMonthlyCost(2300);
       setD2cRate(0.35); // Update D2C rate based on term
     } else if (plusTerm === "1year") {
       setPlusMonthlyCost(2500);
@@ -376,7 +376,7 @@ const ROICalculator = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="basic">Basic ($39/month)</SelectItem>
-                    <SelectItem value="shopify">Shopify ($105/month)</SelectItem>
+                    <SelectItem value="shopify">Grow ($79/month)</SelectItem>
                     <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -395,7 +395,7 @@ const ROICalculator = () => {
                         <SelectValue placeholder="Select Plus plan term" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="3year">3 Year Term ($2,000/month)</SelectItem>
+                        <SelectItem value="3year">3 Year Term ($2,300/month)</SelectItem>
                         <SelectItem value="1year">1 Year Term ($2,500/month)</SelectItem>
                       </SelectContent>
                     </Select>
@@ -424,7 +424,7 @@ const ROICalculator = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="3year">
-                            3 Year Term ($2,000/mo min or VPF)
+                            3 Year Term ($2,300/mo min or VPF)
                           </SelectItem>
                           <SelectItem value="1year">
                             1 Year Term ($2,500/mo min or VPF)
