@@ -18,13 +18,13 @@ const ComparisonTable = () => {
   
   const features = [
     {
-      name: "Transaction Fee",
+      name: "Credit Card Processing Fee",
       basic: {
-        label: "Credit card rates: 2.9% + 30¢ USD online\nAdditional fees using all payment providers other than Shopify Payments",
+        label: "Standard Domestic: 2.9% + 30¢ USD\nStandard International: 3.9% + 30¢ USD\nPremium Cards: 3.5% + 30¢ USD",
         isList: true
       },
       plus: {
-        label: "Credit card rates: 2.25% + 30¢ USD online\nNo additional fees using all payment providers other than Shopify Payments",
+        label: "Standard Domestic: 2.25% + 30¢ USD\nStandard International: 3.25% + 30¢ USD\nPremium Cards: 2.95% + 30¢ USD",
         isList: true
       },
       highlight: true
