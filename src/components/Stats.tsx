@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { 
   TrendingUp, 
@@ -22,6 +23,9 @@ const Stats = () => {
   // Calculate savings rate for display
   const savingsRate = ((basicFeeRate - plusFeeRate) * 100) / basicFeeRate;
 
+  // Calculate quarterly sales (90 days) from annual sales
+  const quarterlySales = annualSales / 4;
+
   return (
     <div className="bg-white py-16">
       <div className="container mx-auto px-4">
@@ -36,8 +40,8 @@ const Stats = () => {
           <StatCard 
             icon={BadgeDollarSign} 
             title="Total Sales (90 days)" 
-            value="$468,559"
-            previousValue="Previous Period: $356,389"
+            value={formatCurrency(quarterlySales)}
+            previousValue="Based on last 365 days"
           />
           
           <StatCard 
