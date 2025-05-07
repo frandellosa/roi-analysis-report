@@ -1,9 +1,18 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { Upload, File } from 'lucide-react';
+import { toast } from 'sonner';
 
 const ROICalculator = () => {
   const [annualSales, setAnnualSales] = useState(1562954);
@@ -11,6 +20,9 @@ const ROICalculator = () => {
   const [plusFeeRate, setPlusFeeRate] = useState(2.25);
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(39);
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(2300);
+  const [selectedPlan, setSelectedPlan] = useState("basic");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
@@ -18,6 +30,50 @@ const ROICalculator = () => {
   const [annualSavings, setAnnualSavings] = useState(0);
   const [feeSavings, setFeeSavings] = useState(0);
   
+  // Processing rates based on the image
+  const processingRates = {
+    basic: {
+      standardDomestic: 2.9,
+      standardInternational: 3.9,
+      premiumDomestic: 3.5,
+      premiumInternational: 4.5,
+      shopPayInstallments: 5.9
+    },
+    shopify: {
+      standardDomestic: 2.7,
+      standardInternational: 3.7,
+      premiumDomestic: 3.3,
+      premiumInternational: 4.3,
+      shopPayInstallments: 5.9
+    },
+    advanced: {
+      standardDomestic: 2.5,
+      standardInternational: 3.5,
+      premiumDomestic: 3.1,
+      premiumInternational: 4.1,
+      shopPayInstallments: 5.9
+    },
+    plus: {
+      standardDomestic: 2.25,
+      standardInternational: 3.25,
+      premiumDomestic: 2.95,
+      premiumInternational: 3.95,
+      shopPayInstallments: 5.0
+    }
+  };
+
+  // Update fee rates when plan changes
+  useEffect(() => {
+    if (selectedPlan === "basic") {
+      setBasicFeeRate(2.9);
+    } else if (selectedPlan === "shopify") {
+      setBasicFeeRate(2.7);
+    } else if (selectedPlan === "advanced") {
+      setBasicFeeRate(2.5);
+    }
+    // Plus rate stays constant
+  }, [selectedPlan]);
+
   // Calculate values when inputs change
   useEffect(() => {
     // Calculate processing fees
@@ -60,6 +116,29 @@ const ROICalculator = () => {
   const handleSliderChange = (value: number[]) => {
     setAnnualSales(value[0]);
   };
+
+  // Handle plan selection change
+  const handlePlanChange = (value: string) => {
+    setSelectedPlan(value);
+  };
+
+  // Handle file upload
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setFileName(file.name);
+      toast.success(`File uploaded: ${file.name}`, {
+        description: "Your payment data will be analyzed for ROI calculation."
+      });
+    }
+  };
+
+  // Trigger file input click
+  const triggerFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
   
   return (
     <div className="bg-white py-16">
@@ -76,6 +155,47 @@ const ROICalculator = () => {
             <CardContent className="pt-6">
               <h3 className="text-xl font-semibold mb-6">Input Your Numbers</h3>
               
+              <div className="mb-6">
+                <Label htmlFor="current-plan" className="mb-2 block">Current Plan</Label>
+                <Select value={selectedPlan} onValueChange={handlePlanChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select your current plan" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="basic">Basic ($39/month)</SelectItem>
+                    <SelectItem value="shopify">Shopify ($79/month)</SelectItem>
+                    <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-2">
+                  <Label htmlFor="file-upload">Upload Payment Data</Label>
+                  {fileName && <span className="text-sm text-green-600">{fileName}</span>}
+                </div>
+                <div 
+                  className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={triggerFileUpload}
+                >
+                  <input 
+                    type="file" 
+                    id="file-upload" 
+                    className="hidden" 
+                    ref={fileInputRef} 
+                    onChange={handleFileUpload} 
+                    accept=".csv,.xlsx,.xls"
+                  />
+                  <Upload className="h-8 w-8 mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-500">
+                    Drag and drop your payment data file, or <span className="text-shopify-blue">browse</span>
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Supports CSV, Excel (.xlsx, .xls)
+                  </p>
+                </div>
+              </div>
+
               <div className="mb-6">
                 <Label htmlFor="annual-sales" className="mb-2 block">Annual Sales Volume</Label>
                 <Input 
@@ -105,7 +225,7 @@ const ROICalculator = () => {
               
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <Label htmlFor="basic-fee" className="mb-2 block">Basic Plan Fee Rate (%)</Label>
+                  <Label htmlFor="basic-fee" className="mb-2 block">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} Plan Fee Rate (%)</Label>
                   <Input 
                     id="basic-fee" 
                     type="number" 
@@ -128,7 +248,7 @@ const ROICalculator = () => {
               
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <Label htmlFor="basic-monthly" className="mb-2 block">Basic Monthly Cost ($)</Label>
+                  <Label htmlFor="basic-monthly" className="mb-2 block">Current Plan Monthly Cost ($)</Label>
                   <Input 
                     id="basic-monthly" 
                     type="number" 
@@ -149,27 +269,83 @@ const ROICalculator = () => {
             </CardContent>
           </Card>
           
-          <Card className="border-gray-100 shadow-md bg-gray-50">
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-6">ROI Results</h3>
-              
-              <div className="mb-8">
-                <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
-                  <h4 className="text-lg font-medium mb-2">Annual Processing Fee Savings</h4>
-                  <p className="text-3xl font-bold text-shopify-green">{formatCurrency(feeSavings)}</p>
-                  <p className="text-sm text-shopify-muted mt-1">Difference in transaction fees only</p>
-                </div>
+          <div className="flex flex-col gap-6">
+            <Card className="border-gray-100 shadow-md bg-gray-50">
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-semibold mb-6">ROI Results</h3>
                 
-                <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
-                  <h4 className="text-lg font-medium mb-2">Net Annual Savings</h4>
-                  <p className={`text-3xl font-bold ${annualSavings > 0 ? 'text-shopify-green' : 'text-red-500'}`}>
-                    {formatCurrency(annualSavings)}
-                  </p>
-                  <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
+                <div className="mb-8">
+                  <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+                    <h4 className="text-lg font-medium mb-2">Annual Processing Fee Savings</h4>
+                    <p className="text-3xl font-bold text-shopify-green">{formatCurrency(feeSavings)}</p>
+                    <p className="text-sm text-shopify-muted mt-1">Difference in transaction fees only</p>
+                  </div>
+                  
+                  <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+                    <h4 className="text-lg font-medium mb-2">Net Annual Savings</h4>
+                    <p className={`text-3xl font-bold ${annualSavings > 0 ? 'text-shopify-green' : 'text-red-500'}`}>
+                      {formatCurrency(annualSavings)}
+                    </p>
+                    <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card className="border-gray-100 shadow-md">
+              <CardContent className="pt-6">
+                <h3 className="text-xl font-semibold mb-4">Processing Rate Comparison</h3>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead>
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Card Type</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plus</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Savings</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Standard Domestic</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.standardDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardDomestic - processingRates.plus.standardDomestic).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Standard International</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.standardInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardInternational - processingRates.plus.standardInternational).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Premium Domestic</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.premiumDomestic}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Premium International</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.premiumInternational}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumInternational - processingRates.plus.premiumInternational).toFixed(2)}%</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2 text-sm">Shop Pay Installments</td>
+                        <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm">{processingRates.plus.shopPayInstallments}% + 30¢</td>
+                        <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mt-4 text-xs text-gray-500">
+                  <p>* Additional rates for Shop Pay Express and other payment methods apply.</p>
+                  <p>* All rates shown are for USA market.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
