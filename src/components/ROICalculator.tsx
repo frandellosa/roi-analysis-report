@@ -151,9 +151,10 @@ const ROICalculator = () => {
     
     setVpfMonthly(totalVpfAmount);
 
-    // Apply the pricing rule: VPF or minimum monthly, whichever is greater
-    // VPF is only applied if any individual channel VPF exceeds the minimum
-    if (d2cVpfValue > plusMonthlyCost || b2bVpfValue > plusMonthlyCost || retailVpfValue > plusMonthlyCost) {
+    // Apply the correct pricing rule:
+    // IF [VPF*Monthly GMV] > Monthly Minimum --> price = [VPF*Monthly GMV]
+    // IF [VPF*Monthly GMV] < Monthly Minimum --> price = Monthly Minimum
+    if (totalVpfAmount > plusMonthlyCost) {
       setEffectivePlusMonthlyCost(totalVpfAmount);
     } else {
       setEffectivePlusMonthlyCost(plusMonthlyCost);
