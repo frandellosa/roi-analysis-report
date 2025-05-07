@@ -43,24 +43,13 @@ const ROICalculator = () => {
   const [d2cPercentage, setD2cPercentage] = useState(70);
   const [b2bPercentage, setB2bPercentage] = useState(20);
   const [retailPercentage, setRetailPercentage] = useState(10);
-  const [useVpf, setUseVpf] = useState(false);
-
-  // Variable platform fee rates
-  const vpfRates = {
-    '1year': {
-      d2c: 0.4,
-      b2b: 0.18,
-      retail: 0.25,
-      transaction: 0.20
-    },
-    '3year': {
-      d2c: 0.35,
-      b2b: 0.18,
-      retail: 0.25,
-      transaction: 0.20
-    }
-  };
   
+  // Variable platform fee rates - now using number inputs instead of toggles
+  const [d2cRate, setD2cRate] = useState(plusTerm === '3year' ? 0.35 : 0.4);
+  const [b2bRate, setB2bRate] = useState(0.18);
+  const [retailRate, setRetailRate] = useState(0.25);
+  const [transactionRate, setTransactionRate] = useState(0.2);
+
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
   const [plusAnnualCost, setPlusAnnualCost] = useState(0);
@@ -68,6 +57,11 @@ const ROICalculator = () => {
   const [feeSavings, setFeeSavings] = useState(0);
   const [vpfMonthly, setVpfMonthly] = useState(0);
   const [effectivePlusMonthlyCost, setEffectivePlusMonthlyCost] = useState(plusMonthlyCost);
+  
+  // Channel VPF values
+  const [d2cVpf, setD2cVpf] = useState(0);
+  const [b2bVpf, setB2bVpf] = useState(0);
+  const [retailVpf, setRetailVpf] = useState(0);
   
   // Processing rates based on the image
   const processingRates = {
@@ -127,8 +121,10 @@ const ROICalculator = () => {
   useEffect(() => {
     if (plusTerm === "3year") {
       setPlusMonthlyCost(2300);
+      setD2cRate(0.35); // Update D2C rate based on term
     } else if (plusTerm === "1year") {
       setPlusMonthlyCost(2500);
+      setD2cRate(0.4);  // Update D2C rate based on term
     }
   }, [plusTerm]);
 
@@ -138,24 +134,28 @@ const ROICalculator = () => {
     const d2cGMV = monthlyGMV * (d2cPercentage / 100);
     const b2bGMV = monthlyGMV * (b2bPercentage / 100);
     const retailGMV = monthlyGMV * (retailPercentage / 100);
-
-    const rates = vpfRates[plusTerm as keyof typeof vpfRates];
     
-    const vpfAmount = (
-      (d2cGMV * rates.d2c / 100) + 
-      (b2bGMV * rates.b2b / 100) + 
-      (retailGMV * rates.retail / 100)
-    );
+    // Calculate VPF for each channel
+    const d2cVpfValue = (d2cGMV * d2cRate / 100);
+    const b2bVpfValue = (b2bGMV * b2bRate / 100);
+    const retailVpfValue = (retailGMV * retailRate / 100);
     
-    setVpfMonthly(vpfAmount);
+    setD2cVpf(d2cVpfValue);
+    setB2bVpf(b2bVpfValue);
+    setRetailVpf(retailVpfValue);
+    
+    const totalVpfAmount = d2cVpfValue + b2bVpfValue + retailVpfValue;
+    
+    setVpfMonthly(totalVpfAmount);
 
     // Apply the pricing rule: VPF or minimum monthly, whichever is greater
-    if (useVpf && vpfAmount > plusMonthlyCost) {
-      setEffectivePlusMonthlyCost(vpfAmount);
+    // VPF is only applied if any individual channel VPF exceeds the minimum
+    if (d2cVpfValue > plusMonthlyCost || b2bVpfValue > plusMonthlyCost || retailVpfValue > plusMonthlyCost) {
+      setEffectivePlusMonthlyCost(totalVpfAmount);
     } else {
       setEffectivePlusMonthlyCost(plusMonthlyCost);
     }
-  }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, useVpf]);
+  }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, d2cRate, b2bRate, retailRate]);
 
   // Calculate ROI
   const calculateROI = () => {
@@ -239,6 +239,17 @@ const ROICalculator = () => {
     setB2bPercentage(newB2B);
     setRetailPercentage(100 - d2cPercentage - newB2B);
   };
+  
+  // Handle rate input changes
+  const handleRateChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const value = parseFloat(e.target.value);
+    if (!isNaN(value) && value >= 0) {
+      setter(value);
+    }
+  };
 
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -318,7 +329,8 @@ const ROICalculator = () => {
                             </TooltipTrigger>
                             <TooltipContent className="max-w-xs">
                               <p>Variable platform fee is calculated as a percentage of your monthly GMV, broken down by channel.</p>
-                              <p className="mt-2">Plus pricing will be either the monthly minimum fee OR the VPF, whichever is greater.</p>
+                              <p className="mt-2">Plus pricing will be the monthly minimum fee OR the VPF, whichever is greater.</p>
+                              <p className="mt-2">VPF only applies if any channel's VPF exceeds the monthly minimum.</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -339,7 +351,7 @@ const ROICalculator = () => {
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <Label>D2C Sales ({plusTerm === '3year' ? '0.35%' : '0.40%'})</Label>
+                        <Label>D2C Sales</Label>
                         <span className="text-sm">{d2cPercentage}%</span>
                       </div>
                       <Slider
@@ -350,10 +362,24 @@ const ROICalculator = () => {
                         value={[d2cPercentage]}
                         onValueChange={(val) => handleD2CChange(val[0])}
                       />
+                      <div className="flex items-center justify-between mt-1">
+                        <Label htmlFor="d2c-rate" className="text-sm">D2C Rate (%)</Label>
+                        <Input
+                          id="d2c-rate"
+                          type="number"
+                          value={d2cRate}
+                          onChange={(e) => handleRateChange(e, setD2cRate)}
+                          className="w-20 text-right"
+                          step="0.01"
+                        />
+                      </div>
+                      <div className="text-xs text-right mt-1 text-gray-500">
+                        VPF: {formatCurrency(d2cVpf)}
+                      </div>
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <Label>B2B Sales (0.18%)</Label>
+                        <Label>B2B Sales</Label>
                         <span className="text-sm">{b2bPercentage}%</span>
                       </div>
                       <Slider
@@ -364,10 +390,24 @@ const ROICalculator = () => {
                         value={[b2bPercentage]}
                         onValueChange={(val) => handleB2BChange(val[0])}
                       />
+                      <div className="flex items-center justify-between mt-1">
+                        <Label htmlFor="b2b-rate" className="text-sm">B2B Rate (%)</Label>
+                        <Input
+                          id="b2b-rate"
+                          type="number"
+                          value={b2bRate}
+                          onChange={(e) => handleRateChange(e, setB2bRate)}
+                          className="w-20 text-right"
+                          step="0.01"
+                        />
+                      </div>
+                      <div className="text-xs text-right mt-1 text-gray-500">
+                        VPF: {formatCurrency(b2bVpf)}
+                      </div>
                     </div>
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <Label>Retail Sales (0.25%)</Label>
+                        <Label>Retail Sales</Label>
                         <span className="text-sm">{retailPercentage}%</span>
                       </div>
                       <Input
@@ -376,6 +416,20 @@ const ROICalculator = () => {
                         disabled
                         className="bg-gray-100"
                       />
+                      <div className="flex items-center justify-between mt-1">
+                        <Label htmlFor="retail-rate" className="text-sm">Retail Rate (%)</Label>
+                        <Input
+                          id="retail-rate"
+                          type="number"
+                          value={retailRate}
+                          onChange={(e) => handleRateChange(e, setRetailRate)}
+                          className="w-20 text-right"
+                          step="0.01"
+                        />
+                      </div>
+                      <div className="text-xs text-right mt-1 text-gray-500">
+                        VPF: {formatCurrency(retailVpf)}
+                      </div>
                     </div>
                   </div>
                   <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
@@ -390,20 +444,6 @@ const ROICalculator = () => {
                     <div className="flex justify-between items-center mt-1">
                       <span className="text-sm font-medium">Effective Monthly Cost:</span>
                       <span className="font-semibold text-shopify-green">{formatCurrency(effectivePlusMonthlyCost)}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        id="use-vpf"
-                        checked={useVpf}
-                        onChange={(e) => setUseVpf(e.target.checked)}
-                        className="h-4 w-4"
-                      />
-                      <Label htmlFor="use-vpf" className="text-sm">
-                        Use Variable Platform Fee in calculations
-                      </Label>
                     </div>
                   </div>
                 </TabsContent>
