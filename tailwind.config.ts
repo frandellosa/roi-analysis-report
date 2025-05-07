@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,12 +19,22 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				shopify: ['ShopifyDisplay', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				shopify: {
+					blue: '#0069FF',
+					green: '#008060',
+					black: '#212326',
+					muted: '#616166',
+					light: '#F3FCF4',
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'

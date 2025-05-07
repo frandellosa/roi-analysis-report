@@ -1,0 +1,64 @@
+
+import { Button } from "@/components/ui/button";
+
+const Hero = () => {
+  return (
+    <div className="bg-gradient-to-br from-white to-blue-50 py-20 px-6">
+      <div className="container mx-auto">
+        <div className="flex flex-col lg:flex-row items-center justify-between">
+          <div className="lg:w-1/2 mb-10 lg:mb-0">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-shopify-black font-shopify mb-6 leading-tight">
+              Maximize Your <span className="text-shopify-blue">ROI</span> with Shopify Plus
+            </h1>
+            <p className="text-lg text-shopify-muted mb-8 max-w-lg">
+              Comprehensive analysis showing how upgrading to Shopify Plus can drive significant savings for Dually Wheels through reduced processing fees and enhanced features.
+            </p>
+            <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+              <Button className="bg-shopify-blue text-white px-8 py-6 rounded-md hover:bg-blue-600 text-lg">
+                View Full Analysis
+              </Button>
+              <Button variant="outline" className="border-shopify-blue text-shopify-blue px-8 py-6 rounded-md hover:bg-blue-50 text-lg">
+                Compare Plans
+              </Button>
+            </div>
+          </div>
+          <div className="lg:w-1/2">
+            <div className="bg-white rounded-xl shadow-xl p-8 border border-gray-100">
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-semibold text-shopify-black mb-2">Annual Savings Projection</h3>
+                <p className="text-shopify-muted">Based on your transaction volume</p>
+              </div>
+              <div className="flex justify-center items-center mb-6">
+                <div className="text-center">
+                  <span className="block text-5xl font-bold text-shopify-green">$7,814.77</span>
+                  <span className="text-gray-500">Est. Annual Savings</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="text-center">
+                    <span className="block text-2xl font-bold text-shopify-blue">$2,342.80</span>
+                    <span className="text-sm text-gray-500">Last 90 Days Savings</span>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="text-center">
+                    <span className="block text-2xl font-bold text-shopify-blue">0.5%</span>
+                    <span className="text-sm text-gray-500">Processing Fee Reduction</span>
+                  </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <Button className="bg-shopify-green text-white hover:bg-green-700 w-full py-4 text-lg">
+                  Calculate Your Custom ROI
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Hero;
