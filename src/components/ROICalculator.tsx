@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -72,7 +71,7 @@ const ROICalculator = () => {
   const [retailVpf, setRetailVpf] = useState(0);
 
   // Access calculator context for updating values
-  const { updateCalculatorContext } = useCalculatorContext();
+  const { updateCalculatorValues } = useCalculatorContext();
   
   // Reset calculator to default values
   const resetCalculator = () => {
@@ -423,9 +422,9 @@ const ROICalculator = () => {
     }
   };
 
-  // Fix typo in function name from previous code
-  const updateCalculatorValues = (values: any) => {
-    updateCalculatorContext(values);
+  // Fixed function to update calculator values using the correct context function
+  const updateCalculatorContext = (values: any) => {
+    updateCalculatorValues(values);
   };
 
   // Shared calculator state and methods to pass to child components
