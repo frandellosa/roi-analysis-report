@@ -9,7 +9,7 @@ import { Slider } from "@/components/ui/slider";
 const ROICalculator = () => {
   const [annualSales, setAnnualSales] = useState(1562954);
   const [basicFeeRate, setBasicFeeRate] = useState(2.9);
-  const [plusFeeRate, setPlusFeeRate] = useState(2.4);
+  const [plusFeeRate, setPlusFeeRate] = useState(2.25);
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(39);
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(2300);
   

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Check, X } from "lucide-react";
@@ -8,7 +7,7 @@ const ComparisonTable = () => {
     {
       name: "Transaction Fee",
       basic: "2.9% + 30¢",
-      plus: "2.4% + 30¢",
+      plus: "2.25% + 30¢",
       highlight: true
     },
     {

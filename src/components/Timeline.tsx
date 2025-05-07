@@ -16,7 +16,7 @@ const Timeline = () => {
   const basicMonthly = 39;
   const plusMonthly = 2300;
   const monthlySales = 1562954 / 12; // Annual sales divided by 12
-  const monthlySavingRate = 0.005; // 0.5% savings
+  const monthlySavingRate = 0.0065; // 0.65% savings (2.9% - 2.25%)
   
   // Create data for the chart
   const data = Array.from({ length: 13 }, (_, i) => {
@@ -69,10 +69,10 @@ const Timeline = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis 
-                    tickFormatter={(value) => `$${Math.abs(value / 1000)}k`}
+                    tickFormatter={(value) => `$${Math.abs(Number(value) / 1000)}k`}
                   />
                   <Tooltip 
-                    formatter={(value) => [`$${Math.abs(value).toLocaleString()}`, value < 0 ? "Net Savings" : "Net Cost"]}
+                    formatter={(value) => [`$${Math.abs(Number(value)).toLocaleString()}`, Number(value) < 0 ? "Net Savings" : "Net Cost"]}
                     labelFormatter={(label) => `Time: ${label}`}
                   />
                   <ReferenceLine y={0} stroke="#000" strokeDasharray="3 3" />

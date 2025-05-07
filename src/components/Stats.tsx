@@ -52,7 +52,7 @@ const Stats = () => {
                   <ChartBarIncreasing className="h-6 w-6 text-shopify-green" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Fee Savings Rate</h3>
-                <p className="text-3xl font-bold text-shopify-green">0.5%</p>
+                <p className="text-3xl font-bold text-shopify-green">0.65%</p>
                 <p className="text-shopify-muted mt-2 text-sm">Plus vs Basic Plan Difference</p>
               </div>
             </CardContent>
@@ -65,7 +65,7 @@ const Stats = () => {
                   <Wallet className="h-6 w-6 text-shopify-green" />
                 </div>
                 <h3 className="text-lg font-medium mb-1">Annual Net Savings</h3>
-                <p className="text-3xl font-bold text-shopify-green">$7,814.77</p>
+                <p className="text-3xl font-bold text-shopify-green">$10,158.70</p>
                 <p className="text-shopify-muted mt-2 text-sm">After monthly plan costs</p>
               </div>
             </CardContent>

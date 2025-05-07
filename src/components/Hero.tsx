@@ -22,28 +22,23 @@ const Hero = () => {
               </div>
               <div className="flex justify-center items-center mb-6">
                 <div className="text-center">
-                  <span className="block text-5xl font-bold text-shopify-green">$7,814.77</span>
+                  <span className="block text-5xl font-bold text-shopify-green">$10,158.70</span>
                   <span className="text-gray-500">Est. Annual Savings</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="text-center">
-                    <span className="block text-2xl font-bold text-shopify-blue">$2,342.80</span>
+                    <span className="block text-2xl font-bold text-shopify-blue">$3,045.64</span>
                     <span className="text-sm text-gray-500">Last 90 Days Savings</span>
                   </div>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="text-center">
-                    <span className="block text-2xl font-bold text-shopify-blue">0.5%</span>
+                    <span className="block text-2xl font-bold text-shopify-blue">0.65%</span>
                     <span className="text-sm text-gray-500">Processing Fee Reduction</span>
                   </div>
                 </div>
-              </div>
-              <div className="text-center">
-                <Button className="bg-shopify-green text-white hover:bg-green-700 w-full py-4 text-lg">
-                  Calculate Your Custom ROI
-                </Button>
               </div>
             </div>
           </div>
