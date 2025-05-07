@@ -738,9 +738,11 @@ const ROICalculator = () => {
                   </div>
                   
                   <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
-                    <h4 className="text-lg font-medium mb-2">Net Annual Savings</h4>
-                    <p className={`text-3xl font-bold ${annualSavings > 0 ? 'text-shopify-green' : 'text-red-500'}`}>
-                      {formatCurrency(annualSavings)}
+                    <h4 className="text-lg font-medium mb-2">
+                      {annualSavings >= 0 ? "Net Annual Savings" : "True Cost of Upgrade"}
+                    </h4>
+                    <p className={`text-3xl font-bold ${annualSavings >= 0 ? 'text-shopify-green' : 'text-shopify-black'}`}>
+                      {formatCurrency(Math.abs(annualSavings))}
                     </p>
                     <p className="text-sm text-shopify-muted mt-1">After subtracting higher plan costs</p>
                   </div>
