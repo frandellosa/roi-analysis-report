@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,31 +13,50 @@ import { ROIResults } from './calculator/ROIResults';
 import { ProcessingRatesTable } from './calculator/ProcessingRatesTable';
 
 const ROICalculator = () => {
+  // Default values
+  const defaultValues = {
+    annualSales: 1562954,
+    basicFeeRate: 2.9,
+    plusFeeRate: 2.25,
+    basicMonthlyCost: 39,
+    plusMonthlyCost: 2300,
+    d2cPercentage: 70,
+    b2bPercentage: 20,
+    retailPercentage: 10,
+    currentConversionRate: 2.5,
+    currentAOV: 120,
+    selectedPlan: "basic",
+    plusTerm: "3year",
+    d2cRate: 0.35,
+    b2bRate: 0.18,
+    retailRate: 0.25
+  };
+  
   // Basic inputs
-  const [annualSales, setAnnualSales] = useState(1562954);
-  const [basicFeeRate, setBasicFeeRate] = useState(2.9);
-  const [plusFeeRate, setPlusFeeRate] = useState(2.25);
-  const [basicMonthlyCost, setBasicMonthlyCost] = useState(39);
-  const [plusMonthlyCost, setPlusMonthlyCost] = useState(2300);
-  const [selectedPlan, setSelectedPlan] = useState("basic");
-  const [plusTerm, setPlusTerm] = useState("3year");
+  const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
+  const [basicFeeRate, setBasicFeeRate] = useState(defaultValues.basicFeeRate);
+  const [plusFeeRate, setPlusFeeRate] = useState(defaultValues.plusFeeRate);
+  const [basicMonthlyCost, setBasicMonthlyCost] = useState(defaultValues.basicMonthlyCost);
+  const [plusMonthlyCost, setPlusMonthlyCost] = useState(defaultValues.plusMonthlyCost);
+  const [selectedPlan, setSelectedPlan] = useState(defaultValues.selectedPlan);
+  const [plusTerm, setPlusTerm] = useState(defaultValues.plusTerm);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   
   // GMV breakdown inputs
-  const [d2cPercentage, setD2cPercentage] = useState(70);
-  const [b2bPercentage, setB2bPercentage] = useState(20);
-  const [retailPercentage, setRetailPercentage] = useState(10);
+  const [d2cPercentage, setD2cPercentage] = useState(defaultValues.d2cPercentage);
+  const [b2bPercentage, setB2bPercentage] = useState(defaultValues.b2bPercentage);
+  const [retailPercentage, setRetailPercentage] = useState(defaultValues.retailPercentage);
   
   // Variable platform fee rates
-  const [d2cRate, setD2cRate] = useState(plusTerm === '3year' ? 0.35 : 0.4);
-  const [b2bRate, setB2bRate] = useState(0.18);
-  const [retailRate, setRetailRate] = useState(0.25);
+  const [d2cRate, setD2cRate] = useState(defaultValues.d2cRate);
+  const [b2bRate, setB2bRate] = useState(defaultValues.b2bRate);
+  const [retailRate, setRetailRate] = useState(defaultValues.retailRate);
   const [transactionRate, setTransactionRate] = useState(0.2);
 
   // Project uplift metrics
-  const [currentConversionRate, setCurrentConversionRate] = useState(2.5);
-  const [currentAOV, setCurrentAOV] = useState(120);
+  const [currentConversionRate, setCurrentConversionRate] = useState(defaultValues.currentConversionRate);
+  const [currentAOV, setCurrentAOV] = useState(defaultValues.currentAOV);
   const [monthlyUpliftLow, setMonthlyUpliftLow] = useState(0);
   const [monthlyUpliftAverage, setMonthlyUpliftAverage] = useState(0);
   const [monthlyUpliftGood, setMonthlyUpliftGood] = useState(0);
@@ -57,6 +77,37 @@ const ROICalculator = () => {
   // Access calculator context for updating values
   const { updateCalculatorValues } = useCalculatorContext();
   
+  // Reset calculator to default values
+  const resetCalculator = () => {
+    setAnnualSales(defaultValues.annualSales);
+    setBasicFeeRate(defaultValues.basicFeeRate);
+    setPlusFeeRate(defaultValues.plusFeeRate);
+    setBasicMonthlyCost(defaultValues.basicMonthlyCost);
+    setPlusMonthlyCost(defaultValues.plusMonthlyCost);
+    setSelectedPlan(defaultValues.selectedPlan);
+    setPlusTerm(defaultValues.plusTerm);
+    setD2cPercentage(defaultValues.d2cPercentage);
+    setB2bPercentage(defaultValues.b2bPercentage);
+    setRetailPercentage(defaultValues.retailPercentage);
+    setD2cRate(defaultValues.d2cRate);
+    setB2bRate(defaultValues.b2bRate);
+    setRetailRate(defaultValues.retailRate);
+    setCurrentConversionRate(defaultValues.currentConversionRate);
+    setCurrentAOV(defaultValues.currentAOV);
+    
+    // Clear file upload
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setFileName(null);
+    
+    // Recalculate with default values
+    setTimeout(() => {
+      calculateROI();
+      toast.success("Calculator values have been reset to defaults");
+    }, 100);
+  };
+
   // Processing rates based on Shopify's website
   const processingRates = {
     basic: {
@@ -385,8 +436,7 @@ const ROICalculator = () => {
     setMonthlyUpliftLow,
     setMonthlyUpliftAverage,
     setMonthlyUpliftGood,
-    currentConversionRate,
-    currentAOV
+    resetCalculator
   };
   
   return (

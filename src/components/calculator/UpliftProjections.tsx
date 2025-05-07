@@ -1,7 +1,8 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Info, DollarSign } from "lucide-react";
+import { Info, DollarSign, RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipProvider,
@@ -23,12 +24,23 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     handleRateChange,
     setCurrentConversionRate,
     setCurrentAOV,
-    formatCurrency
+    formatCurrency,
+    resetCalculator
   } = calculatorState;
 
   return (
     <div className="mb-6 border-t border-gray-200 pt-6">
-      <h4 className="text-lg font-semibold mb-4">Projected Uplift</h4>
+      <div className="flex justify-between items-center mb-4">
+        <h4 className="text-lg font-semibold">Projected Uplift</h4>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={resetCalculator}
+          className="flex items-center gap-1 text-xs"
+        >
+          <RotateCcw className="h-3 w-3" /> Reset Values
+        </Button>
+      </div>
       
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
