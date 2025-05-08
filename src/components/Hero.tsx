@@ -6,10 +6,7 @@ import { formatCurrency } from '@/utils/formatters';
 const Hero = () => {
   const [companyName, setCompanyName] = useState("[BRAND NAME]");
   const [isEditing, setIsEditing] = useState(false);
-  const { processingFeeSavings, monthlyUpliftAverage } = useCalculatorContext();
-
-  // Calculate the last 90 days savings (quarterly) based on annual savings and average monthly uplift
-  const quarterlyValue = (processingFeeSavings / 4) + (monthlyUpliftAverage * 3);
+  const { processingFeeSavings } = useCalculatorContext();
 
   const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompanyName(e.target.value);
@@ -77,20 +74,10 @@ const Hero = () => {
                   <span className="text-gray-400">Est. Annual Processing Fee Savings</span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-shopify-teal-dark p-4 rounded-lg">
-                  <div className="text-center">
-                    <span className="block text-2xl font-bold text-[#95D374]">
-                      {formatCurrency(quarterlyValue)}
-                    </span>
-                    <span className="text-sm text-gray-400">Last 90 Days Savings + Uplift</span>
-                  </div>
-                </div>
-                <div className="bg-shopify-teal-dark p-4 rounded-lg">
-                  <div className="text-center">
-                    <span className="block text-2xl font-bold text-[#95D374]">0.65%</span>
-                    <span className="text-sm text-gray-400">Processing Fee Reduction</span>
-                  </div>
+              <div className="bg-shopify-teal-dark p-4 rounded-lg">
+                <div className="text-center">
+                  <span className="block text-2xl font-bold text-[#95D374]">0.65%</span>
+                  <span className="text-sm text-gray-400">Processing Fee Reduction</span>
                 </div>
               </div>
             </div>
