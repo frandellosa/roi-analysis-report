@@ -24,7 +24,7 @@ export const RegularPlanCard = ({ plan }: RegularPlanCardProps) => {
         <div className="text-sm text-gray-500">Starting at</div>
         <div className="flex items-baseline">
           <span className="text-4xl font-bold">{plan.price}</span>
-          <span className="text-sm text-gray-500 ml-1">{plan.billing}</span>
+          <span className="text-sm text-gray-500 ml-1">/month</span>
         </div>
       </div>
       

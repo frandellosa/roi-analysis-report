@@ -6,7 +6,7 @@ export const allPlans: Record<string, Plan> = {
     name: "Shopify Basic",
     description: "For solo entrepreneurs",
     price: "$39",
-    billing: "/month billed once yearly",
+    billing: "/month",
     isPopular: false,
     
     standardDomestic: "2.9% + $0.30",
@@ -30,7 +30,7 @@ export const allPlans: Record<string, Plan> = {
     name: "Shopify Grow",
     description: "For small teams",
     price: "$105",
-    billing: "/month billed once yearly",
+    billing: "/month",
     isPopular: false,
     
     standardDomestic: "2.7% + $0.30",
@@ -55,7 +55,7 @@ export const allPlans: Record<string, Plan> = {
     name: "Shopify Advanced",
     description: "As your business scales",
     price: "$399",
-    billing: "/month billed once yearly",
+    billing: "/month",
     isPopular: false,
     
     standardDomestic: "2.5% + $0.30",
