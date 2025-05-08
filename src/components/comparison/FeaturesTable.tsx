@@ -19,10 +19,6 @@ type Plan = {
   thirdPartyProviderRate: string;
   
   features: string[];
-  cta: string;
-  ctaLink: string;
-  secondaryCta?: string;
-  secondaryCtaLink?: string;
   highlight: boolean;
 };
 
@@ -57,8 +53,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "Localized global selling (3 markets)",
         "POS Lite"
       ],
-      cta: "Try for free",
-      ctaLink: "#",
       highlight: false
     },
     shopify: {
@@ -85,8 +79,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "5 additional staff accounts",
         "POS Lite"
       ],
-      cta: "Try for free",
-      ctaLink: "#",
       highlight: false
     },
     advanced: {
@@ -114,8 +106,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "10x checkout capacity",
         "POS Lite"
       ],
-      cta: "Try for free",
-      ctaLink: "#",
       highlight: false
     },
     plus: {
@@ -144,10 +134,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "Up to 200 POS Pro locations",
         "Sell wholesale/B2B"
       ],
-      cta: "Get started",
-      ctaLink: "#",
-      secondaryCta: "Get in touch",
-      secondaryCtaLink: "#",
       highlight: true
     }
   };
