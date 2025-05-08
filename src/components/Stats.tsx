@@ -78,7 +78,7 @@ const Stats = () => {
             icon={CreditCard} 
             title="Annual Processing Fees" 
             value={formatCurrency(currentAnnualProcessingFees)}
-            previousValue={`At ${basicFeeRate.toFixed(2)}% rate`}
+            previousValue="At current plan rate"
             valueColor="text-shopify-black"
           />
         </div>
