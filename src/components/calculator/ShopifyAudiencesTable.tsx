@@ -10,15 +10,15 @@ interface ShopifyAudiencesTableProps {
 }
 
 export const ShopifyAudiencesTable = ({ currentAOV = 200 }: ShopifyAudiencesTableProps) => {
-  // Current values (editable)
-  const [digitalAdSpend, setDigitalAdSpend] = useState(50000);
-  const [retargetingPercent, setRetargetingPercent] = useState(15);
-  const [prospectingCPA, setProspectingCPA] = useState(100);
-  const [retargetingCPA, setRetargetingCPA] = useState(75);
-  const [prospectingOrders, setProspectingOrders] = useState(425);
-  const [retargetingOrders, setRetargetingOrders] = useState(100);
+  // Current values (editable) - all set to 0 by default
+  const [digitalAdSpend, setDigitalAdSpend] = useState(0);
+  const [retargetingPercent, setRetargetingPercent] = useState(0);
+  const [prospectingCPA, setProspectingCPA] = useState(0);
+  const [retargetingCPA, setRetargetingCPA] = useState(0);
+  const [prospectingOrders, setProspectingOrders] = useState(0);
+  const [retargetingOrders, setRetargetingOrders] = useState(0);
   const [ltv, setLtv] = useState(currentAOV);
-  const [operatingMargin, setOperatingMargin] = useState(15);
+  const [operatingMargin, setOperatingMargin] = useState(0);
 
   // Calculated values
   const [prospectingSpend, setProspectingSpend] = useState(0);
