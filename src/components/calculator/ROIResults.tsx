@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
+import { ArrowDown } from "lucide-react";
 
 interface ROIResultsProps {
   calculatorState: any;
@@ -18,11 +19,20 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
     currentAOV,
     formatCurrency,
     plusMonthlyCost,
-    basicMonthlyCost
+    basicMonthlyCost,
+    processingRates,
+    selectedPlan,
+    annualSales
   } = calculatorState;
 
   // Get the uplift percentages from context
-  const { lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage } = useCalculatorContext();
+  const { 
+    lowUpliftPercentage, 
+    averageUpliftPercentage, 
+    goodUpliftPercentage,
+    basicFeeRate,
+    plusFeeRate
+  } = useCalculatorContext();
 
   // Calculate checkout drop-off metrics if available
   const showCheckoutMetrics = reachedCheckout > 0;
@@ -37,12 +47,56 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
   // Calculate net annual savings (fee savings minus plan cost difference)
   const netAnnualSavings = feeSavings - annualPlanDifference;
 
+  // Calculate current and projected processing fees
+  const basePlan = selectedPlan.split('-')[0];
+  const currentProcessingFees = annualSales * (basicFeeRate / 100);
+  const projectedProcessingFees = annualSales * (plusFeeRate / 100);
+  const processingFeesDifference = currentProcessingFees - projectedProcessingFees;
+  const processingFeesPercentReduction = ((basicFeeRate - plusFeeRate) / basicFeeRate) * 100;
+
+  // Determine if we should show the processing fee comparison (only when fees are calculated)
+  const showProcessingComparison = basicFeeRate > 0 && plusFeeRate > 0;
+
   return (
     <Card className="border-gray-100 shadow-md bg-gray-50">
       <CardContent className="pt-6">
         <h3 className="text-xl font-semibold mb-6">ROI Results</h3>
         
         <div className="mb-8">
+          {showProcessingComparison && (
+            <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+              <h4 className="text-lg font-medium mb-2">Processing Fee Comparison</h4>
+              <div className="grid grid-cols-2 gap-6 mb-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600">Current Processing Fees</p>
+                  <p className="text-2xl font-bold text-shopify-black">
+                    {formatCurrency(currentProcessingFees)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {basicFeeRate.toFixed(2)}% rate
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-600">Plus Processing Fees</p>
+                  <p className="text-2xl font-bold text-shopify-green">
+                    {formatCurrency(projectedProcessingFees)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {plusFeeRate.toFixed(2)}% rate
+                  </p>
+                </div>
+              </div>
+              <div className="bg-gray-50 p-3 rounded mt-3 flex items-center justify-between">
+                <span className="text-sm font-medium">Fee Reduction</span>
+                <div className="flex items-center">
+                  <ArrowDown className="h-4 w-4 mr-1 text-green-600" />
+                  <span className="text-green-600 font-semibold">{processingFeesPercentReduction.toFixed(1)}%</span>
+                  <span className="ml-2 text-gray-500">({formatCurrency(processingFeesDifference)} savings)</span>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
             <h4 className="text-lg font-medium mb-2">Annual Processing Fee Savings</h4>
             <p className="text-3xl font-bold text-shopify-green">{formatCurrency(feeSavings)}</p>
