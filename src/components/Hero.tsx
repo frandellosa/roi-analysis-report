@@ -6,10 +6,10 @@ import { formatCurrency } from '@/utils/formatters';
 const Hero = () => {
   const [companyName, setCompanyName] = useState("[BRAND NAME]");
   const [isEditing, setIsEditing] = useState(false);
-  const { annualNetSavings, monthlyUpliftAverage } = useCalculatorContext();
+  const { processingFeeSavings, monthlyUpliftAverage } = useCalculatorContext();
 
   // Calculate the last 90 days savings (quarterly) based on annual savings and average monthly uplift
-  const quarterlyValue = (annualNetSavings / 4) + (monthlyUpliftAverage * 3);
+  const quarterlyValue = (processingFeeSavings / 4) + (monthlyUpliftAverage * 3);
 
   const handleCompanyNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCompanyName(e.target.value);
@@ -72,9 +72,9 @@ const Hero = () => {
               <div className="flex justify-center items-center mb-6">
                 <div className="text-center">
                   <span className="block text-5xl font-bold text-shopify-green">
-                    {formatCurrency(annualNetSavings)}
+                    {formatCurrency(processingFeeSavings)}
                   </span>
-                  <span className="text-gray-400">Est. Annual Savings</span>
+                  <span className="text-gray-400">Est. Annual Processing Fee Savings</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-6">
