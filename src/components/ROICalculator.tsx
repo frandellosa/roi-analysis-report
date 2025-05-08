@@ -647,10 +647,6 @@ const ROICalculator = () => {
               processingRates={processingRates}
               selectedPlan={selectedPlan}
             />
-
-            <ShopifyAudiencesTable
-              currentAOV={currentAOV}
-            />
           </div>
         </div>
       </div>
