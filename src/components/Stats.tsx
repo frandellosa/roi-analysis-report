@@ -40,15 +40,6 @@ const Stats = () => {
   // Calculate the correct net annual savings
   const netAnnualSavings = processingFeeSavings - annualPlanDifference;
   
-  // Calculate 90-day savings (quarterly)
-  const quarterlySavings = netAnnualSavings / 4;
-  
-  // Calculate quarterly uplift (90-day uplift)
-  const quarterlyUplift = monthlyUpliftAverage * 3;
-  
-  // Combined quarterly savings + uplift
-  const combinedQuarterlySavings = quarterlySavings + quarterlyUplift;
-
   // Calculate checkout drop-off metrics
   const dropOffRate = reachedCheckout > 0 
     ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
@@ -65,7 +56,7 @@ const Stats = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatCard 
             icon={BadgeDollarSign} 
             title="Quarterly Sales" 
@@ -86,14 +77,6 @@ const Stats = () => {
             value={`${(basicFeeRate - plusFeeRate).toFixed(2)}%`}
             previousValue="Plus vs Basic Plan Difference"
             valueColor="text-shopify-green"
-          />
-          
-          <StatCard 
-            icon={Wallet} 
-            title="Last 90 Days Savings + Uplift" 
-            value={formatCurrency(combinedQuarterlySavings)}
-            previousValue="Fee savings and revenue gain"
-            valueColor={combinedQuarterlySavings >= 0 ? "text-shopify-green" : "text-shopify-black"}
           />
         </div>
 
