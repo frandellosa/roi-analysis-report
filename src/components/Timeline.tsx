@@ -24,6 +24,7 @@ import {
   ChartTooltip, 
   ChartTooltipContent 
 } from "@/components/ui/chart"; 
+import { formatCurrency } from "@/utils/formatters";
 
 const Timeline = () => {
   // Use values from calculator context
@@ -34,7 +35,6 @@ const Timeline = () => {
     basicMonthlyCost,
     effectivePlusMonthlyCost,
     monthlyUpliftAverage,
-    formatCurrency
   } = useCalculatorContext();
   
   // Calculate monthly values
