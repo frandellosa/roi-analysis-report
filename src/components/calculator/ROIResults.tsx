@@ -53,15 +53,21 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
   // Calculate net annual savings (fee savings minus plan cost difference)
   const netAnnualSavings = feeSavings - annualPlanDifference;
 
-  // Calculate current and projected processing fees
+  // Get the base plan name from selectedPlan to access the correct processing rates
   const basePlan = selectedPlan.split('-')[0];
-  const currentProcessingFees = annualSales * (basicFeeRate / 100);
-  const projectedProcessingFees = annualSales * (plusFeeRate / 100);
+  
+  // Always get current rates directly from the processingRates object based on selected plan
+  const currentProcessingRate = processingRates[basePlan]?.standardDomestic || 0;
+  const plusProcessingRate = processingRates.plus?.standardDomestic || 0;
+  
+  // Calculate current and projected processing fees
+  const currentProcessingFees = annualSales * (currentProcessingRate / 100);
+  const projectedProcessingFees = annualSales * (plusProcessingRate / 100);
   const processingFeesDifference = currentProcessingFees - projectedProcessingFees;
-  const processingFeesPercentReduction = ((basicFeeRate - plusFeeRate) / basicFeeRate) * 100;
+  const processingFeesPercentReduction = ((currentProcessingRate - plusProcessingRate) / currentProcessingRate) * 100;
 
   // Determine if we should show the processing fee comparison (only when fees are calculated)
-  const showProcessingComparison = basicFeeRate > 0 && plusFeeRate > 0;
+  const showProcessingComparison = currentProcessingRate > 0 && plusProcessingRate > 0;
 
   return (
     <Card className="border-gray-100 shadow-md bg-gray-50">
@@ -79,7 +85,7 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
                     {formatCurrency(currentProcessingFees)}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {basicFeeRate.toFixed(2)}% rate
+                    {currentProcessingRate.toFixed(2)}% rate
                   </p>
                 </div>
                 <div>
@@ -88,7 +94,7 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
                     {formatCurrency(projectedProcessingFees)}
                   </p>
                   <p className="text-xs text-gray-500">
-                    {plusFeeRate.toFixed(2)}% rate
+                    {plusProcessingRate.toFixed(2)}% rate
                   </p>
                 </div>
               </div>

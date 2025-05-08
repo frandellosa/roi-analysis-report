@@ -237,12 +237,16 @@ const ROICalculator = () => {
     setPlusAnnualCost(plusAnnual);
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
+    
+    // Get the current plan's processing rate
+    const currentRate = processingRates[basePlan]?.standardDomestic || 0;
+    const plusRate = processingRates.plus?.standardDomestic || 0;
 
-    // Update the context with new values, including selectedPlan and the correct fee rates
+    // Update the context with new values, including the correct fee rates
     updateCalculatorValues({
       annualSales,
-      basicFeeRate: processingRates[basePlan].standardDomestic,
-      plusFeeRate: processingRates.plus.standardDomestic,
+      basicFeeRate: currentRate,
+      plusFeeRate: plusRate,
       basicMonthlyCost,
       plusMonthlyCost,
       effectivePlusMonthlyCost,
@@ -400,7 +404,7 @@ const ROICalculator = () => {
     feeSavings,
     annualSavings,
     plans,
-    processingRates,
+    processingRates, // Include processingRates in calculatorState
     handlePlanChange,
     handleTermChange,
     handleSalesChange,
@@ -414,8 +418,17 @@ const ROICalculator = () => {
     setMonthlyUpliftAverage,
     setMonthlyUpliftGood,
     resetCalculator,
-    calculateROI
+    calculateROI,
+    basicMonthlyCost,
+    plusMonthlyCost
   };
+  
+  // Add an effect to recalculate ROI when plan selection changes
+  useEffect(() => {
+    if (annualSales > 0) {
+      calculateROI();
+    }
+  }, [selectedPlan]);
   
   return (
     <div className="bg-white py-16" id="roi-calculator">
