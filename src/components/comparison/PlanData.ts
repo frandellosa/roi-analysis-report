@@ -90,7 +90,7 @@ export const allPlans: Record<string, Plan> = {
     premiumInternational: "3.95% + $0.30",
     
     inPersonRate: "2.2% + $0",
-    thirdPartyProviderRate: "0.5%",
+    thirdPartyProviderRate: "0.2%",
     
     features: [
       "Up to 53% shipping discount, insurance, 3rd-party calculated rates",
