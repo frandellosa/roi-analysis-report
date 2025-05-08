@@ -4,7 +4,7 @@ import { useCalculatorContext } from '@/contexts/CalculatorContext';
 import { formatCurrency } from '@/utils/formatters';
 
 const Hero = () => {
-  const [companyName, setCompanyName] = useState("Dually Wheels");
+  const [companyName, setCompanyName] = useState("[BRAND NAME]");
   const [isEditing, setIsEditing] = useState(false);
   const { annualNetSavings, monthlyUpliftAverage } = useCalculatorContext();
 
