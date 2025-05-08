@@ -51,7 +51,7 @@ const Stats = () => {
             icon={BadgeDollarSign} 
             title="Quarterly Sales" 
             value={formatCurrency(quarterlySales)}
-            previousValue="Based on last 90 days"
+            previousValue="Based on quarterly average"
           />
           
           <StatCard 
