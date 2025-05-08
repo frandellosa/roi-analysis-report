@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,7 +45,7 @@ const ROICalculator = () => {
   
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
-  const [basicMonthlyCost, setBasicMonthlyCost] = useState(defaultValues.basicMonthlyCost);
+  // We no longer need to manage basicMonthlyCost in state since it's now derived from the plan
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(defaultValues.plusMonthlyCost);
   const [plusTerm, setPlusTerm] = useState(defaultValues.plusTerm);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,9 +90,8 @@ const ROICalculator = () => {
   // Reset calculator to default values
   const resetCalculator = () => {
     setAnnualSales(defaultValues.annualSales);
-    setBasicMonthlyCost(defaultValues.basicMonthlyCost);
-    setPlusMonthlyCost(defaultValues.plusMonthlyCost);
     updateSelectedPlan("basic"); // Update through context
+    setPlusMonthlyCost(defaultValues.plusMonthlyCost);
     setPlusTerm(defaultValues.plusTerm);
     setD2cPercentage(defaultValues.d2cPercentage);
     setB2bPercentage(defaultValues.b2bPercentage);
@@ -151,29 +149,6 @@ const ROICalculator = () => {
       shopPayInstallments: 5.0
     }
   };
-
-  // Monthly costs by plan
-  const monthlyCosts = {
-    basic: 39,
-    shopify: 105, // Updated to reflect Grow plan at $105
-    advanced: 399
-  };
-
-  // Update monthly cost when plan changes
-  useEffect(() => {
-    // Extract the base plan name (removing any billing suffix)
-    const basePlan = selectedPlan.split('-')[0];
-    
-    // Get the monthly cost from the plan data in the context
-    if (plans[basePlan]) {
-      const priceString = plans[basePlan].price;
-      const priceMatch = priceString.match(/\$(\d+)/);
-      
-      if (priceMatch && priceMatch[1]) {
-        setBasicMonthlyCost(parseInt(priceMatch[1], 10));
-      }
-    }
-  }, [selectedPlan, plans]); // This now uses the context values
 
   // Update Plus monthly cost based on term selection
   useEffect(() => {
@@ -287,6 +262,20 @@ const ROICalculator = () => {
   const calculateROI = () => {
     // Get the base plan name for accessing processing rates
     const basePlan = selectedPlan.split('-')[0];
+
+    // Get the monthly cost based on the pricing structure in plans
+    const getPlanMonthlyCost = (planId: string) => {
+      const priceString = plans[planId].price;
+      const priceMatch = priceString.match(/\$(\d+)/);
+      
+      if (priceMatch && priceMatch[1]) {
+        return parseInt(priceMatch[1], 10);
+      }
+      return 0;
+    };
+    
+    // Get the current plan's monthly cost
+    const basicMonthlyCost = getPlanMonthlyCost(basePlan);
     
     // Get processing fees using the processing rates
     const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees();
@@ -474,10 +463,6 @@ const ROICalculator = () => {
   const calculatorState = {
     annualSales,
     setAnnualSales,
-    basicMonthlyCost,
-    setBasicMonthlyCost,
-    plusMonthlyCost,
-    setPlusMonthlyCost,
     effectivePlusMonthlyCost,
     selectedPlan,
     plusTerm,
