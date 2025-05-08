@@ -206,12 +206,15 @@ const ROICalculator = () => {
 
   // Calculate processing fees using the rates table data
   const calculateProcessingFees = () => {
+    // Get the base plan name for accessing processing rates
+    const basePlan = selectedPlan.split('-')[0];
+    
     // If we have file data, use it for calculations
     if (fileData) {
       // Simple example - in a real implementation this would parse and analyze the file data
       // For now, we'll just use a placeholder implementation
       return {
-        basicProcessingFee: fileData.totalAmount * (processingRates[selectedPlan].standardDomestic / 100) + (fileData.transactions * 0.30),
+        basicProcessingFee: fileData.totalAmount * (processingRates[basePlan].standardDomestic / 100) + (fileData.transactions * 0.30),
         plusProcessingFee: fileData.totalAmount * (processingRates.plus.standardDomestic / 100) + (fileData.transactions * 0.30),
       };
     } else {
@@ -221,7 +224,7 @@ const ROICalculator = () => {
       const transactionFee = 0.30;
       
       // Use the selected plan's standard domestic rate and Plus plan's rate
-      const basicRate = processingRates[selectedPlan as keyof typeof processingRates].standardDomestic;
+      const basicRate = processingRates[basePlan].standardDomestic;
       const plusRate = processingRates.plus.standardDomestic;
       
       const basicProcessingFee = (annualSales * basicRate / 100) + (transactionFee * transactionsCount);
@@ -271,6 +274,9 @@ const ROICalculator = () => {
   
   // Calculate ROI
   const calculateROI = () => {
+    // Get the base plan name for accessing processing rates
+    const basePlan = selectedPlan.split('-')[0];
+    
     // Get processing fees using the processing rates
     const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees();
     
@@ -295,7 +301,7 @@ const ROICalculator = () => {
     // Update the context with new values, including selectedPlan
     updateCalculatorValues({
       annualSales,
-      basicFeeRate: processingRates[selectedPlan as keyof typeof processingRates].standardDomestic,
+      basicFeeRate: processingRates[basePlan].standardDomestic,
       plusFeeRate: processingRates.plus.standardDomestic,
       basicMonthlyCost,
       plusMonthlyCost,

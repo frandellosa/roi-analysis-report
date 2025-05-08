@@ -15,6 +15,9 @@ interface ProcessingRatesTableProps {
 }
 
 export const ProcessingRatesTable = ({ processingRates, selectedPlan }: ProcessingRatesTableProps) => {
+  // Extract the base plan name (removing any billing suffix)
+  const basePlan = selectedPlan.split('-')[0];
+  
   const formatPlanName = (plan: string): string => {
     switch(plan) {
       case 'basic': return 'Basic';
@@ -33,7 +36,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
             <thead>
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Card Type</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{formatPlanName(selectedPlan)}</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{formatPlanName(basePlan)}</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plus</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Savings</th>
               </tr>
@@ -41,33 +44,33 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
             <tbody className="divide-y divide-gray-200">
               <tr>
                 <td className="px-4 py-2 text-sm">Standard Domestic</td>
-                <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardDomestic}% + 30¢</td>
+                <td className="px-4 py-2 text-sm">{processingRates[basePlan].standardDomestic}% + 30¢</td>
                 <td className="px-4 py-2 text-sm">{processingRates.plus.standardDomestic}% + 30¢</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardDomestic - processingRates.plus.standardDomestic).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].standardDomestic - processingRates.plus.standardDomestic).toFixed(2)}%</td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Standard International</td>
-                <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].standardInternational}% + 30¢</td>
+                <td className="px-4 py-2 text-sm">{processingRates[basePlan].standardInternational}% + 30¢</td>
                 <td className="px-4 py-2 text-sm">{processingRates.plus.standardInternational}% + 30¢</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].standardInternational - processingRates.plus.standardInternational).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].standardInternational - processingRates.plus.standardInternational).toFixed(2)}%</td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Premium Domestic</td>
-                <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic}% + 30¢</td>
+                <td className="px-4 py-2 text-sm">{processingRates[basePlan].premiumDomestic}% + 30¢</td>
                 <td className="px-4 py-2 text-sm">{processingRates.plus.premiumDomestic}% + 30¢</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2)}%</td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Premium International</td>
-                <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].premiumInternational}% + 30¢</td>
+                <td className="px-4 py-2 text-sm">{processingRates[basePlan].premiumInternational}% + 30¢</td>
                 <td className="px-4 py-2 text-sm">{processingRates.plus.premiumInternational}% + 30¢</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].premiumInternational - processingRates.plus.premiumInternational).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].premiumInternational - processingRates.plus.premiumInternational).toFixed(2)}%</td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Shop Pay Installments</td>
-                <td className="px-4 py-2 text-sm">{processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments}% + 30¢</td>
+                <td className="px-4 py-2 text-sm">{processingRates[basePlan].shopPayInstallments}% + 30¢</td>
                 <td className="px-4 py-2 text-sm">{processingRates.plus.shopPayInstallments}% + 30¢</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[selectedPlan as keyof typeof processingRates].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
               </tr>
             </tbody>
           </table>
