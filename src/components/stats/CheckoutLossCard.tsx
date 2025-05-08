@@ -30,18 +30,18 @@ export const CheckoutLossCard = ({
   };
 
   return (
-    <Card className="border-red-100 shadow-md bg-red-50">
+    <Card className="border-gray-200 shadow-md bg-gray-100">
       <CardHeader className="pb-2">
         <div className="flex items-center gap-2">
           <ShoppingCart className="h-6 w-6 text-red-600" />
-          <CardTitle className="text-xl font-bold text-red-700">Checkout Drop-Off Analysis</CardTitle>
+          <CardTitle className="text-xl font-bold text-gray-700">Checkout Drop-Off Analysis</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         {hasData ? (
           <div className="grid md:grid-cols-4 gap-4">
             <div className="col-span-4 md:col-span-2">
-              <div className="bg-white p-5 rounded-lg border border-red-100 h-full">
+              <div className="bg-white p-5 rounded-lg border border-gray-200 h-full">
                 <h3 className="text-lg font-medium mb-4">Revenue Lost at Checkout</h3>
                 <p className="text-3xl font-bold text-red-600">{formatCurrency(potentialRevenueLost)}</p>
                 <p className="text-sm text-gray-500 mt-2">
@@ -51,7 +51,7 @@ export const CheckoutLossCard = ({
             </div>
             
             <div className="md:col-span-1">
-              <div className="bg-white p-5 rounded-lg border border-red-100 h-full">
+              <div className="bg-white p-5 rounded-lg border border-gray-200 h-full">
                 <h3 className="text-base font-medium mb-2">Drop-Off Rate</h3>
                 <div className="flex items-center">
                   <TrendingDown className="h-5 w-5 text-red-500 mr-2" />
@@ -64,7 +64,7 @@ export const CheckoutLossCard = ({
             </div>
             
             <div className="md:col-span-1">
-              <div className="bg-white p-5 rounded-lg border border-red-100 h-full">
+              <div className="bg-white p-5 rounded-lg border border-gray-200 h-full">
                 <h3 className="text-base font-medium mb-2">Checkout Stats</h3>
                 <div className="flex flex-col gap-1">
                   <div className="flex justify-between items-center">
@@ -85,7 +85,7 @@ export const CheckoutLossCard = ({
           </div>
         ) : (
           <div className="text-center py-8">
-            <p className="text-xl font-medium text-red-600 mb-4">Analyze Your Checkout Drop-Off</p>
+            <p className="text-xl font-medium text-gray-700 mb-4">Analyze Your Checkout Drop-Off</p>
             <p className="text-gray-600 mb-6">
               Enter your checkout data to see how much revenue you're losing to checkout abandonment
             </p>
@@ -97,9 +97,6 @@ export const CheckoutLossCard = ({
             </Button>
           </div>
         )}
-        <div className="mt-3 text-sm text-red-700 font-semibold">
-          Shopify Plus can help reduce checkout abandonment with optimized checkout flows.
-        </div>
       </CardContent>
     </Card>
   );

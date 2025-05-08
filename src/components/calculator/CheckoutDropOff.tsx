@@ -55,7 +55,7 @@ export const CheckoutDropOff = ({ calculatorState }: CheckoutDropOffProps) => {
       </div>
       
       {reachedCheckout > 0 && (
-        <Card className="bg-gray-50 border-gray-200">
+        <Card className="bg-gray-100 border-gray-200">
           <CardContent className="pt-4 pb-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
