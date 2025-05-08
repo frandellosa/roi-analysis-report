@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { ImagePlus, RotateCcw } from "lucide-react";
 
 const LOGO_STORAGE_KEY = 'shopify-roi-logo';
-const DEFAULT_LOGO = "/lovable-uploads/4d7ebcea-986b-41ce-9dca-3cb9194c2aa6.png";
+const DEFAULT_LOGO = "/lovable-uploads/0da62f1b-75b3-4c96-b17a-b761074ceb54.png";
 
 const Navigation = () => {
   const [logoSrc, setLogoSrc] = useState(DEFAULT_LOGO);
