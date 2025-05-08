@@ -5,7 +5,9 @@ import { Label } from "@/components/ui/label";
 import { 
   Select, 
   SelectContent, 
+  SelectGroup,
   SelectItem, 
+  SelectLabel,
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
@@ -44,9 +46,30 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
             <SelectValue placeholder="Select your current plan" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="basic">Basic ($39/month)</SelectItem>
-            <SelectItem value="shopify">Grow ($105/month)</SelectItem>
-            <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
+            <SelectGroup>
+              <SelectLabel>Monthly billing</SelectLabel>
+              <SelectItem value="basic">Basic ($39/month)</SelectItem>
+              <SelectItem value="shopify">Grow ($105/month)</SelectItem>
+              <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Annual billing (paid upfront)</SelectLabel>
+              <SelectItem value="basic-annual">Basic Annual ($348/year - $29/month)</SelectItem>
+              <SelectItem value="shopify-annual">Grow Annual ($948/year - $79/month)</SelectItem>
+              <SelectItem value="advanced-annual">Advanced Annual ($3,588/year - $299/month)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Biennial billing (2 years)</SelectLabel>
+              <SelectItem value="basic-biennial">Basic Biennial ($558/2years)</SelectItem>
+              <SelectItem value="shopify-biennial">Grow Biennial ($1,518/2years)</SelectItem>
+              <SelectItem value="advanced-biennial">Advanced Biennial ($5,640/2years)</SelectItem>
+            </SelectGroup>
+            <SelectGroup>
+              <SelectLabel>Triennial billing (3 years)</SelectLabel>
+              <SelectItem value="basic-triennial">Basic Triennial ($783/3years)</SelectItem>
+              <SelectItem value="shopify-triennial">Grow Triennial ($2,133/3years)</SelectItem>
+              <SelectItem value="advanced-triennial">Advanced Triennial ($7,884/3years)</SelectItem>
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
