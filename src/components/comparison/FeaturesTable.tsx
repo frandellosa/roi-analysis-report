@@ -53,8 +53,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "POS Lite"
       ],
       highlight: false,
-      cta: "Learn more",
-      ctaLink: "#",
     },
     shopify: {
       name: "Shopify Grow",
@@ -80,8 +78,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "POS Lite"
       ],
       highlight: false,
-      cta: "Learn more",
-      ctaLink: "#",
     },
     advanced: {
       name: "Shopify Advanced",
@@ -108,8 +104,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "POS Lite"
       ],
       highlight: false,
-      cta: "Learn more",
-      ctaLink: "#",
     },
     plus: {
       name: "Shopify Plus",
@@ -222,64 +216,64 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         </div>
       </div>
 
-      {/* Plus plan card - updated badge text and removed CTA buttons */}
-      <div className="relative rounded-2xl border-2 border-shopify-blue p-6 flex flex-col h-full shadow-lg shadow-shopify-blue/20 bg-gradient-to-br from-white to-shopify-light">
-        {/* Updated badge text */}
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-shopify-blue to-shopify-green text-white text-xs font-bold py-1.5 px-6 rounded-full shadow-md flex items-center">
+      {/* Plus plan card - updated with hero banner color palette */}
+      <div className="relative rounded-2xl border-2 border-shopify-teal p-6 flex flex-col h-full shadow-lg shadow-shopify-teal-dark/20 bg-gradient-to-br from-shopify-teal-light to-shopify-teal">
+        {/* Updated badge text with hero banner colors */}
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-shopify-teal to-shopify-green text-white text-xs font-bold py-1.5 px-6 rounded-full shadow-md flex items-center">
           <Crown className="h-3.5 w-3.5 mr-1.5" />
           RECOMMENDED
         </div>
         
         <div className="flex items-center mb-1">
-          <h3 className="text-2xl font-bold text-shopify-blue flex items-center">
+          <h3 className="text-2xl font-bold text-white flex items-center">
             {plusPlan.name}
             <Star className="h-5 w-5 ml-2 text-shopify-green" fill="currentColor" />
           </h3>
         </div>
-        <p className="text-sm text-shopify-muted mb-6">{plusPlan.description}</p>
+        <p className="text-sm text-gray-300 mb-6">{plusPlan.description}</p>
         
         <div className="mb-6">
-          <div className="text-sm text-shopify-muted">Starting at</div>
+          <div className="text-sm text-gray-300">Starting at</div>
           <div className="flex items-baseline">
-            <span className="text-4xl font-bold text-shopify-blue">{plusPlan.price}</span>
-            <span className="text-sm text-shopify-muted ml-1">{plusPlan.billing}</span>
+            <span className="text-4xl font-bold text-white">{plusPlan.price}</span>
+            <span className="text-sm text-gray-300 ml-1">{plusPlan.billing}</span>
           </div>
           <div className="mt-2">
-            <span className="text-xs font-medium bg-shopify-light text-shopify-darkgreen px-3 py-1 rounded-full inline-flex items-center">
+            <span className="text-xs font-medium bg-shopify-teal-light text-shopify-green px-3 py-1 rounded-full inline-flex items-center">
               <Award className="h-3 w-3 mr-1" /> Best Value for High-Volume Merchants
             </span>
           </div>
         </div>
         
         <div className="mb-6">
-          <h4 className="font-semibold mb-2 text-shopify-blue flex items-center">
+          <h4 className="font-semibold mb-2 text-white flex items-center">
             <Star className="h-4 w-4 mr-1.5 text-shopify-green" fill="currentColor" stroke="none" />
             Premium payment rates
           </h4>
-          <div className="bg-shopify-light p-4 rounded-lg mb-2 border border-shopify-green/20">
-            <p className="font-medium mb-1 text-shopify-darkgreen">Standard cards (Consumer)</p>
+          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-2 border border-shopify-green/20">
+            <p className="font-medium mb-1 text-white">Standard cards (Consumer)</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm text-shopify-muted">Domestic</p>
-                <p className="font-medium text-shopify-blue">{plusPlan.standardDomestic}</p>
+                <p className="text-sm text-gray-300">Domestic</p>
+                <p className="font-medium text-shopify-green">{plusPlan.standardDomestic}</p>
               </div>
               <div>
-                <p className="text-sm text-shopify-muted">International</p>
-                <p className="font-medium text-shopify-blue">{plusPlan.standardInternational}</p>
+                <p className="text-sm text-gray-300">International</p>
+                <p className="font-medium text-shopify-green">{plusPlan.standardInternational}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-shopify-light p-4 rounded-lg mb-4 border border-shopify-green/20">
-            <p className="font-medium mb-1 text-shopify-darkgreen">Premium cards (Commercial & Amex)</p>
+          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-4 border border-shopify-green/20">
+            <p className="font-medium mb-1 text-white">Premium cards (Commercial & Amex)</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-sm text-shopify-muted">Domestic</p>
-                <p className="font-medium text-shopify-blue">{plusPlan.premiumDomestic}</p>
+                <p className="text-sm text-gray-300">Domestic</p>
+                <p className="font-medium text-shopify-green">{plusPlan.premiumDomestic}</p>
               </div>
               <div>
-                <p className="text-sm text-shopify-muted">International</p>
-                <p className="font-medium text-shopify-blue">{plusPlan.premiumInternational}</p>
+                <p className="text-sm text-gray-300">International</p>
+                <p className="font-medium text-shopify-green">{plusPlan.premiumInternational}</p>
               </div>
             </div>
           </div>
@@ -287,27 +281,27 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
           <ul className="space-y-2">
             <li className="flex items-start">
               <Check className="h-5 w-5 text-shopify-green mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-sm">In-person rate: <span className="text-shopify-blue font-medium">{plusPlan.inPersonRate}</span></span>
+              <span className="text-sm text-gray-200">In-person rate: <span className="text-shopify-green font-medium">{plusPlan.inPersonRate}</span></span>
             </li>
             <li className="flex items-start">
               <Check className="h-5 w-5 text-shopify-green mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-sm">3rd-party providers: <span className="text-shopify-blue font-medium">{plusPlan.thirdPartyProviderRate}</span></span>
+              <span className="text-sm text-gray-200">3rd-party providers: <span className="text-shopify-green font-medium">{plusPlan.thirdPartyProviderRate}</span></span>
             </li>
           </ul>
         </div>
         
         <div className="mb-6">
-          <h4 className="font-semibold mb-2 text-shopify-blue flex items-center">
+          <h4 className="font-semibold mb-2 text-white flex items-center">
             <Star className="h-4 w-4 mr-1.5 text-shopify-green" fill="currentColor" stroke="none" />
             Premium features
           </h4>
           <ul className="space-y-3">
             {plusPlan.features.map((feature, i) => (
               <li key={i} className="flex items-start">
-                <div className="bg-shopify-light rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
+                <div className="bg-shopify-teal-dark rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
                   <Check className="h-4 w-4 text-shopify-green" />
                 </div>
-                <span className="text-sm">{feature}</span>
+                <span className="text-sm text-gray-200">{feature}</span>
               </li>
             ))}
           </ul>
