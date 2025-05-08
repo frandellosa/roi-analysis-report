@@ -1,5 +1,6 @@
 
 import { Card, CardContent } from "@/components/ui/card";
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
 interface ProcessingRatesTableProps {
   processingRates: {
@@ -17,6 +18,9 @@ interface ProcessingRatesTableProps {
 export const ProcessingRatesTable = ({ processingRates, selectedPlan }: ProcessingRatesTableProps) => {
   // Extract the base plan name (removing any billing suffix)
   const basePlan = selectedPlan.split('-')[0];
+  
+  // Get context values to ensure we're using the correct rates
+  const { basicFeeRate, plusFeeRate } = useCalculatorContext();
   
   const formatPlanName = (plan: string): string => {
     switch(plan) {
@@ -78,6 +82,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
         <div className="mt-4 text-xs text-gray-500">
           <p>* Additional rates for Shop Pay Express and other payment methods apply.</p>
           <p>* All rates shown are for USA market.</p>
+          <p>* Rates used for calculations: {basicFeeRate.toFixed(1)}% ({formatPlanName(basePlan)}) and {plusFeeRate.toFixed(1)}% (Plus)</p>
         </div>
       </CardContent>
     </Card>

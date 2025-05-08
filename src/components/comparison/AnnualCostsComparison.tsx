@@ -9,10 +9,15 @@ export const AnnualCostsComparison = () => {
     plusFeeRate,
     basicMonthlyCost,
     plusMonthlyCost,
-    effectivePlusMonthlyCost
+    effectivePlusMonthlyCost,
+    selectedPlan,
+    plans
   } = useCalculatorContext();
 
-  // Calculate processing costs based on annual sales
+  // Get the base plan name (removing any billing suffix)
+  const basePlan = selectedPlan.split('-')[0];
+
+  // Calculate processing costs based on annual sales and the selected plan's rate
   const basicProcessingCost = annualSales * (basicFeeRate / 100);
   const plusProcessingCost = annualSales * (plusFeeRate / 100);
   
@@ -37,6 +42,9 @@ export const AnnualCostsComparison = () => {
         <p className="text-sm text-shopify-muted mt-1">
           + {formatCurrency(basicAnnualPlanCost)}/year plan cost
         </p>
+        <p className="text-xs text-shopify-muted mt-1">
+          ({basicFeeRate.toFixed(1)}% processing rate)
+        </p>
       </div>
       <div className="p-6 border-l text-center bg-shopify-light">
         <p className="font-bold text-xl text-shopify-blue">
@@ -44,6 +52,9 @@ export const AnnualCostsComparison = () => {
         </p>
         <p className="text-sm text-shopify-muted mt-1">
           + {formatCurrency(plusAnnualPlanCost)}/year plan cost
+        </p>
+        <p className="text-xs text-shopify-muted mt-1">
+          ({plusFeeRate.toFixed(1)}% processing rate)
         </p>
       </div>
     </div>
