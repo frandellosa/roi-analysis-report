@@ -6,6 +6,7 @@ import ComparisonTable from "@/components/ComparisonTable";
 import ROICalculator from "@/components/ROICalculator";
 import Timeline from "@/components/Timeline";
 import Footer from "@/components/Footer";
+import PDFDownloadButton from "@/components/PDFDownloadButton";
 import { Separator } from "@/components/ui/separator";
 
 const Index = () => {

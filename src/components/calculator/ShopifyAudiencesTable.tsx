@@ -80,13 +80,13 @@ export const ShopifyAudiencesTable = ({ currentAOV = 200 }: ShopifyAudiencesTabl
     const futureRetargetingSpend = futureAdSpend * (futureRetargetingPercent / 100);
     const futureProspectingSpend = futureAdSpend - futureRetargetingSpend;
     
-    // Calculate future CPAs
-    const futureProspectingCPA = prospectingCPA * (1 - (prospectingCPAReduction / 100));
-    const futureRetargetingCPA = retargetingCPA * (1 - (retargetingCPAReduction / 100));
+    // Calculate future CPAs - handle zero values to prevent NaN
+    const futureProspectingCPA = prospectingCPA === 0 ? 0 : prospectingCPA * (1 - (prospectingCPAReduction / 100));
+    const futureRetargetingCPA = retargetingCPA === 0 ? 0 : retargetingCPA * (1 - (retargetingCPAReduction / 100));
     
-    // Calculate future orders
-    const futureProspectingOrders = Math.round(futureProspectingSpend / futureProspectingCPA);
-    const futureRetargetingOrders = Math.round(futureRetargetingSpend / futureRetargetingCPA);
+    // Calculate future orders - handle zero CPAs to prevent division by zero
+    const futureProspectingOrders = futureProspectingCPA === 0 ? 0 : Math.round(futureProspectingSpend / futureProspectingCPA);
+    const futureRetargetingOrders = futureRetargetingCPA === 0 ? 0 : Math.round(futureRetargetingSpend / futureRetargetingCPA);
     const futureTotalOrders = futureProspectingOrders + futureRetargetingOrders;
     
     // Calculate increased orders due to Shopify Audiences
