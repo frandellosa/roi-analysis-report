@@ -4,11 +4,13 @@ import {
   TrendingUp, 
   BadgeDollarSign, 
   ChartBarIncreasing, 
-  Wallet 
+  Wallet,
+  ShoppingCart
 } from "lucide-react";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { formatCurrency } from "@/utils/formatters";
 import { StatCard } from "./stats/StatCard";
+import { CheckoutLossCard } from "./stats/CheckoutLossCard";
 
 const Stats = () => {
   // Use values from calculator context
@@ -18,7 +20,10 @@ const Stats = () => {
     plusFeeRate, 
     processingFeeSavings, 
     annualNetSavings,
-    monthlyUpliftAverage
+    monthlyUpliftAverage,
+    reachedCheckout,
+    completedCheckout,
+    currentAOV
   } = useCalculatorContext();
   
   // Calculate savings rate for display
@@ -35,6 +40,13 @@ const Stats = () => {
   
   // Combined quarterly savings + uplift
   const combinedQuarterlySavings = quarterlySavings + quarterlyUplift;
+
+  // Calculate checkout drop-off metrics if available
+  const showCheckoutMetrics = reachedCheckout > 0 && completedCheckout >= 0;
+  const dropOffRate = reachedCheckout > 0 
+    ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
+    : 0;
+  const potentialRevenueLost = (reachedCheckout - completedCheckout) * currentAOV;
 
   return (
     <div className="bg-white py-16">
@@ -77,6 +89,17 @@ const Stats = () => {
             valueColor={combinedQuarterlySavings >= 0 ? "text-shopify-green" : "text-shopify-black"}
           />
         </div>
+
+        {showCheckoutMetrics && (
+          <div className="mt-12">
+            <CheckoutLossCard
+              dropOffRate={dropOffRate}
+              potentialRevenueLost={potentialRevenueLost}
+              reachedCheckout={reachedCheckout}
+              completedCheckout={completedCheckout}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
