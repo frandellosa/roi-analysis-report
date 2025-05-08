@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
