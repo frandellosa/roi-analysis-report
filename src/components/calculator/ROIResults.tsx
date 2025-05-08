@@ -142,7 +142,7 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
             </div>
           )}
           
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
             <h4 className="text-lg font-medium mb-2">Projected Revenue Uplift</h4>
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div className="bg-gray-50 p-3 rounded text-center">
