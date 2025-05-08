@@ -3,7 +3,7 @@ import React from 'react';
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CheckoutDropOffProps {
@@ -36,7 +36,7 @@ export const CheckoutDropOff = ({ calculatorState }: CheckoutDropOffProps) => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <InfoCircle className="h-4 w-4 ml-2 text-gray-500" />
+              <Info className="h-4 w-4 ml-2 text-gray-500" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
               <p>These figures represent annual checkout sessions data.</p>
