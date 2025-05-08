@@ -5,6 +5,7 @@ import Stats from "@/components/Stats";
 import ComparisonTable from "@/components/ComparisonTable";
 import ROICalculator from "@/components/ROICalculator";
 import Timeline from "@/components/Timeline";
+import Footer from "@/components/Footer";
 import { Separator } from "@/components/ui/separator";
 
 const Index = () => {
@@ -17,6 +18,7 @@ const Index = () => {
       <ComparisonTable />
       <ROICalculator />
       <Timeline />
+      <Footer />
     </div>
   );
 };
