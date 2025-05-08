@@ -1,9 +1,29 @@
 
 import { Check } from "lucide-react";
 
-export const FeaturesTable = () => {
-  const plans = [
-    {
+type Plan = {
+  name: string;
+  description: string;
+  price: string;
+  billing: string;
+  isPopular: boolean;
+  cardRates: string;
+  ratesList: string[];
+  features: string[];
+  cta: string;
+  ctaLink: string;
+  secondaryCta?: string;
+  secondaryCtaLink?: string;
+  highlight: boolean;
+};
+
+type FeaturesTableProps = {
+  selectedPlan: string;
+};
+
+export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
+  const allPlans: Record<string, Plan> = {
+    basic: {
       name: "Shopify Basic",
       description: "For solo entrepreneurs",
       price: "$39",
@@ -26,7 +46,7 @@ export const FeaturesTable = () => {
       ctaLink: "#",
       highlight: false
     },
-    {
+    shopify: {
       name: "Shopify Grow",
       description: "For small teams",
       price: "$99",
@@ -50,7 +70,7 @@ export const FeaturesTable = () => {
       ctaLink: "#",
       highlight: false
     },
-    {
+    advanced: {
       name: "Shopify Advanced",
       description: "As your business scales",
       price: "$389",
@@ -75,7 +95,7 @@ export const FeaturesTable = () => {
       ctaLink: "#",
       highlight: false
     },
-    {
+    plus: {
       name: "Shopify Plus",
       description: "For more complex businesses",
       price: "US$2,300",
@@ -101,78 +121,133 @@ export const FeaturesTable = () => {
       secondaryCtaLink: "#",
       highlight: true
     }
-  ];
+  };
+
+  // Get the current plan and Plus plan
+  const currentPlan = allPlans[selectedPlan];
+  const plusPlan = allPlans.plus;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
-      {plans.map((plan, index) => (
-        <div key={index} className={`rounded-2xl border p-6 flex flex-col h-full ${plan.highlight ? 'border-shopify-blue shadow-md' : 'border-gray-200'}`}>
-          {plan.isPopular && (
-            <div className="mb-2">
-              <span className="bg-green-400 text-xs text-black font-semibold py-1 px-3 rounded-full">
-                Most Popular
-              </span>
-            </div>
-          )}
-          
-          <h3 className="text-xl font-bold mb-1">{plan.name}</h3>
-          <p className="text-sm text-gray-600 mb-4">{plan.description}</p>
-          
-          <div className="mb-6">
-            <div className="text-sm text-gray-500">Starting at</div>
-            <div className="flex items-baseline">
-              <span className="text-4xl font-bold">{plan.price}</span>
-              <span className="text-sm text-gray-500 ml-1">{plan.billing}</span>
-            </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+      {/* Current plan card */}
+      <div className={`rounded-2xl border p-6 flex flex-col h-full ${currentPlan.highlight ? 'border-shopify-blue shadow-md' : 'border-gray-200'}`}>
+        {currentPlan.isPopular && (
+          <div className="mb-2">
+            <span className="bg-green-400 text-xs text-black font-semibold py-1 px-3 rounded-full">
+              Most Popular
+            </span>
           </div>
-          
-          <div className="mb-6">
-            <h4 className="font-semibold mb-2">{plan.cardRates}</h4>
-            <ul className="space-y-2">
-              {plan.ratesList.map((rate, i) => (
-                <li key={i} className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{rate}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="mb-6">
-            <h4 className="font-semibold mb-2">Standout features</h4>
-            <ul className="space-y-2">
-              {plan.features.map((feature, i) => (
-                <li key={i} className="flex items-start">
-                  <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="mt-auto space-y-3">
-            <a 
-              href={plan.ctaLink}
-              className={`w-full py-3 px-4 rounded-full text-center font-medium block ${
-                plan.highlight 
-                  ? 'bg-black hover:bg-gray-800 text-white' 
-                  : 'bg-black hover:bg-gray-800 text-white'
-              }`}
-            >
-              {plan.cta}
-            </a>
-            
-            {plan.secondaryCta && (
-              <a 
-                href={plan.secondaryCtaLink}
-                className="w-full py-3 px-4 rounded-full text-center font-medium block border border-gray-300 hover:bg-gray-50"
-              >
-                {plan.secondaryCta}
-              </a>
-            )}
+        )}
+        
+        <h3 className="text-xl font-bold mb-1">{currentPlan.name}</h3>
+        <p className="text-sm text-gray-600 mb-4">{currentPlan.description}</p>
+        
+        <div className="mb-6">
+          <div className="text-sm text-gray-500">Starting at</div>
+          <div className="flex items-baseline">
+            <span className="text-4xl font-bold">{currentPlan.price}</span>
+            <span className="text-sm text-gray-500 ml-1">{currentPlan.billing}</span>
           </div>
         </div>
-      ))}
+        
+        <div className="mb-6">
+          <h4 className="font-semibold mb-2">{currentPlan.cardRates}</h4>
+          <ul className="space-y-2">
+            {currentPlan.ratesList.map((rate, i) => (
+              <li key={i} className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">{rate}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div className="mb-6">
+          <h4 className="font-semibold mb-2">Standout features</h4>
+          <ul className="space-y-2">
+            {currentPlan.features.map((feature, i) => (
+              <li key={i} className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div className="mt-auto space-y-3">
+          <a 
+            href={currentPlan.ctaLink}
+            className={`w-full py-3 px-4 rounded-full text-center font-medium block bg-black hover:bg-gray-800 text-white`}
+          >
+            {currentPlan.cta}
+          </a>
+          
+          {currentPlan.secondaryCta && (
+            <a 
+              href={currentPlan.secondaryCtaLink}
+              className="w-full py-3 px-4 rounded-full text-center font-medium block border border-gray-300 hover:bg-gray-50"
+            >
+              {currentPlan.secondaryCta}
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Plus plan card - always shown */}
+      <div className="rounded-2xl border border-shopify-blue p-6 flex flex-col h-full shadow-md">
+        <h3 className="text-xl font-bold mb-1">{plusPlan.name}</h3>
+        <p className="text-sm text-gray-600 mb-4">{plusPlan.description}</p>
+        
+        <div className="mb-6">
+          <div className="text-sm text-gray-500">Starting at</div>
+          <div className="flex items-baseline">
+            <span className="text-4xl font-bold">{plusPlan.price}</span>
+            <span className="text-sm text-gray-500 ml-1">{plusPlan.billing}</span>
+          </div>
+        </div>
+        
+        <div className="mb-6">
+          <h4 className="font-semibold mb-2">{plusPlan.cardRates}</h4>
+          <ul className="space-y-2">
+            {plusPlan.ratesList.map((rate, i) => (
+              <li key={i} className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">{rate}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div className="mb-6">
+          <h4 className="font-semibold mb-2">Standout features</h4>
+          <ul className="space-y-2">
+            {plusPlan.features.map((feature, i) => (
+              <li key={i} className="flex items-start">
+                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-sm">{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <div className="mt-auto space-y-3">
+          <a 
+            href={plusPlan.ctaLink}
+            className="w-full py-3 px-4 rounded-full text-center font-medium block bg-black hover:bg-gray-800 text-white"
+          >
+            {plusPlan.cta}
+          </a>
+          
+          {plusPlan.secondaryCta && (
+            <a 
+              href={plusPlan.secondaryCtaLink}
+              className="w-full py-3 px-4 rounded-full text-center font-medium block border border-gray-300 hover:bg-gray-50"
+            >
+              {plusPlan.secondaryCta}
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
