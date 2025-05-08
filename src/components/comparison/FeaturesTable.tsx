@@ -1,4 +1,3 @@
-
 import { Check, Crown, Award, Star } from "lucide-react";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
@@ -21,10 +20,6 @@ type Plan = {
   
   features: string[];
   highlight: boolean;
-  cta?: string;
-  ctaLink?: string;
-  secondaryCta?: string;
-  secondaryCtaLink?: string;
 };
 
 type FeaturesTableProps = {
@@ -141,9 +136,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "Up to 200 POS Pro locations",
         "Sell wholesale/B2B"
       ],
-      highlight: true,
-      cta: "Learn more",
-      ctaLink: "#",
+      highlight: true
     }
   };
 
@@ -227,32 +220,14 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
             ))}
           </ul>
         </div>
-        
-        <div className="mt-auto space-y-3">
-          <a 
-            href={currentPlan.ctaLink}
-            className={`w-full py-3 px-4 rounded-full text-center font-medium block bg-black hover:bg-gray-800 text-white`}
-          >
-            {currentPlan.cta}
-          </a>
-          
-          {currentPlan.secondaryCta && (
-            <a 
-              href={currentPlan.secondaryCtaLink}
-              className="w-full py-3 px-4 rounded-full text-center font-medium block border border-gray-300 hover:bg-gray-50"
-            >
-              {currentPlan.secondaryCta}
-            </a>
-          )}
-        </div>
       </div>
 
-      {/* Plus plan card - updated with Shopify branding colors instead of purple */}
+      {/* Plus plan card - updated badge text and removed CTA buttons */}
       <div className="relative rounded-2xl border-2 border-shopify-blue p-6 flex flex-col h-full shadow-lg shadow-shopify-blue/20 bg-gradient-to-br from-white to-shopify-light">
-        {/* Premium badge */}
+        {/* Updated badge text */}
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-shopify-blue to-shopify-green text-white text-xs font-bold py-1.5 px-6 rounded-full shadow-md flex items-center">
           <Crown className="h-3.5 w-3.5 mr-1.5" />
-          PREMIUM PLAN
+          RECOMMENDED
         </div>
         
         <div className="flex items-center mb-1">
@@ -336,24 +311,6 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
               </li>
             ))}
           </ul>
-        </div>
-        
-        <div className="mt-auto space-y-3">
-          <a 
-            href={plusPlan.ctaLink}
-            className="w-full py-3.5 px-4 rounded-full text-center font-medium block bg-gradient-to-r from-shopify-blue to-shopify-green hover:from-shopify-darkgreen hover:to-shopify-blue text-white transition-all duration-300 shadow-md shadow-shopify-green/25 transform hover:-translate-y-0.5"
-          >
-            {plusPlan.cta || "Get Started with Plus"}
-          </a>
-          
-          {plusPlan.secondaryCta && (
-            <a 
-              href={plusPlan.secondaryCtaLink}
-              className="w-full py-3 px-4 rounded-full text-center font-medium block border border-shopify-green text-shopify-darkgreen hover:bg-shopify-light transition-colors"
-            >
-              {plusPlan.secondaryCta}
-            </a>
-          )}
         </div>
       </div>
     </div>

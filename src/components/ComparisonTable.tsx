@@ -43,9 +43,6 @@ const ComparisonTable = () => {
         
         <Card className="border-gray-100 shadow-md overflow-hidden relative">
           <CardContent className="p-0">
-            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10 bg-gradient-to-r from-shopify-blue to-shopify-green text-xs text-white font-bold py-1 px-4 rounded-full shadow-md">
-              See how Shopify Plus can transform your business
-            </div>
             <FeaturesTable selectedPlan={selectedPlan} />
           </CardContent>
         </Card>
