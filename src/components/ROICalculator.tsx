@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,8 +33,16 @@ const ROICalculator = () => {
     completedCheckout: 0
   };
   
-  // Get selectedPlan from context
-  const { selectedPlan, updateSelectedPlan, updateCalculatorValues, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage } = useCalculatorContext();
+  // Get context values
+  const { 
+    selectedPlan, 
+    updateSelectedPlan, 
+    updateCalculatorValues, 
+    plans,
+    lowUpliftPercentage, 
+    averageUpliftPercentage, 
+    goodUpliftPercentage 
+  } = useCalculatorContext();
   
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
@@ -155,14 +164,16 @@ const ROICalculator = () => {
     // Extract the base plan name (removing any billing suffix)
     const basePlan = selectedPlan.split('-')[0];
     
-    if (basePlan === "basic") {
-      setBasicMonthlyCost(monthlyCosts.basic);
-    } else if (basePlan === "shopify") {
-      setBasicMonthlyCost(monthlyCosts.shopify);
-    } else if (basePlan === "advanced") {
-      setBasicMonthlyCost(monthlyCosts.advanced);
+    // Get the monthly cost from the plan data in the context
+    if (plans[basePlan]) {
+      const priceString = plans[basePlan].price;
+      const priceMatch = priceString.match(/\$(\d+)/);
+      
+      if (priceMatch && priceMatch[1]) {
+        setBasicMonthlyCost(parseInt(priceMatch[1], 10));
+      }
     }
-  }, [selectedPlan]); // This now uses the context value
+  }, [selectedPlan, plans]); // This now uses the context values
 
   // Update Plus monthly cost based on term selection
   useEffect(() => {
@@ -499,7 +510,7 @@ const ROICalculator = () => {
     plusAnnualCost,
     feeSavings,
     annualSavings,
-    monthlyCosts,
+    plans,
     processingRates,
     handlePlanChange,
     handleTermChange,
@@ -514,7 +525,7 @@ const ROICalculator = () => {
     setMonthlyUpliftAverage,
     setMonthlyUpliftGood,
     resetCalculator,
-    calculateROI // Add the calculateROI function to the state so it can be called from UpliftProjections
+    calculateROI
   };
   
   return (

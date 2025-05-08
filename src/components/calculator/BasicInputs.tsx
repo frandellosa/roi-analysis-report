@@ -21,12 +21,29 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
   const { 
     annualSales, 
     handleSalesChange,
-    basicMonthlyCost,
     effectivePlusMonthlyCost
   } = calculatorState;
   
   // Use shared context instead of local state
-  const { selectedPlan, updateSelectedPlan } = useCalculatorContext();
+  const { selectedPlan, updateSelectedPlan, plans } = useCalculatorContext();
+  
+  // Get the base plan name (removing any billing suffix)
+  const basePlan = selectedPlan.split('-')[0];
+  
+  // Get the monthly cost based on the pricing structure in plans
+  const getPlanMonthlyCost = (planId: string) => {
+    // Extract just the price number from the string (e.g., "$39" -> 39)
+    const priceString = plans[planId].price;
+    const priceMatch = priceString.match(/\$(\d+)/);
+    
+    if (priceMatch && priceMatch[1]) {
+      return parseInt(priceMatch[1], 10);
+    }
+    return 0;
+  };
+  
+  // Set the current monthly cost from the selected plan
+  const basicMonthlyCost = getPlanMonthlyCost(basePlan);
   
   const handlePlanChange = (value: string) => {
     updateSelectedPlan(value);
@@ -48,9 +65,9 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
           <SelectContent>
             <SelectGroup>
               <SelectLabel>Monthly billing</SelectLabel>
-              <SelectItem value="basic">Basic ($39/month)</SelectItem>
-              <SelectItem value="shopify">Grow ($105/month)</SelectItem>
-              <SelectItem value="advanced">Advanced ($399/month)</SelectItem>
+              <SelectItem value="basic">Basic ({plans.basic.price}/month)</SelectItem>
+              <SelectItem value="shopify">Grow ({plans.shopify.price}/month)</SelectItem>
+              <SelectItem value="advanced">Advanced ({plans.advanced.price}/month)</SelectItem>
             </SelectGroup>
             <SelectGroup>
               <SelectLabel>Annual billing (paid upfront)</SelectLabel>
@@ -109,3 +126,4 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
     </>
   );
 };
+
