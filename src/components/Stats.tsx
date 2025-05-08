@@ -41,15 +41,14 @@ const Stats = () => {
   // Combined quarterly savings + uplift
   const combinedQuarterlySavings = quarterlySavings + quarterlyUplift;
 
-  // Calculate checkout drop-off metrics if available
-  const showCheckoutMetrics = reachedCheckout > 0 && completedCheckout >= 0;
+  // Calculate checkout drop-off metrics
   const dropOffRate = reachedCheckout > 0 
     ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
     : 0;
   const potentialRevenueLost = (reachedCheckout - completedCheckout) * currentAOV;
 
   return (
-    <div className="bg-white py-16">
+    <div className="bg-white py-16" id="business-stats">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="shopify-heading">Your Business at a Glance</h2>
@@ -90,16 +89,14 @@ const Stats = () => {
           />
         </div>
 
-        {showCheckoutMetrics && (
-          <div className="mt-12">
-            <CheckoutLossCard
-              dropOffRate={dropOffRate}
-              potentialRevenueLost={potentialRevenueLost}
-              reachedCheckout={reachedCheckout}
-              completedCheckout={completedCheckout}
-            />
-          </div>
-        )}
+        <div className="mt-12">
+          <CheckoutLossCard
+            dropOffRate={dropOffRate}
+            potentialRevenueLost={potentialRevenueLost}
+            reachedCheckout={reachedCheckout}
+            completedCheckout={completedCheckout}
+          />
+        </div>
       </div>
     </div>
   );
