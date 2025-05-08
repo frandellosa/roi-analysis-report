@@ -30,16 +30,53 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
   // Get the base plan name (removing any billing suffix)
   const basePlan = selectedPlan.split('-')[0];
   
-  // Get the monthly cost based on the pricing structure in plans
+  // Function to extract monthly cost from plan price string, accounting for billing period
   const getPlanMonthlyCost = (planId: string) => {
-    // Extract just the price number from the string (e.g., "$39" -> 39)
-    const priceString = plans[planId].price;
-    const priceMatch = priceString.match(/\$(\d+)/);
+    // Extract billing period from the selected plan
+    const billingPeriod = selectedPlan.includes('-') ? selectedPlan.split('-')[1] : 'monthly';
     
-    if (priceMatch && priceMatch[1]) {
-      return parseInt(priceMatch[1], 10);
+    // For monthly plans, use the price directly
+    if (!billingPeriod || billingPeriod === 'monthly') {
+      const priceString = plans[planId].price;
+      const priceMatch = priceString.match(/\$(\d+)/);
+      
+      if (priceMatch && priceMatch[1]) {
+        return parseInt(priceMatch[1], 10);
+      }
+      return 0;
+    } 
+    // For non-monthly plans, extract from the SelectItem values
+    else {
+      // Annual billing prices (stored as monthly equivalent)
+      if (billingPeriod === 'annual') {
+        if (planId === 'basic') return 29;
+        if (planId === 'shopify') return 79;
+        if (planId === 'advanced') return 299;
+      }
+      // Biennial billing prices (stored as monthly equivalent)
+      else if (billingPeriod === 'biennial') {
+        // Calculate monthly equivalent (divide by 24 months)
+        if (planId === 'basic') return Math.round(558 / 24);
+        if (planId === 'shopify') return Math.round(1518 / 24);
+        if (planId === 'advanced') return Math.round(5640 / 24);
+      }
+      // Triennial billing prices (stored as monthly equivalent)
+      else if (billingPeriod === 'triennial') {
+        // Calculate monthly equivalent (divide by 36 months)
+        if (planId === 'basic') return Math.round(783 / 36);
+        if (planId === 'shopify') return Math.round(2133 / 36);
+        if (planId === 'advanced') return Math.round(7884 / 36);
+      }
+      
+      // Fallback to regular monthly price
+      const priceString = plans[planId].price;
+      const priceMatch = priceString.match(/\$(\d+)/);
+      
+      if (priceMatch && priceMatch[1]) {
+        return parseInt(priceMatch[1], 10);
+      }
+      return 0;
     }
-    return 0;
   };
   
   // Set the current monthly cost from the selected plan
@@ -126,4 +163,3 @@ export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
     </>
   );
 };
-

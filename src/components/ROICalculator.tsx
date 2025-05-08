@@ -262,20 +262,10 @@ const ROICalculator = () => {
   const calculateROI = () => {
     // Get the base plan name for accessing processing rates
     const basePlan = selectedPlan.split('-')[0];
-
-    // Get the monthly cost based on the pricing structure in plans
-    const getPlanMonthlyCost = (planId: string) => {
-      const priceString = plans[planId].price;
-      const priceMatch = priceString.match(/\$(\d+)/);
-      
-      if (priceMatch && priceMatch[1]) {
-        return parseInt(priceMatch[1], 10);
-      }
-      return 0;
-    };
+    const billingPeriod = selectedPlan.includes('-') ? selectedPlan.split('-')[1] : 'monthly';
     
     // Get the current plan's monthly cost
-    const basicMonthlyCost = getPlanMonthlyCost(basePlan);
+    const basicMonthlyCost = getPlanMonthlyCost(basePlan, billingPeriod);
     
     // Get processing fees using the processing rates
     const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees();
@@ -298,7 +288,7 @@ const ROICalculator = () => {
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
 
-    // Update the context with new values, including selectedPlan
+    // Update the context with new values, including selectedPlan and the correct monthly cost
     updateCalculatorValues({
       annualSales,
       basicFeeRate: processingRates[basePlan].standardDomestic,
@@ -457,6 +447,42 @@ const ROICalculator = () => {
   // Fixed function to update calculator values using the correct context function
   const updateCalculatorContext = (values: any) => {
     updateCalculatorValues(values);
+  };
+
+  // Function to extract monthly cost for any plan, including non-monthly plans
+  const getPlanMonthlyCost = (planId: string, billingType: string = 'monthly') => {
+    if (billingType === 'monthly') {
+      const priceString = plans[planId].price;
+      const priceMatch = priceString.match(/\$(\d+)/);
+      
+      if (priceMatch && priceMatch[1]) {
+        return parseInt(priceMatch[1], 10);
+      }
+      return 0;
+    } 
+    else {
+      // Annual billing prices
+      if (billingType === 'annual') {
+        if (planId === 'basic') return 29;
+        if (planId === 'shopify') return 79;
+        if (planId === 'advanced') return 299;
+      }
+      // Biennial billing prices
+      else if (billingType === 'biennial') {
+        if (planId === 'basic') return Math.round(558 / 24);
+        if (planId === 'shopify') return Math.round(1518 / 24);
+        if (planId === 'advanced') return Math.round(5640 / 24);
+      }
+      // Triennial billing prices
+      else if (billingType === 'triennial') {
+        if (planId === 'basic') return Math.round(783 / 36);
+        if (planId === 'shopify') return Math.round(2133 / 36);
+        if (planId === 'advanced') return Math.round(7884 / 36);
+      }
+      
+      // Fallback to regular monthly price
+      return getPlanMonthlyCost(planId, 'monthly');
+    }
   };
 
   // Shared calculator state and methods to pass to child components
