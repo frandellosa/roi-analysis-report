@@ -94,7 +94,7 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
               </div>
             </div>
             <p className="text-sm text-shopify-muted mt-1">
-              Based on your current metrics and projected improvements in conversion rate and average order value 
+              Based on improved conversion rates applied to reached checkout sessions and improved AOV for completed checkouts
             </p>
           </div>
         </div>

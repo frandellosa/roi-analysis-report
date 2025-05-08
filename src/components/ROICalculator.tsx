@@ -226,31 +226,34 @@ const ROICalculator = () => {
   // Calculate Revenue Uplift with different scenarios using completed checkout sessions
   const calculateRevenueUplift = () => {
     // If we have checkout data, use it as the baseline
-    if (completedCheckout > 0) {
-      // Calculate monthly base revenue from completed checkouts
+    if (reachedCheckout > 0 && completedCheckout > 0) {
+      // Calculate current revenue from completed checkouts
       const currentMonthlyRevenue = completedCheckout * currentAOV;
       
       // Use configurable percentages for uplift scenarios
-      // Low uplift scenario - base calculations on completed checkouts
+      // Low uplift scenario
       const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
       const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
-      // The CR improvement factor impacts the number of completed checkouts
-      const lowCRFactor = lowCR / currentConversionRate;
-      const lowMonthlyRevenue = completedCheckout * lowCRFactor * lowAOV;
+      
+      // Calculate improved completed checkouts based on improved CR
+      const lowImprovedCompleted = reachedCheckout * (lowCR / 100);
+      const lowMonthlyRevenue = lowImprovedCompleted * lowAOV;
       const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
       
       // Average uplift scenario
       const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
       const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
-      const avgCRFactor = avgCR / currentConversionRate;
-      const avgMonthlyRevenue = completedCheckout * avgCRFactor * avgAOV;
+      
+      const avgImprovedCompleted = reachedCheckout * (avgCR / 100);
+      const avgMonthlyRevenue = avgImprovedCompleted * avgAOV;
       const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
       
       // Good uplift scenario
       const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
       const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
-      const goodCRFactor = goodCR / currentConversionRate;
-      const goodMonthlyRevenue = completedCheckout * goodCRFactor * goodAOV;
+      
+      const goodImprovedCompleted = reachedCheckout * (goodCR / 100);
+      const goodMonthlyRevenue = goodImprovedCompleted * goodAOV;
       const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
       
       setMonthlyUpliftLow(lowUplift);

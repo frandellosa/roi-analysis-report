@@ -26,7 +26,8 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     setCurrentConversionRate,
     setCurrentAOV,
     formatCurrency,
-    completedCheckout
+    completedCheckout,
+    reachedCheckout
   } = calculatorState;
   
   // Get the configurable percentages from the context
@@ -46,46 +47,20 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   const getAvgUpliftAOV = () => currentAOV * (1 + averageUpliftPercentage / 100);
   const getGoodUpliftAOV = () => currentAOV * (1 + goodUpliftPercentage / 100);
   
-  // Calculate the revenue difference for each improvement type using completed checkout sessions
-  const calculateUpliftRevenue = (improvedCR: number, improvedAOV: number) => {
-    // If we have completed checkout data, use it as the baseline for monthly calculations
-    if (completedCheckout > 0) {
-      // Current monthly revenue based on completed checkouts
-      const currentMonthlyRevenue = completedCheckout * currentAOV;
-      
-      // Calculate the percentage increase in conversion rate
-      const crImprovementFactor = improvedCR / currentConversionRate;
-      
-      // Improved monthly revenue based on improved conversion rate and AOV
-      // More completed checkouts (due to improved CR) and higher AOV
-      const improvedMonthlyRevenue = completedCheckout * crImprovementFactor * improvedAOV;
-      
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
-    } else {
-      // Fallback to the original calculation if no checkout data
-      const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
-        : 0;
-      
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * improvedAOV;
-      
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
-    }
-  };
-  
-  // Revenue impact from CR improvement only
+  // Calculate the revenue difference for CR improvement only
   const getCROnlyUplift = (improvedCR: number) => {
-    if (completedCheckout > 0) {
-      const currentMonthlyRevenue = completedCheckout * currentAOV;
+    if (reachedCheckout > 0) {
+      // Current conversion rate is completedCheckout / reachedCheckout
+      const actualCR = completedCheckout / reachedCheckout;
       
-      // Calculate the percentage increase in conversion rate
-      const crImprovementFactor = improvedCR / currentConversionRate;
+      // Calculate improved completed checkouts based on improved CR
+      const improvedCompleted = reachedCheckout * (improvedCR / 100);
       
-      // Only improving CR means more completed checkouts at the same AOV
-      const improvedMonthlyRevenue = completedCheckout * crImprovementFactor * currentAOV;
+      // Calculate additional completed checkouts from CR improvement
+      const additionalCompletions = improvedCompleted - completedCheckout;
       
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      // Revenue uplift from additional completions at current AOV
+      return additionalCompletions * currentAOV;
     } else {
       const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
         ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
@@ -101,12 +76,11 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   // Revenue impact from AOV improvement only
   const getAOVOnlyUplift = (improvedAOV: number) => {
     if (completedCheckout > 0) {
-      const currentMonthlyRevenue = completedCheckout * currentAOV;
+      // Revenue uplift from existing completions at improved AOV
+      const currentRevenue = completedCheckout * currentAOV;
+      const improvedRevenue = completedCheckout * improvedAOV;
       
-      // Only improving AOV means same number of completed checkouts but higher AOV
-      const improvedMonthlyRevenue = completedCheckout * improvedAOV;
-      
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      return improvedRevenue - currentRevenue;
     } else {
       const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
         ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
@@ -114,6 +88,32 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       
       const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
       const improvedMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * improvedAOV;
+      
+      return improvedMonthlyRevenue - currentMonthlyRevenue;
+    }
+  };
+  
+  // Calculate combined uplift (both CR and AOV improvements)
+  const calculateUpliftRevenue = (improvedCR: number, improvedAOV: number) => {
+    if (reachedCheckout > 0) {
+      // Calculate improved completed checkouts based on improved CR
+      const improvedCompleted = reachedCheckout * (improvedCR / 100);
+      
+      // Current revenue
+      const currentRevenue = completedCheckout * currentAOV;
+      
+      // Improved revenue with both CR and AOV improvements
+      const improvedRevenue = improvedCompleted * improvedAOV;
+      
+      return improvedRevenue - currentRevenue;
+    } else {
+      // Fallback to the original calculation if no checkout data
+      const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
+        ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
+        : 0;
+      
+      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
+      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * improvedAOV;
       
       return improvedMonthlyRevenue - currentMonthlyRevenue;
     }
