@@ -1,5 +1,7 @@
 
 import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { allPlans } from '@/components/comparison/PlanData';
+import { Plan } from '@/components/comparison/types';
 
 type CalculatorContextType = {
   annualSales: number;
@@ -23,8 +25,11 @@ type CalculatorContextType = {
   lowUpliftPercentage: number;
   averageUpliftPercentage: number;
   goodUpliftPercentage: number;
-  updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>) => void;
+  // Add plan data and methods to update features
+  plans: Record<string, Plan>;
+  updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan' | 'plans' | 'updatePlanFeature'>>) => void;
   updateSelectedPlan: (plan: string) => void;
+  updatePlanFeature: (planId: string, featureIndex: number, newText: string) => void;
 };
 
 const defaultValues: CalculatorContextType = {
@@ -48,8 +53,10 @@ const defaultValues: CalculatorContextType = {
   lowUpliftPercentage: 5,
   averageUpliftPercentage: 10,
   goodUpliftPercentage: 15, // Changed from 20 to 15
+  plans: allPlans,
   updateCalculatorValues: () => {},
   updateSelectedPlan: () => {},
+  updatePlanFeature: () => {},
 };
 
 const CalculatorContext = createContext<CalculatorContextType>(defaultValues);
@@ -57,7 +64,7 @@ const CalculatorContext = createContext<CalculatorContextType>(defaultValues);
 export const useCalculatorContext = () => useContext(CalculatorContext);
 
 export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
-  const [calculatorValues, setCalculatorValues] = useState<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>(
+  const [calculatorValues, setCalculatorValues] = useState<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan' | 'updatePlanFeature'>>(
     {
       annualSales: defaultValues.annualSales,
       basicFeeRate: defaultValues.basicFeeRate,
@@ -79,10 +86,11 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       lowUpliftPercentage: defaultValues.lowUpliftPercentage,
       averageUpliftPercentage: defaultValues.averageUpliftPercentage,
       goodUpliftPercentage: defaultValues.goodUpliftPercentage,
+      plans: JSON.parse(JSON.stringify(allPlans)), // Deep clone to avoid mutations
     }
   );
 
-  const updateCalculatorValues = (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>) => {
+  const updateCalculatorValues = (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan' | 'plans' | 'updatePlanFeature'>>) => {
     setCalculatorValues(prev => ({ ...prev, ...values }));
   };
   
@@ -90,11 +98,26 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
     setCalculatorValues(prev => ({ ...prev, selectedPlan: plan }));
   };
 
+  const updatePlanFeature = (planId: string, featureIndex: number, newText: string) => {
+    setCalculatorValues(prev => {
+      const newPlans = { ...prev.plans };
+      if (newPlans[planId] && newPlans[planId].features && featureIndex >= 0 && featureIndex < newPlans[planId].features.length) {
+        newPlans[planId] = { 
+          ...newPlans[planId], 
+          features: [...newPlans[planId].features]
+        };
+        newPlans[planId].features[featureIndex] = newText;
+      }
+      return { ...prev, plans: newPlans };
+    });
+  };
+
   return (
     <CalculatorContext.Provider value={{ 
       ...calculatorValues, 
       updateCalculatorValues,
-      updateSelectedPlan
+      updateSelectedPlan,
+      updatePlanFeature
     }}>
       {children}
     </CalculatorContext.Provider>

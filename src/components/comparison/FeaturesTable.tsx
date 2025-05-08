@@ -1,24 +1,23 @@
 
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { FeaturesTableProps } from "./types";
-import { allPlans } from "./PlanData";
 import { RegularPlanCard } from "./RegularPlanCard";
 import { PlusPlanCard } from "./PlusPlanCard";
 
 export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
-  const { processingFeeSavings } = useCalculatorContext();
+  const { plans } = useCalculatorContext();
   
   // Get the current plan and Plus plan
-  const currentPlan = allPlans[selectedPlan];
-  const plusPlan = allPlans.plus;
+  const currentPlan = plans[selectedPlan];
+  const plusPlan = plans.plus;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
       {/* Current plan card */}
-      <RegularPlanCard plan={currentPlan} />
+      <RegularPlanCard plan={currentPlan} planId={selectedPlan} />
 
       {/* Plus plan card */}
-      <PlusPlanCard plan={plusPlan} />
+      <PlusPlanCard plan={plusPlan} planId="plus" />
     </div>
   );
 };

@@ -1,12 +1,14 @@
 
 import { Award, Check, Crown, Star } from "lucide-react";
 import { Plan } from "./types";
+import { EditablePlanFeature } from "./EditablePlanFeature";
 
 type PlusPlanCardProps = {
   plan: Plan;
+  planId: string;
 };
 
-export const PlusPlanCard = ({ plan }: PlusPlanCardProps) => {
+export const PlusPlanCard = ({ plan, planId }: PlusPlanCardProps) => {
   return (
     <div className="relative rounded-2xl border-2 border-shopify-teal p-6 flex flex-col h-full shadow-lg shadow-shopify-teal-dark/20 bg-gradient-to-br from-shopify-teal-light to-shopify-teal">
       {/* Badge */}
@@ -88,12 +90,13 @@ export const PlusPlanCard = ({ plan }: PlusPlanCardProps) => {
         </h4>
         <ul className="space-y-3">
           {plan.features.map((feature, i) => (
-            <li key={i} className="flex items-start">
-              <div className="bg-gray-700 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                <Check className="h-4 w-4 text-gray-300" />
-              </div>
-              <span className="text-sm text-gray-200">{feature}</span>
-            </li>
+            <EditablePlanFeature 
+              key={i} 
+              feature={feature} 
+              index={i} 
+              planId={planId} 
+              isHighlighted={true}
+            />
           ))}
         </ul>
       </div>

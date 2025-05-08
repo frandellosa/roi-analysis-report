@@ -1,12 +1,14 @@
 
 import { Check } from "lucide-react";
 import { Plan } from "./types";
+import { EditablePlanFeature } from "./EditablePlanFeature";
 
 type RegularPlanCardProps = {
   plan: Plan;
+  planId: string;
 };
 
-export const RegularPlanCard = ({ plan }: RegularPlanCardProps) => {
+export const RegularPlanCard = ({ plan, planId }: RegularPlanCardProps) => {
   return (
     <div className={`rounded-2xl border p-6 flex flex-col h-full ${plan.highlight ? 'border-shopify-blue shadow-md' : 'border-gray-200'}`}>
       {plan.isPopular && (
@@ -74,10 +76,12 @@ export const RegularPlanCard = ({ plan }: RegularPlanCardProps) => {
         <h4 className="font-semibold mb-2">Standout features</h4>
         <ul className="space-y-2">
           {plan.features.map((feature, i) => (
-            <li key={i} className="flex items-start">
-              <Check className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-sm">{feature}</span>
-            </li>
+            <EditablePlanFeature 
+              key={i} 
+              feature={feature} 
+              index={i} 
+              planId={planId} 
+            />
           ))}
         </ul>
       </div>
