@@ -1,4 +1,5 @@
 
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { formatCurrency } from "@/utils/formatters";
 
 interface FeeSavingsComparisonProps {
@@ -6,10 +7,16 @@ interface FeeSavingsComparisonProps {
 }
 
 export const FeeSavingsComparison = ({ processingFeeSavings }: FeeSavingsComparisonProps) => {
+  const { basicFeeRate, plusFeeRate } = useCalculatorContext();
+  const savingsPercentage = ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(1);
+  
   return (
     <div className="grid grid-cols-3 bg-gray-50">
       <div className="p-6">
         <p className="font-bold text-shopify-black">Fee Savings</p>
+        <p className="text-sm text-shopify-muted">
+          ({savingsPercentage}% rate reduction)
+        </p>
       </div>
       <div className="p-6 border-l text-center">
         <p className="font-bold text-xl text-shopify-black">$0</p>

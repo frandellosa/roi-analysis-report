@@ -330,7 +330,7 @@ const ROICalculator = () => {
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
 
-    // Update the context with new values, including selectedPlan and the correct monthly cost
+    // Update the context with new values, including selectedPlan and the correct fee rates
     updateCalculatorValues({
       annualSales,
       basicFeeRate: processingRates[basePlan].standardDomestic,
