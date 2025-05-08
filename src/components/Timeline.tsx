@@ -14,6 +14,16 @@ import {
   ComposedChart,
 } from "recharts";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
+import { 
+  TrendingUp, 
+  Calendar,
+  ArrowRight,
+} from "lucide-react";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart"; 
 
 const Timeline = () => {
   // Use values from calculator context
@@ -23,7 +33,8 @@ const Timeline = () => {
     plusFeeRate,
     basicMonthlyCost,
     effectivePlusMonthlyCost,
-    monthlyUpliftAverage
+    monthlyUpliftAverage,
+    formatCurrency
   } = useCalculatorContext();
   
   // Calculate monthly values
@@ -68,123 +79,280 @@ const Timeline = () => {
     <div className="bg-gray-50 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-shopify-black mb-4 font-shopify">ROI Timeline</h2>
-          <p className="text-shopify-muted max-w-2xl mx-auto">
-            See how your investment in Shopify Plus pays off over time as transaction fee savings and conversion uplift accumulate.
+          <h2 className="text-3xl font-bold text-shopify-black mb-4 font-shopify">Return on Investment Timeline</h2>
+          <p className="text-shopify-muted max-w-3xl mx-auto">
+            See exactly when your Shopify Plus investment starts paying for itself through reduced fees and improved conversion rates.
           </p>
         </div>
         
         <Card className="border-gray-100 shadow-md">
           <CardContent className="pt-6">
-            <div className="mb-6">
-              <h3 className="text-xl font-semibold mb-2">Projected ROI Timeline</h3>
-              <p className="text-shopify-muted">
-                Based on your current sales volume of ${(annualSales / 1000000).toFixed(2)}M annually, this chart shows when you'll reach the breakeven point.
-              </p>
+            <div className="mb-8">
+              <div className="flex items-center mb-2">
+                <Calendar className="h-5 w-5 text-shopify-green mr-2" />
+                <h3 className="text-xl font-semibold">When Will You Break Even?</h3>
+              </div>
+              <div className="flex items-center mb-6 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                <div className="mr-3 bg-blue-100 p-2 rounded-full">
+                  <TrendingUp className="h-5 w-5 text-blue-600" />
+                </div>
+                <p className="text-shopify-muted text-sm">
+                  Based on your current sales volume of <span className="font-semibold">${(annualSales / 1000000).toFixed(1)}M annually</span>, 
+                  this chart shows when your Shopify Plus investment begins to pay off.
+                </p>
+              </div>
             </div>
             
-            <div className="h-80 w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="mb-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                  <h4 className="font-medium mb-1 text-gray-600">Processing Savings Breakeven</h4>
+                  <p className="text-2xl font-bold text-shopify-blue">
+                    {breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "Not Applicable" : `Month ${breakevenMonth}`}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Based on transaction fee savings only</p>
+                </div>
+                <div className="bg-green-50 p-4 rounded-lg border border-green-100">
+                  <h4 className="font-medium mb-1 text-gray-600">Full ROI Breakeven</h4>
+                  <p className="text-2xl font-bold text-shopify-green">
+                    {breakevenWithUpliftMonth <= 0 ? "Immediate" : 
+                     breakevenWithUpliftMonth >= 12 ? "Beyond Year 1" : 
+                     `Month ${breakevenWithUpliftMonth}`}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Including revenue uplift benefits</p>
+                </div>
+                <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                  <h4 className="font-medium mb-1 text-gray-600">Monthly Revenue Increase</h4>
+                  <p className="text-2xl font-bold text-amber-600">
+                    {formatCurrency(Math.round(monthlyUpliftAverage))}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">From improved conversions & AOV</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="h-[400px] w-full">
+              <ChartContainer
+                className="h-[400px]"
+                config={{
+                  savings: {
+                    label: "Processing Savings Only",
+                    color: "#008060"
+                  },
+                  withUplift: {
+                    label: "With Revenue Uplift",
+                    color: "#0069FF"
+                  },
+                  uplift: {
+                    label: "Monthly Additional Revenue",
+                    color: "#F49342"
+                  }
+                }}
+              >
                 <ComposedChart
                   data={data}
                   margin={{
-                    top: 5,
+                    top: 20,
                     right: 30,
                     left: 20,
-                    bottom: 5,
+                    bottom: 10,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                  <XAxis 
+                    dataKey="month" 
+                    stroke="#6B7280"
+                    tickLine={false}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    tick={{ fontSize: 12 }}
+                  />
                   <YAxis 
                     yAxisId="left"
-                    tickFormatter={(value) => `$${Math.abs(Number(value) / 1000)}k`}
+                    tickFormatter={(value) => {
+                      const absValue = Math.abs(Number(value));
+                      return value < 0 ? `-$${(absValue / 1000).toFixed(0)}k` : `$${(absValue / 1000).toFixed(0)}k`;
+                    }}
+                    stroke="#6B7280"
+                    tickLine={false}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    label={{ 
+                      value: "Net Investment / Savings", 
+                      angle: -90, 
+                      position: 'insideLeft',
+                      style: { textAnchor: 'middle', fill: '#6B7280', fontSize: 12 }
+                    }}
                   />
                   <YAxis 
                     yAxisId="right"
                     orientation="right"
-                    tickFormatter={(value) => `$${Math.abs(Number(value) / 1000)}k`}
-                  />
-                  <Tooltip 
-                    formatter={(value, name) => {
-                      if (name === "Projected Monthly Revenue Uplift") {
-                        return [`$${Math.abs(Number(value)).toLocaleString()}`, name];
-                      }
-                      return [`$${Math.abs(Number(value)).toLocaleString()}`, Number(value) < 0 ? "Net Savings" : "Net Cost"];
+                    tickFormatter={(value) => `$${(Number(value) / 1000).toFixed(0)}k`}
+                    stroke="#F49342"
+                    tickLine={false}
+                    axisLine={{ stroke: '#E5E7EB' }}
+                    label={{ 
+                      value: "Revenue Uplift", 
+                      angle: 90, 
+                      position: 'insideRight',
+                      style: { textAnchor: 'middle', fill: '#F49342', fontSize: 12 }
                     }}
-                    labelFormatter={(label) => `Time: ${label}`}
                   />
-                  <Legend />
-                  <ReferenceLine yAxisId="left" y={0} stroke="#000" strokeDasharray="3 3" />
-                  <ReferenceLine 
-                    yAxisId="left"
-                    x={`Month ${breakevenMonth}${breakevenMonth <= 0 || !isFinite(breakevenMonth) ? ' (N/A)' : ''}`} 
-                    stroke="#008060" 
-                    strokeDasharray="3 3" 
-                    label={{ value: breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "No Breakeven" : "Breakeven Point", position: "top", fill: "#008060" }}
+                  <ChartTooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div className="bg-white p-3 border border-gray-200 shadow-lg rounded-md">
+                            <p className="font-semibold mb-2">{payload[0].payload.month}</p>
+                            {payload.map((entry, index) => {
+                              const value = Math.abs(Number(entry.value));
+                              if (entry.dataKey === "netCost") {
+                                return (
+                                  <p className="flex justify-between items-center text-xs mb-1" key={index}>
+                                    <span className="flex items-center">
+                                      <span className="w-2 h-2 inline-block rounded-full bg-[#008060] mr-1"></span>
+                                      Fee Savings Only:
+                                    </span>
+                                    <span className="font-mono ml-4">
+                                      {Number(entry.value) < 0 ? 
+                                        <span className="text-shopify-green">${value.toLocaleString()} saved</span> : 
+                                        <span className="text-red-500">${value.toLocaleString()} cost</span>
+                                      }
+                                    </span>
+                                  </p>
+                                );
+                              } else if (entry.dataKey === "netWithUplift") {
+                                return (
+                                  <p className="flex justify-between items-center text-xs mb-1" key={index}>
+                                    <span className="flex items-center">
+                                      <span className="w-2 h-2 inline-block rounded-full bg-[#0069FF] mr-1"></span>
+                                      With Revenue Uplift:
+                                    </span>
+                                    <span className="font-mono ml-4">
+                                      {Number(entry.value) < 0 ? 
+                                        <span className="text-shopify-green">${value.toLocaleString()} saved</span> : 
+                                        <span className="text-red-500">${value.toLocaleString()} cost</span>
+                                      }
+                                    </span>
+                                  </p>
+                                );
+                              } else if (entry.dataKey === "projectedRevenueUplift") {
+                                return (
+                                  <p className="flex justify-between items-center text-xs mb-1" key={index}>
+                                    <span className="flex items-center">
+                                      <span className="w-2 h-2 inline-block rounded-full bg-[#F49342] mr-1"></span>
+                                      Monthly Revenue Increase:
+                                    </span>
+                                    <span className="font-mono font-semibold ml-4 text-amber-600">
+                                      ${value.toLocaleString()}
+                                    </span>
+                                  </p>
+                                );
+                              }
+                              return null;
+                            })}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
                   />
+                  <Legend 
+                    align="center"
+                    verticalAlign="top"
+                    height={36}
+                    formatter={(value) => {
+                      if (value === "netCost") return "Processing Savings Only";
+                      if (value === "netWithUplift") return "With Revenue Uplift";
+                      if (value === "projectedRevenueUplift") return "Monthly Revenue Increase";
+                      return value;
+                    }}
+                  />
+                  <ReferenceLine yAxisId="left" y={0} stroke="#000" strokeWidth={2} />
+                  {breakevenMonth > 0 && breakevenMonth <= 12 && isFinite(breakevenMonth) && (
+                    <ReferenceLine 
+                      yAxisId="left"
+                      x={`Month ${breakevenMonth}`} 
+                      stroke="#008060" 
+                      strokeDasharray="3 3" 
+                      label={{ 
+                        value: "Fee Breakeven", 
+                        position: "top", 
+                        fill: "#008060",
+                        fontSize: 12,
+                        fontWeight: 500
+                      }}
+                    />
+                  )}
                   {breakevenWithUpliftMonth > 0 && breakevenWithUpliftMonth < 12 && (
                     <ReferenceLine 
                       yAxisId="left"
                       x={`Month ${breakevenWithUpliftMonth}`}
                       stroke="#0069FF" 
                       strokeDasharray="3 3" 
-                      label={{ value: "Breakeven With Uplift", position: "insideTopRight", fill: "#0069FF" }}
+                      label={{ 
+                        value: "Full ROI Breakeven", 
+                        position: "insideTopRight", 
+                        fill: "#0069FF",
+                        fontSize: 12,
+                        fontWeight: 500
+                      }}
                     />
                   )}
                   <Line
                     yAxisId="left"
                     type="monotone"
                     dataKey="netCost"
+                    name="netCost"
                     stroke="#008060"
-                    name="Processing Savings Only"
                     strokeWidth={2}
+                    dot={{ r: 4, strokeWidth: 1 }}
+                    activeDot={{ r: 6 }}
                   />
                   <Line
                     yAxisId="left"
                     type="monotone"
                     dataKey="netWithUplift"
+                    name="netWithUplift"
                     stroke="#0069FF"
-                    name="With Conversion Uplift"
                     strokeWidth={2}
+                    dot={{ r: 4, strokeWidth: 1 }}
+                    activeDot={{ r: 6 }}
                   />
                   <Area
                     yAxisId="right"
                     type="monotone"
                     dataKey="projectedRevenueUplift"
+                    name="projectedRevenueUplift"
                     fill="#FFC859"
                     fillOpacity={0.6}
                     stroke="#F49342"
-                    name="Projected Monthly Revenue Uplift"
                   />
                 </ComposedChart>
-              </ResponsiveContainer>
+              </ChartContainer>
             </div>
             
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">Breakeven Point</h4>
-                <p className="text-2xl font-bold text-shopify-blue">
-                  {breakevenMonth <= 0 || !isFinite(breakevenMonth) ? "Not Applicable" : `Month ${breakevenMonth}`}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">Based on processing savings only</p>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">Breakeven With Uplift</h4>
-                <p className="text-2xl font-bold text-shopify-green">
-                  {breakevenWithUpliftMonth <= 0 ? "Immediate" : 
-                   breakevenWithUpliftMonth >= 12 ? "Beyond 1 Year" : 
-                   `Month ${breakevenWithUpliftMonth}`}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">Including conversion rate improvements</p>
-              </div>
-              <div className="bg-amber-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-1">Monthly Uplift</h4>
-                <p className="text-2xl font-bold text-amber-600">
-                  ${Math.round(monthlyUpliftAverage).toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">From improved conversion rate & AOV</p>
-              </div>
+            <div className="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h4 className="font-semibold mb-3 flex items-center">
+                <ArrowRight className="h-4 w-4 mr-1 text-shopify-green" />
+                How to Read This Chart
+              </h4>
+              <ul className="text-sm space-y-2 text-gray-600">
+                <li className="flex items-start">
+                  <span className="w-2 h-2 rounded-full bg-[#008060] mt-1.5 mr-2"></span>
+                  <span><b>Green Line:</b> Shows when processing fee savings alone cover the cost of upgrading</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 rounded-full bg-[#0069FF] mt-1.5 mr-2"></span>
+                  <span><b>Blue Line:</b> Shows when total benefits (fees + revenue uplift) cover the upgrade cost</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 rounded-full bg-[#F49342] mt-1.5 mr-2"></span>
+                  <span><b>Orange Area:</b> Shows projected monthly revenue increase from improved conversion rates</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="w-2 h-2 rounded-full bg-black mt-1.5 mr-2"></span>
+                  <span><b>Black Line:</b> Breakeven point - above this line is a cost, below is savings</span>
+                </li>
+              </ul>
             </div>
           </CardContent>
         </Card>
