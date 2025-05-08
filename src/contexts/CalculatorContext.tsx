@@ -19,6 +19,10 @@ type CalculatorContextType = {
   selectedPlan: string;
   reachedCheckout: number;
   completedCheckout: number;
+  // Adding the percentage configurable values
+  lowUpliftPercentage: number;
+  averageUpliftPercentage: number;
+  goodUpliftPercentage: number;
   updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>) => void;
   updateSelectedPlan: (plan: string) => void;
 };
@@ -41,6 +45,9 @@ const defaultValues: CalculatorContextType = {
   selectedPlan: 'basic',
   reachedCheckout: 0,
   completedCheckout: 0,
+  lowUpliftPercentage: 5,
+  averageUpliftPercentage: 10,
+  goodUpliftPercentage: 15, // Changed from 20 to 15
   updateCalculatorValues: () => {},
   updateSelectedPlan: () => {},
 };
@@ -69,6 +76,9 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       selectedPlan: defaultValues.selectedPlan,
       reachedCheckout: defaultValues.reachedCheckout,
       completedCheckout: defaultValues.completedCheckout,
+      lowUpliftPercentage: defaultValues.lowUpliftPercentage,
+      averageUpliftPercentage: defaultValues.averageUpliftPercentage,
+      goodUpliftPercentage: defaultValues.goodUpliftPercentage,
     }
   );
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,7 @@ const ROICalculator = () => {
   };
   
   // Get selectedPlan from context
-  const { selectedPlan, updateSelectedPlan, updateCalculatorValues } = useCalculatorContext();
+  const { selectedPlan, updateSelectedPlan, updateCalculatorValues, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage } = useCalculatorContext();
   
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
@@ -236,22 +235,23 @@ const ROICalculator = () => {
     // Calculate monthly base metrics
     const monthlyVisitors = (annualSales / 12) / (currentAOV * (currentConversionRate / 100));
 
-    // Low uplift scenario (5% improvement)
-    const lowCR = currentConversionRate * 1.05;
-    const lowAOV = currentAOV * 1.05;
+    // Use configurable percentages from context instead of hardcoded values
+    // Low uplift scenario
+    const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
+    const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
     const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
     const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
     const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
     
-    // Average uplift scenario (10% improvement)
-    const avgCR = currentConversionRate * 1.1;
-    const avgAOV = currentAOV * 1.1;
+    // Average uplift scenario
+    const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
+    const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
     const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
     const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
     
-    // Good uplift scenario (20% improvement)
-    const goodCR = currentConversionRate * 1.2;
-    const goodAOV = currentAOV * 1.2;
+    // Good uplift scenario (now 15% instead of 20%)
+    const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
+    const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
     const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
     const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
     
@@ -503,7 +503,8 @@ const ROICalculator = () => {
     setMonthlyUpliftLow,
     setMonthlyUpliftAverage,
     setMonthlyUpliftGood,
-    resetCalculator
+    resetCalculator,
+    calculateROI // Add the calculateROI function to the state so it can be called from UpliftProjections
   };
   
   return (
