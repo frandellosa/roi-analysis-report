@@ -47,7 +47,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   const getAvgUpliftAOV = () => currentAOV * (1 + averageUpliftPercentage / 100);
   const getGoodUpliftAOV = () => currentAOV * (1 + goodUpliftPercentage / 100);
   
-  // Calculate the revenue difference for CR improvement only
+  // Calculate the revenue difference for CR improvement only - Based on annual metrics
   const getCROnlyUplift = (improvedCR: number) => {
     if (reachedCheckout > 0) {
       // Current conversion rate is completedCheckout / reachedCheckout
@@ -59,42 +59,42 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       // Calculate additional completed checkouts from CR improvement
       const additionalCompletions = improvedCompleted - completedCheckout;
       
-      // Revenue uplift from additional completions at current AOV
+      // Annual revenue uplift from additional completions at current AOV
       return additionalCompletions * currentAOV;
     } else {
-      const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
+      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
+        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * currentAOV;
+      const currentAnnualRevenue = annualVisitors * currentConversionRate / 100 * currentAOV;
+      const improvedAnnualRevenue = annualVisitors * improvedCR / 100 * currentAOV;
       
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      return improvedAnnualRevenue - currentAnnualRevenue;
     }
   };
   
-  // Revenue impact from AOV improvement only
+  // Revenue impact from AOV improvement only - Annual metrics
   const getAOVOnlyUplift = (improvedAOV: number) => {
     if (completedCheckout > 0) {
-      // Revenue uplift from existing completions at improved AOV
+      // Annual revenue uplift from existing completions at improved AOV
       const currentRevenue = completedCheckout * currentAOV;
       const improvedRevenue = completedCheckout * improvedAOV;
       
       return improvedRevenue - currentRevenue;
     } else {
-      const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
+      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
+        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * improvedAOV;
+      const currentAnnualRevenue = annualVisitors * currentConversionRate / 100 * currentAOV;
+      const improvedAnnualRevenue = annualVisitors * currentConversionRate / 100 * improvedAOV;
       
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      return improvedAnnualRevenue - currentAnnualRevenue;
     }
   };
   
-  // Calculate combined uplift (both CR and AOV improvements)
-  const calculateUpliftRevenue = (improvedCR: number, improvedAOV: number) => {
+  // Calculate combined uplift (both CR and AOV improvements) - Annual metrics
+  const calculateAnnualUplift = (improvedCR: number, improvedAOV: number) => {
     if (reachedCheckout > 0) {
       // Calculate improved completed checkouts based on improved CR
       const improvedCompleted = reachedCheckout * (improvedCR / 100);
@@ -108,16 +108,19 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       return improvedRevenue - currentRevenue;
     } else {
       // Fallback to the original calculation if no checkout data
-      const monthlyVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales / 12) / (currentAOV * (currentConversionRate / 100))
+      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
+        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * improvedAOV;
+      const currentAnnualRevenue = annualVisitors * currentConversionRate / 100 * currentAOV;
+      const improvedAnnualRevenue = annualVisitors * improvedCR / 100 * improvedAOV;
       
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      return improvedAnnualRevenue - currentAnnualRevenue;
     }
   };
+  
+  // Convert annual uplift to monthly for display
+  const annualToMonthly = (annualValue: number) => annualValue / 12;
   
   // Handle percentage changes
   const handlePercentageChange = (value: number, type: 'low' | 'average' | 'good') => {
@@ -136,15 +139,20 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     calculatorState.calculateROI();
   };
 
-  // Calculate uplift values for display
-  const lowUplift = calculateUpliftRevenue(getLowUpliftCR(), getLowUpliftAOV());
-  const averageUplift = calculateUpliftRevenue(getAvgUpliftCR(), getAvgUpliftAOV());
-  const goodUplift = calculateUpliftRevenue(getGoodUpliftCR(), getGoodUpliftAOV());
+  // Calculate annual uplift values
+  const annualLowUplift = calculateAnnualUplift(getLowUpliftCR(), getLowUpliftAOV());
+  const annualAverageUplift = calculateAnnualUplift(getAvgUpliftCR(), getAvgUpliftAOV());
+  const annualGoodUplift = calculateAnnualUplift(getGoodUpliftCR(), getGoodUpliftAOV());
+  
+  // Convert to monthly for display
+  const monthlyLowUplift = annualToMonthly(annualLowUplift);
+  const monthlyAverageUplift = annualToMonthly(annualAverageUplift);
+  const monthlyGoodUplift = annualToMonthly(annualGoodUplift);
 
   return (
     <div className="mb-6 border-t border-gray-200 pt-6">
       <div className="flex justify-between items-center mb-4">
-        <h4 className="text-lg font-semibold">Projected Uplift</h4>
+        <h4 className="text-lg font-semibold">Projected Revenue Uplift</h4>
       </div>
       
       <div className="grid grid-cols-2 gap-4 mb-4">
@@ -247,14 +255,27 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       </div>
       
       <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
-        <h5 className="font-medium mb-2">Projected Monthly Revenue Uplift</h5>
+        <div className="flex items-center justify-between mb-2">
+          <h5 className="font-medium">Projected Monthly Revenue Uplift</h5>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Info className="h-4 w-4 text-gray-400" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p>Monthly revenue projections calculated from annual checkout data.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         
         <div className="space-y-4">
           {/* Monthly completed checkouts info if available */}
           {completedCheckout > 0 && (
             <div className="bg-white p-3 rounded border border-gray-100 mb-2">
-              <p className="text-sm font-medium">Based on {completedCheckout} completed checkout sessions per month</p>
-              <p className="text-xs text-gray-500">Current monthly revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
+              <p className="text-sm font-medium">Based on {completedCheckout} annual completed checkout sessions</p>
+              <p className="text-xs text-gray-500">Current annual revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
+              <p className="text-xs text-gray-500">Monthly average: {formatCurrency((completedCheckout * currentAOV) / 12)}</p>
             </div>
           )}
           
@@ -273,7 +294,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-amber-500"> {getLowUpliftCR().toFixed(2)}%</span>
                 </p>
                 <p className="text-xs font-medium text-amber-500 mt-1">
-                  +{formatCurrency(getCROnlyUplift(getLowUpliftCR()))}
+                  +{formatCurrency(annualToMonthly(getCROnlyUplift(getLowUpliftCR())))}/mo
                 </p>
               </div>
               
@@ -284,14 +305,18 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-amber-500"> ${getLowUpliftAOV().toFixed(0)}</span>
                 </p>
                 <p className="text-xs font-medium text-amber-500 mt-1">
-                  +{formatCurrency(getAOVOnlyUplift(getLowUpliftAOV()))}
+                  +{formatCurrency(annualToMonthly(getAOVOnlyUplift(getLowUpliftAOV())))}/mo
                 </p>
               </div>
             </div>
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-amber-500">{formatCurrency(lowUplift)}</p>
+              <p className="text-sm font-semibold text-amber-500">{formatCurrency(monthlyLowUplift)}/mo</p>
+            </div>
+            <div className="flex justify-between items-center pt-1">
+              <p className="text-xs text-gray-600">Annual Total:</p>
+              <p className="text-xs font-semibold text-amber-500">{formatCurrency(annualLowUplift)}/year</p>
             </div>
           </div>
           
@@ -310,7 +335,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-blue-500"> {getAvgUpliftCR().toFixed(2)}%</span>
                 </p>
                 <p className="text-xs font-medium text-blue-500 mt-1">
-                  +{formatCurrency(getCROnlyUplift(getAvgUpliftCR()))}
+                  +{formatCurrency(annualToMonthly(getCROnlyUplift(getAvgUpliftCR())))}/mo
                 </p>
               </div>
               
@@ -321,14 +346,18 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-blue-500"> ${getAvgUpliftAOV().toFixed(0)}</span>
                 </p>
                 <p className="text-xs font-medium text-blue-500 mt-1">
-                  +{formatCurrency(getAOVOnlyUplift(getAvgUpliftAOV()))}
+                  +{formatCurrency(annualToMonthly(getAOVOnlyUplift(getAvgUpliftAOV())))}/mo
                 </p>
               </div>
             </div>
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-blue-500">{formatCurrency(averageUplift)}</p>
+              <p className="text-sm font-semibold text-blue-500">{formatCurrency(monthlyAverageUplift)}/mo</p>
+            </div>
+            <div className="flex justify-between items-center pt-1">
+              <p className="text-xs text-gray-600">Annual Total:</p>
+              <p className="text-xs font-semibold text-blue-500">{formatCurrency(annualAverageUplift)}/year</p>
             </div>
           </div>
           
@@ -347,7 +376,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-green-600"> {getGoodUpliftCR().toFixed(2)}%</span>
                 </p>
                 <p className="text-xs font-medium text-green-600 mt-1">
-                  +{formatCurrency(getCROnlyUplift(getGoodUpliftCR()))}
+                  +{formatCurrency(annualToMonthly(getCROnlyUplift(getGoodUpliftCR())))}/mo
                 </p>
               </div>
               
@@ -358,20 +387,24 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
                   <span className="font-medium text-green-600"> ${getGoodUpliftAOV().toFixed(0)}</span>
                 </p>
                 <p className="text-xs font-medium text-green-600 mt-1">
-                  +{formatCurrency(getAOVOnlyUplift(getGoodUpliftAOV()))}
+                  +{formatCurrency(annualToMonthly(getAOVOnlyUplift(getGoodUpliftAOV())))}/mo
                 </p>
               </div>
             </div>
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-green-600">{formatCurrency(goodUplift)}</p>
+              <p className="text-sm font-semibold text-green-600">{formatCurrency(monthlyGoodUplift)}/mo</p>
+            </div>
+            <div className="flex justify-between items-center pt-1">
+              <p className="text-xs text-gray-600">Annual Total:</p>
+              <p className="text-xs font-semibold text-green-600">{formatCurrency(annualGoodUplift)}/year</p>
             </div>
           </div>
           
           <div className="text-xs text-gray-500 mt-2">
-            <p>Based on your current metrics and projected improvements in conversion rate and average order value.</p>
-            <p className="mt-1">Use the sliders above to adjust the improvement percentages for each scenario.</p>
+            <p>Based on your annual metrics and projected improvements in conversion rate and average order value.</p>
+            <p className="mt-1">Monthly figures are calculated by dividing annual projections by 12.</p>
           </div>
         </div>
       </div>
