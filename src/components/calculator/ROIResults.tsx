@@ -16,7 +16,9 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
     reachedCheckout,
     completedCheckout,
     currentAOV,
-    formatCurrency
+    formatCurrency,
+    plusMonthlyCost,
+    basicMonthlyCost
   } = calculatorState;
 
   // Get the uplift percentages from context
@@ -28,6 +30,12 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
     ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
     : 0;
   const potentialRevenueLost = (reachedCheckout - completedCheckout) * currentAOV;
+
+  // Calculate the annual plan cost difference
+  const annualPlanDifference = (plusMonthlyCost - basicMonthlyCost) * 12;
+  
+  // Calculate net annual savings (fee savings minus plan cost difference)
+  const netAnnualSavings = feeSavings - annualPlanDifference;
 
   return (
     <Card className="border-gray-100 shadow-md bg-gray-50">
@@ -43,15 +51,15 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
           
           <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
             <h4 className="text-lg font-medium mb-2">
-              {annualSavings >= 0 ? "Net Annual Savings" : "Annual Cost to Upgrade"}
+              {netAnnualSavings >= 0 ? "Net Annual Savings" : "Annual Cost to Upgrade"}
             </h4>
-            <p className={`text-3xl font-bold ${annualSavings >= 0 ? 'text-shopify-green' : 'text-shopify-black'}`}>
-              {formatCurrency(Math.abs(annualSavings))}
+            <p className={`text-3xl font-bold ${netAnnualSavings >= 0 ? 'text-shopify-green' : 'text-shopify-black'}`}>
+              {formatCurrency(Math.abs(netAnnualSavings))}
             </p>
             <p className="text-sm text-shopify-muted mt-1">
-              {annualSavings >= 0 
-                ? "Annual savings after subtracting higher plan costs" 
-                : "Annual cost after accounting for plan difference"}
+              {netAnnualSavings >= 0 
+                ? "Annual fee savings minus higher plan costs" 
+                : "Annual cost after subtracting processing fee savings"}
             </p>
           </div>
           

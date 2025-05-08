@@ -18,7 +18,9 @@ const Stats = () => {
     annualSales, 
     basicFeeRate, 
     plusFeeRate, 
-    processingFeeSavings, 
+    processingFeeSavings,
+    basicMonthlyCost,
+    plusMonthlyCost,
     annualNetSavings,
     monthlyUpliftAverage,
     reachedCheckout,
@@ -32,8 +34,14 @@ const Stats = () => {
   // Calculate quarterly sales (90 days) from annual sales
   const quarterlySales = annualSales / 4;
   
+  // Calculate plan cost difference
+  const annualPlanDifference = (plusMonthlyCost - basicMonthlyCost) * 12;
+  
+  // Calculate the correct net annual savings
+  const netAnnualSavings = processingFeeSavings - annualPlanDifference;
+  
   // Calculate 90-day savings (quarterly)
-  const quarterlySavings = annualNetSavings / 4;
+  const quarterlySavings = netAnnualSavings / 4;
   
   // Calculate quarterly uplift (90-day uplift)
   const quarterlyUplift = monthlyUpliftAverage * 3;
