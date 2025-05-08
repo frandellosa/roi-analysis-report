@@ -516,10 +516,19 @@ const ROICalculator = () => {
 
               <Button 
                 onClick={calculateROI} 
-                className="w-full"
+                className="w-full mb-4"
                 size="lg"
               >
                 <Calculator className="mr-2" /> Calculate ROI
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={resetCalculator}
+                className="w-full flex items-center justify-center gap-1 text-sm"
+              >
+                <RotateCcw className="h-4 w-4" /> Reset Values
               </Button>
             </CardContent>
           </Card>
