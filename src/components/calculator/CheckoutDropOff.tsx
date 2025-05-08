@@ -46,7 +46,7 @@ export const CheckoutDropOff = ({ calculatorState }: CheckoutDropOffProps) => {
       </h4>
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
-          <Label htmlFor="reached-checkout" className="mb-2 block">Annual Checkout Sessions</Label>
+          <Label htmlFor="reached-checkout" className="mb-2 block">Annual Reached Checkout Sessions</Label>
           <Input 
             id="reached-checkout" 
             type="number" 
@@ -56,7 +56,7 @@ export const CheckoutDropOff = ({ calculatorState }: CheckoutDropOffProps) => {
           />
         </div>
         <div>
-          <Label htmlFor="completed-checkout" className="mb-2 block">Completed Checkout Sessions</Label>
+          <Label htmlFor="completed-checkout" className="mb-2 block">Annual Completed Checkout Sessions</Label>
           <Input 
             id="completed-checkout" 
             type="number" 
