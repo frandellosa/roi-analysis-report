@@ -1,3 +1,4 @@
+
 import { Check, Crown, Award, Star } from "lucide-react";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
@@ -178,7 +179,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
           </div>
           
           <div className="bg-gray-50 p-4 rounded-lg mb-4">
-            <p className="font-medium mb-1">Premium cards (Commercial & Amex)</p>
+            <p className="font-medium mb-1">Exclusive cards (Commercial & Amex)</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-sm text-gray-600">Domestic</p>
@@ -227,7 +228,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         <div className="flex items-center mb-1">
           <h3 className="text-2xl font-bold text-white flex items-center">
             {plusPlan.name}
-            <Star className="h-5 w-5 ml-2 text-shopify-green" fill="currentColor" />
+            <Star className="h-5 w-5 ml-2 text-gray-300" fill="currentColor" />
           </h3>
         </div>
         <p className="text-sm text-gray-300 mb-6">{plusPlan.description}</p>
@@ -239,7 +240,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
             <span className="text-sm text-gray-300 ml-1">{plusPlan.billing}</span>
           </div>
           <div className="mt-2">
-            <span className="text-xs font-medium bg-shopify-teal-light text-shopify-green px-3 py-1 rounded-full inline-flex items-center">
+            <span className="text-xs font-medium bg-shopify-teal-light text-gray-300 px-3 py-1 rounded-full inline-flex items-center">
               <Award className="h-3 w-3 mr-1" /> Best Value for High-Volume Merchants
             </span>
           </div>
@@ -247,59 +248,59 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         
         <div className="mb-6">
           <h4 className="font-semibold mb-2 text-white flex items-center">
-            <Star className="h-4 w-4 mr-1.5 text-shopify-green" fill="currentColor" stroke="none" />
-            Premium payment rates
+            <Star className="h-4 w-4 mr-1.5 text-gray-300" fill="currentColor" stroke="none" />
+            Exclusive payment rates
           </h4>
-          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-2 border border-shopify-green/20">
+          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-2 border border-gray-300/20">
             <p className="font-medium mb-1 text-white">Standard cards (Consumer)</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-sm text-gray-300">Domestic</p>
-                <p className="font-medium text-shopify-green">{plusPlan.standardDomestic}</p>
+                <p className="font-medium text-gray-300">{plusPlan.standardDomestic}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-300">International</p>
-                <p className="font-medium text-shopify-green">{plusPlan.standardInternational}</p>
+                <p className="font-medium text-gray-300">{plusPlan.standardInternational}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-4 border border-shopify-green/20">
-            <p className="font-medium mb-1 text-white">Premium cards (Commercial & Amex)</p>
+          <div className="bg-shopify-teal-dark p-4 rounded-lg mb-4 border border-gray-300/20">
+            <p className="font-medium mb-1 text-white">Exclusive cards (Commercial & Amex)</p>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <p className="text-sm text-gray-300">Domestic</p>
-                <p className="font-medium text-shopify-green">{plusPlan.premiumDomestic}</p>
+                <p className="font-medium text-gray-300">{plusPlan.premiumDomestic}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-300">International</p>
-                <p className="font-medium text-shopify-green">{plusPlan.premiumInternational}</p>
+                <p className="font-medium text-gray-300">{plusPlan.premiumInternational}</p>
               </div>
             </div>
           </div>
           
           <ul className="space-y-2">
             <li className="flex items-start">
-              <Check className="h-5 w-5 text-shopify-green mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-sm text-gray-200">In-person rate: <span className="text-shopify-green font-medium">{plusPlan.inPersonRate}</span></span>
+              <Check className="h-5 w-5 text-gray-300 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-gray-200">In-person rate: <span className="text-gray-300 font-medium">{plusPlan.inPersonRate}</span></span>
             </li>
             <li className="flex items-start">
-              <Check className="h-5 w-5 text-shopify-green mr-2 mt-0.5 flex-shrink-0" />
-              <span className="text-sm text-gray-200">3rd-party providers: <span className="text-shopify-green font-medium">{plusPlan.thirdPartyProviderRate}</span></span>
+              <Check className="h-5 w-5 text-gray-300 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-gray-200">3rd-party providers: <span className="text-gray-300 font-medium">{plusPlan.thirdPartyProviderRate}</span></span>
             </li>
           </ul>
         </div>
         
         <div className="mb-6">
           <h4 className="font-semibold mb-2 text-white flex items-center">
-            <Star className="h-4 w-4 mr-1.5 text-shopify-green" fill="currentColor" stroke="none" />
-            Premium features
+            <Star className="h-4 w-4 mr-1.5 text-gray-300" fill="currentColor" stroke="none" />
+            Exclusive features
           </h4>
           <ul className="space-y-3">
             {plusPlan.features.map((feature, i) => (
               <li key={i} className="flex items-start">
                 <div className="bg-shopify-teal-dark rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
-                  <Check className="h-4 w-4 text-shopify-green" />
+                  <Check className="h-4 w-4 text-gray-300" />
                 </div>
                 <span className="text-sm text-gray-200">{feature}</span>
               </li>
