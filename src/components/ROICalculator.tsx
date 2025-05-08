@@ -152,11 +152,14 @@ const ROICalculator = () => {
 
   // Update monthly cost when plan changes
   useEffect(() => {
-    if (selectedPlan === "basic") {
+    // Extract the base plan name (removing any billing suffix)
+    const basePlan = selectedPlan.split('-')[0];
+    
+    if (basePlan === "basic") {
       setBasicMonthlyCost(monthlyCosts.basic);
-    } else if (selectedPlan === "shopify") {
+    } else if (basePlan === "shopify") {
       setBasicMonthlyCost(monthlyCosts.shopify);
-    } else if (selectedPlan === "advanced") {
+    } else if (basePlan === "advanced") {
       setBasicMonthlyCost(monthlyCosts.advanced);
     }
   }, [selectedPlan]); // This now uses the context value
