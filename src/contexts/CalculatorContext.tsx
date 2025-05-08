@@ -16,7 +16,9 @@ type CalculatorContextType = {
   monthlyUpliftGood: number;
   currentConversionRate: number;
   currentAOV: number;
+  selectedPlan: string;
   updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => void;
+  updateSelectedPlan: (plan: string) => void;
 };
 
 const defaultValues: CalculatorContextType = {
@@ -34,7 +36,9 @@ const defaultValues: CalculatorContextType = {
   monthlyUpliftGood: 0,
   currentConversionRate: 0,
   currentAOV: 0,
+  selectedPlan: 'basic',
   updateCalculatorValues: () => {},
+  updateSelectedPlan: () => {},
 };
 
 const CalculatorContext = createContext<CalculatorContextType>(defaultValues);
@@ -42,7 +46,7 @@ const CalculatorContext = createContext<CalculatorContextType>(defaultValues);
 export const useCalculatorContext = () => useContext(CalculatorContext);
 
 export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
-  const [calculatorValues, setCalculatorValues] = useState<Omit<CalculatorContextType, 'updateCalculatorValues'>>(
+  const [calculatorValues, setCalculatorValues] = useState<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>(
     {
       annualSales: defaultValues.annualSales,
       basicFeeRate: defaultValues.basicFeeRate,
@@ -58,15 +62,24 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       monthlyUpliftGood: defaultValues.monthlyUpliftGood,
       currentConversionRate: defaultValues.currentConversionRate,
       currentAOV: defaultValues.currentAOV,
+      selectedPlan: defaultValues.selectedPlan,
     }
   );
 
-  const updateCalculatorValues = (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => {
+  const updateCalculatorValues = (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>) => {
     setCalculatorValues(prev => ({ ...prev, ...values }));
+  };
+  
+  const updateSelectedPlan = (plan: string) => {
+    setCalculatorValues(prev => ({ ...prev, selectedPlan: plan }));
   };
 
   return (
-    <CalculatorContext.Provider value={{ ...calculatorValues, updateCalculatorValues }}>
+    <CalculatorContext.Provider value={{ 
+      ...calculatorValues, 
+      updateCalculatorValues,
+      updateSelectedPlan
+    }}>
       {children}
     </CalculatorContext.Provider>
   );

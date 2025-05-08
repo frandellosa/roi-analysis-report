@@ -9,6 +9,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { useCalculatorContext } from '@/contexts/CalculatorContext';
 
 interface BasicInputsProps {
   calculatorState: any;
@@ -16,13 +17,23 @@ interface BasicInputsProps {
 
 export const BasicInputs = ({ calculatorState }: BasicInputsProps) => {
   const { 
-    selectedPlan, 
-    handlePlanChange, 
     annualSales, 
     handleSalesChange,
     basicMonthlyCost,
     effectivePlusMonthlyCost
   } = calculatorState;
+  
+  // Use shared context instead of local state
+  const { selectedPlan, updateSelectedPlan } = useCalculatorContext();
+  
+  const handlePlanChange = (value: string) => {
+    updateSelectedPlan(value);
+    // Also call the calculatorState's handler if it exists 
+    // to maintain backward compatibility
+    if (calculatorState.handlePlanChange) {
+      calculatorState.handlePlanChange(value);
+    }
+  };
 
   return (
     <>

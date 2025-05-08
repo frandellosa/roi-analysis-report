@@ -2,7 +2,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { FeaturesTable } from "./comparison/FeaturesTable";
-import { useState } from "react";
 import { 
   Select,
   SelectContent,
@@ -12,8 +11,11 @@ import {
 } from "@/components/ui/select";
 
 const ComparisonTable = () => {
-  const { processingFeeSavings } = useCalculatorContext();
-  const [selectedPlan, setSelectedPlan] = useState("basic");
+  const { selectedPlan, updateSelectedPlan } = useCalculatorContext();
+  
+  const handlePlanChange = (value: string) => {
+    updateSelectedPlan(value);
+  };
   
   return (
     <div className="bg-gradient-to-b from-white to-gray-100 py-16">
@@ -28,7 +30,7 @@ const ComparisonTable = () => {
         <div className="flex justify-center mb-6">
           <div className="w-full max-w-xs">
             <p className="text-sm text-gray-600 mb-2">Select your current plan:</p>
-            <Select value={selectedPlan} onValueChange={setSelectedPlan}>
+            <Select value={selectedPlan} onValueChange={handlePlanChange}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a plan" />
               </SelectTrigger>

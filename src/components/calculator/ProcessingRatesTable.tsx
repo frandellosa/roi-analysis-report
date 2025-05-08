@@ -15,6 +15,15 @@ interface ProcessingRatesTableProps {
 }
 
 export const ProcessingRatesTable = ({ processingRates, selectedPlan }: ProcessingRatesTableProps) => {
+  const formatPlanName = (plan: string): string => {
+    switch(plan) {
+      case 'basic': return 'Basic';
+      case 'shopify': return 'Grow';
+      case 'advanced': return 'Advanced';
+      default: return plan.charAt(0).toUpperCase() + plan.slice(1);
+    }
+  };
+
   return (
     <Card className="border-gray-100 shadow-md">
       <CardContent className="pt-6">
@@ -24,7 +33,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
             <thead>
               <tr>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Card Type</th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{formatPlanName(selectedPlan)}</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plus</th>
                 <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Savings</th>
               </tr>
@@ -71,4 +80,3 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
     </Card>
   );
 };
-

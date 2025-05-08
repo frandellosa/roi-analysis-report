@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,18 +22,19 @@ const ROICalculator = () => {
     retailPercentage: 0,
     currentConversionRate: 0,
     currentAOV: 0,
-    selectedPlan: "basic",
     plusTerm: "3year",
     d2cRate: 0,
     b2bRate: 0,
     retailRate: 0
   };
   
+  // Get selectedPlan from context
+  const { selectedPlan, updateSelectedPlan, updateCalculatorValues } = useCalculatorContext();
+  
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
   const [basicMonthlyCost, setBasicMonthlyCost] = useState(defaultValues.basicMonthlyCost);
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(defaultValues.plusMonthlyCost);
-  const [selectedPlan, setSelectedPlan] = useState(defaultValues.selectedPlan);
   const [plusTerm, setPlusTerm] = useState(defaultValues.plusTerm);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -70,16 +70,13 @@ const ROICalculator = () => {
   const [d2cVpf, setD2cVpf] = useState(0);
   const [b2bVpf, setB2bVpf] = useState(0);
   const [retailVpf, setRetailVpf] = useState(0);
-
-  // Access calculator context for updating values
-  const { updateCalculatorValues } = useCalculatorContext();
   
   // Reset calculator to default values
   const resetCalculator = () => {
     setAnnualSales(defaultValues.annualSales);
     setBasicMonthlyCost(defaultValues.basicMonthlyCost);
     setPlusMonthlyCost(defaultValues.plusMonthlyCost);
-    setSelectedPlan(defaultValues.selectedPlan);
+    updateSelectedPlan("basic"); // Update through context
     setPlusTerm(defaultValues.plusTerm);
     setD2cPercentage(defaultValues.d2cPercentage);
     setB2bPercentage(defaultValues.b2bPercentage);
@@ -152,7 +149,7 @@ const ROICalculator = () => {
     } else if (selectedPlan === "advanced") {
       setBasicMonthlyCost(monthlyCosts.advanced);
     }
-  }, [selectedPlan]);
+  }, [selectedPlan]); // This now uses the context value
 
   // Update Plus monthly cost based on term selection
   useEffect(() => {
@@ -281,7 +278,7 @@ const ROICalculator = () => {
     setFeeSavings(processingFeeSavings);
     setAnnualSavings(totalSavings);
 
-    // Update the context with new values
+    // Update the context with new values, including selectedPlan
     updateCalculatorValues({
       annualSales,
       basicFeeRate: processingRates[selectedPlan as keyof typeof processingRates].standardDomestic,
@@ -296,7 +293,8 @@ const ROICalculator = () => {
       monthlyUpliftAverage: monthlyUpliftAverage,
       monthlyUpliftGood: monthlyUpliftGood,
       currentConversionRate,
-      currentAOV
+      currentAOV,
+      selectedPlan
     });
 
     toast.success("ROI calculation complete", {
@@ -338,7 +336,7 @@ const ROICalculator = () => {
 
   // Handle plan selection change
   const handlePlanChange = (value: string) => {
-    setSelectedPlan(value);
+    updateSelectedPlan(value); // Use context setter
   };
 
   // Handle term selection change
