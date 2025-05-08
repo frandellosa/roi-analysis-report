@@ -223,39 +223,78 @@ const ROICalculator = () => {
     }
   };
   
-  // Calculate Revenue Uplift with different scenarios
+  // Calculate Revenue Uplift with different scenarios using completed checkout sessions
   const calculateRevenueUplift = () => {
-    // Calculate monthly base metrics
-    const monthlyVisitors = (annualSales / 12) / (currentAOV * (currentConversionRate / 100));
-
-    // Use configurable percentages from context instead of hardcoded values
-    // Low uplift scenario
-    const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
-    const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
-    const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-    const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
-    const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
-    
-    // Average uplift scenario
-    const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
-    const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
-    const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
-    const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
-    
-    // Good uplift scenario (now 15% instead of 20%)
-    const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
-    const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
-    const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
-    const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
-    
-    setMonthlyUpliftLow(lowUplift);
-    setMonthlyUpliftAverage(avgUplift);
-    setMonthlyUpliftGood(goodUplift);
-    
-    // Annualized uplift (average scenario * 12) for the existing total calculation
-    const annualUplift = avgUplift * 12;
-    
-    return annualUplift;
+    // If we have checkout data, use it as the baseline
+    if (completedCheckout > 0) {
+      // Calculate monthly base revenue from completed checkouts
+      const currentMonthlyRevenue = completedCheckout * currentAOV;
+      
+      // Use configurable percentages for uplift scenarios
+      // Low uplift scenario - base calculations on completed checkouts
+      const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
+      const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
+      // The CR improvement factor impacts the number of completed checkouts
+      const lowCRFactor = lowCR / currentConversionRate;
+      const lowMonthlyRevenue = completedCheckout * lowCRFactor * lowAOV;
+      const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
+      
+      // Average uplift scenario
+      const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
+      const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
+      const avgCRFactor = avgCR / currentConversionRate;
+      const avgMonthlyRevenue = completedCheckout * avgCRFactor * avgAOV;
+      const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
+      
+      // Good uplift scenario
+      const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
+      const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
+      const goodCRFactor = goodCR / currentConversionRate;
+      const goodMonthlyRevenue = completedCheckout * goodCRFactor * goodAOV;
+      const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
+      
+      setMonthlyUpliftLow(lowUplift);
+      setMonthlyUpliftAverage(avgUplift);
+      setMonthlyUpliftGood(goodUplift);
+      
+      // Annualized uplift (average scenario * 12) for the existing total calculation
+      const annualUplift = avgUplift * 12;
+      
+      return annualUplift;
+    } else {
+      // Fallback to original calculation when no checkout data is available
+      // Calculate monthly base metrics
+      const monthlyVisitors = (annualSales / 12) / (currentAOV * (currentConversionRate / 100));
+  
+      // Use configurable percentages from context
+      // Low uplift scenario
+      const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
+      const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
+      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
+      const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
+      const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
+      
+      // Average uplift scenario
+      const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
+      const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
+      const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
+      const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
+      
+      // Good uplift scenario
+      const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
+      const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
+      const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
+      const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
+      
+      setMonthlyUpliftLow(lowUplift);
+      setMonthlyUpliftAverage(avgUplift);
+      setMonthlyUpliftGood(goodUplift);
+      
+      // Annualized uplift (average scenario * 12) for the existing total calculation
+      const annualUplift = avgUplift * 12;
+      
+      return annualUplift;
+    }
   };
   
   // Calculate ROI
