@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calculator } from 'lucide-react';
+import { Calculator, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCalculatorContext } from '@/contexts/CalculatorContext';
 import { BasicInputs } from './calculator/BasicInputs';
