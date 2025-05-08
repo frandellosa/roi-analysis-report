@@ -1,7 +1,10 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
-import { ArrowDown } from "lucide-react";
+import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
+import { ShopifyAudiencesTable } from "./ShopifyAudiencesTable";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { useState } from "react";
 
 interface ROIResultsProps {
   calculatorState: any;
@@ -24,6 +27,9 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
     selectedPlan,
     annualSales
   } = calculatorState;
+
+  // State for the collapsible section
+  const [isAudiencesOpen, setIsAudiencesOpen] = useState(false);
 
   // Get the uplift percentages from context
   const { 
@@ -159,6 +165,25 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
               Based on improved conversion rates applied to reached checkout sessions and improved AOV for completed checkouts
             </p>
           </div>
+          
+          {/* Collapsible Shopify Audiences section */}
+          <Collapsible
+            open={isAudiencesOpen}
+            onOpenChange={setIsAudiencesOpen}
+            className="mt-4"
+          >
+            <CollapsibleTrigger className="bg-white w-full p-4 rounded-lg border border-gray-200 flex justify-between items-center hover:bg-gray-50 transition-colors">
+              <h4 className="text-lg font-medium">Margin Impact due to Shopify Audiences</h4>
+              {isAudiencesOpen ? (
+                <ChevronUp className="h-5 w-5 text-gray-500" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-gray-500" />
+              )}
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2">
+              <ShopifyAudiencesTable currentAOV={currentAOV} />
+            </CollapsibleContent>
+          </Collapsible>
         </div>
       </CardContent>
     </Card>
