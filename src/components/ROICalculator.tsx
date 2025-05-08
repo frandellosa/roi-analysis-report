@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -383,6 +384,17 @@ const ROICalculator = () => {
     }
   };
 
+  // Handle checkout input changes
+  const handleCheckoutChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 0) {
+      setter(value);
+    }
+  };
+
   // Parse the uploaded file and extract payment data
   const parsePaymentFile = (file: File) => {
     // For demo purposes, we'll create a simplified mock parsing
@@ -447,7 +459,6 @@ const ROICalculator = () => {
     setPlusMonthlyCost,
     effectivePlusMonthlyCost,
     selectedPlan,
-    setSelectedPlan,
     plusTerm,
     setPlusTerm,
     d2cPercentage,
