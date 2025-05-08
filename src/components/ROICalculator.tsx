@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { toast } from 'sonner';
@@ -81,6 +82,7 @@ const ROICalculator = () => {
   const [feeSavings, setFeeSavings] = useState(0);
   const [vpfMonthly, setVpfMonthly] = useState(0);
   const [effectivePlusMonthlyCost, setEffectivePlusMonthlyCost] = useState(plusMonthlyCost);
+  const [basicMonthlyCost, setBasicMonthlyCost] = useState(0); // Add state for basicMonthlyCost
   
   // Channel VPF values
   const [d2cVpf, setD2cVpf] = useState(0);
@@ -197,7 +199,10 @@ const ROICalculator = () => {
     const billingPeriod = selectedPlan.includes('-') ? selectedPlan.split('-')[1] : 'monthly';
     
     // Get the current plan's monthly cost
-    const basicMonthlyCost = getPlanMonthlyCost(basePlan, billingPeriod, plans);
+    const currentBasicMonthlyCost = getPlanMonthlyCost(basePlan, billingPeriod, plans);
+    
+    // Update the state with the calculated monthly cost
+    setBasicMonthlyCost(currentBasicMonthlyCost);
     
     // Get processing fees using the processing rates
     const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees(
@@ -212,7 +217,7 @@ const ROICalculator = () => {
     const processingFeeSavings = basicProcessingFee - plusProcessingFee;
     
     // Calculate total annual costs
-    const basicAnnual = basicProcessingFee + (basicMonthlyCost * 12);
+    const basicAnnual = basicProcessingFee + (currentBasicMonthlyCost * 12);
     const plusAnnual = plusProcessingFee + (effectivePlusMonthlyCost * 12);
     
     // Calculate savings
@@ -247,7 +252,7 @@ const ROICalculator = () => {
       annualSales,
       basicFeeRate: currentRate,
       plusFeeRate: plusRate,
-      basicMonthlyCost,
+      basicMonthlyCost: currentBasicMonthlyCost,
       plusMonthlyCost,
       effectivePlusMonthlyCost,
       processingFeeSavings,
