@@ -1,5 +1,5 @@
-
 import { Check } from "lucide-react";
+import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
 type Plan = {
   name: string;
@@ -7,8 +7,17 @@ type Plan = {
   price: string;
   billing: string;
   isPopular: boolean;
-  cardRates: string;
-  ratesList: string[];
+  
+  // Card rate information
+  standardDomestic: string;
+  standardInternational: string;
+  premiumDomestic: string;
+  premiumInternational: string;
+  
+  // Other rates
+  inPersonRate: string;
+  thirdPartyProviderRate: string;
+  
   features: string[];
   cta: string;
   ctaLink: string;
@@ -22,6 +31,8 @@ type FeaturesTableProps = {
 };
 
 export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
+  const { processingFeeSavings } = useCalculatorContext();
+  
   const allPlans: Record<string, Plan> = {
     basic: {
       name: "Shopify Basic",
@@ -29,12 +40,16 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
       price: "$39",
       billing: "/month billed once yearly",
       isPopular: false,
-      cardRates: "Card rates starting at",
-      ratesList: [
-        "2.9% + 30¢ USD online",
-        "2.7% + 0¢ USD in person",
-        "2% 3rd-party payment providers"
-      ],
+      
+      // Card rates from the provided reference image
+      standardDomestic: "2.9% + $0.30",
+      standardInternational: "3.9% + $0.30",
+      premiumDomestic: "3.5% + $0.30",
+      premiumInternational: "4.5% + $0.30",
+      
+      inPersonRate: "2.7% + $0",
+      thirdPartyProviderRate: "2%",
+      
       features: [
         "Up to 45% shipping discount",
         "10 inventory locations",
@@ -49,15 +64,19 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
     shopify: {
       name: "Shopify Grow",
       description: "For small teams",
-      price: "$99",
+      price: "$105",
       billing: "/month billed once yearly",
       isPopular: true,
-      cardRates: "Card rates starting at",
-      ratesList: [
-        "2.6% + 30¢ USD online",
-        "2.5% + 0¢ USD in person",
-        "1% 3rd-party payment providers"
-      ],
+      
+      // Card rates from the provided reference image
+      standardDomestic: "2.7% + $0.30",
+      standardInternational: "3.7% + $0.30",
+      premiumDomestic: "3.3% + $0.30",
+      premiumInternational: "4.3% + $0.30",
+      
+      inPersonRate: "2.5% + $0",
+      thirdPartyProviderRate: "1%",
+      
       features: [
         "Up to 50% shipping discount and insurance",
         "10 inventory locations",
@@ -73,15 +92,19 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
     advanced: {
       name: "Shopify Advanced",
       description: "As your business scales",
-      price: "$389",
+      price: "$399",
       billing: "/month billed once yearly",
       isPopular: false,
-      cardRates: "Card rates starting at",
-      ratesList: [
-        "2.4% + 30¢ USD online",
-        "2.4% + 0¢ USD in person",
-        "0.6% 3rd-party payment providers"
-      ],
+      
+      // Card rates from the provided reference image
+      standardDomestic: "2.5% + $0.30",
+      standardInternational: "3.5% + $0.30",
+      premiumDomestic: "3.1% + $0.30",
+      premiumInternational: "4.1% + $0.30",
+      
+      inPersonRate: "2.4% + $0",
+      thirdPartyProviderRate: "0.6%",
+      
       features: [
         "Up to 53% shipping discount, insurance, 3rd-party calculated rates",
         "10 inventory locations",
@@ -101,10 +124,16 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
       price: "US$2,300",
       billing: "/month on a 3-year term",
       isPopular: false,
-      cardRates: "Card rates",
-      ratesList: [
-        "Competitive rates for high-volume merchants"
-      ],
+      
+      // Card rates from the provided reference image
+      standardDomestic: "2.25% + $0.30",
+      standardInternational: "3.25% + $0.30",
+      premiumDomestic: "2.95% + $0.30",
+      premiumInternational: "3.95% + $0.30",
+      
+      inPersonRate: "2.2% + $0",
+      thirdPartyProviderRate: "0.5%",
+      
       features: [
         "Up to 53% shipping discount, insurance, 3rd-party calculated rates",
         "200 inventory locations",
@@ -151,14 +180,44 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         </div>
         
         <div className="mb-6">
-          <h4 className="font-semibold mb-2">{currentPlan.cardRates}</h4>
+          <h4 className="font-semibold mb-2">Online payment rates</h4>
+          <div className="bg-gray-50 p-4 rounded-lg mb-2">
+            <p className="font-medium mb-1">Standard cards (Consumer)</p>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-gray-600">Domestic</p>
+                <p className="font-medium">{currentPlan.standardDomestic}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">International</p>
+                <p className="font-medium">{currentPlan.standardInternational}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <p className="font-medium mb-1">Premium cards (Commercial & Amex)</p>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-gray-600">Domestic</p>
+                <p className="font-medium">{currentPlan.premiumDomestic}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">International</p>
+                <p className="font-medium">{currentPlan.premiumInternational}</p>
+              </div>
+            </div>
+          </div>
+          
           <ul className="space-y-2">
-            {currentPlan.ratesList.map((rate, i) => (
-              <li key={i} className="flex items-start">
-                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                <span className="text-sm">{rate}</span>
-              </li>
-            ))}
+            <li className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">In-person rate: {currentPlan.inPersonRate}</span>
+            </li>
+            <li className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">3rd-party payment providers: {currentPlan.thirdPartyProviderRate}</span>
+            </li>
           </ul>
         </div>
         
@@ -207,14 +266,44 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         </div>
         
         <div className="mb-6">
-          <h4 className="font-semibold mb-2">{plusPlan.cardRates}</h4>
+          <h4 className="font-semibold mb-2">Online payment rates</h4>
+          <div className="bg-blue-50 p-4 rounded-lg mb-2">
+            <p className="font-medium mb-1">Standard cards (Consumer)</p>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-gray-600">Domestic</p>
+                <p className="font-medium">{plusPlan.standardDomestic}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">International</p>
+                <p className="font-medium">{plusPlan.standardInternational}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-blue-50 p-4 rounded-lg mb-4">
+            <p className="font-medium mb-1">Premium cards (Commercial & Amex)</p>
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <p className="text-sm text-gray-600">Domestic</p>
+                <p className="font-medium">{plusPlan.premiumDomestic}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">International</p>
+                <p className="font-medium">{plusPlan.premiumInternational}</p>
+              </div>
+            </div>
+          </div>
+          
           <ul className="space-y-2">
-            {plusPlan.ratesList.map((rate, i) => (
-              <li key={i} className="flex items-start">
-                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                <span className="text-sm">{rate}</span>
-              </li>
-            ))}
+            <li className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">In-person rate: {plusPlan.inPersonRate}</span>
+            </li>
+            <li className="flex items-start">
+              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <span className="text-sm">3rd-party payment providers: {plusPlan.thirdPartyProviderRate}</span>
+            </li>
           </ul>
         </div>
         
