@@ -10,6 +10,7 @@ import { UpliftProjections } from './calculator/UpliftProjections';
 import { FileUpload } from './calculator/FileUpload';
 import { ROIResults } from './calculator/ROIResults';
 import { ProcessingRatesTable } from './calculator/ProcessingRatesTable';
+import { ShopifyAudiencesTable } from './calculator/ShopifyAudiencesTable';
 import { CheckoutDropOff } from './calculator/CheckoutDropOff';
 
 const ROICalculator = () => {
@@ -572,6 +573,10 @@ const ROICalculator = () => {
             <ProcessingRatesTable 
               processingRates={processingRates}
               selectedPlan={selectedPlan}
+            />
+
+            <ShopifyAudiencesTable
+              currentAOV={currentAOV}
             />
           </div>
         </div>
