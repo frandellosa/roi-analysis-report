@@ -1,21 +1,23 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calculator, RotateCcw } from 'lucide-react';
+import { Card } from "@/components/ui/card";
 import { toast } from 'sonner';
 import { useCalculatorContext } from '@/contexts/CalculatorContext';
-import { BasicInputs } from './calculator/BasicInputs';
-import { GmvBreakdown } from './calculator/GmvBreakdown';
-import { UpliftProjections } from './calculator/UpliftProjections';
-import { FileUpload } from './calculator/FileUpload';
 import { ROIResults } from './calculator/ROIResults';
 import { ProcessingRatesTable } from './calculator/ProcessingRatesTable';
-import { ShopifyAudiencesTable } from './calculator/ShopifyAudiencesTable';
-import { CheckoutDropOff } from './calculator/CheckoutDropOff';
+import { CalculatorControls } from './calculator/CalculatorControls';
+import { 
+  calculateProcessingFees, 
+  calculateRevenueUplift, 
+  getPlanMonthlyCost, 
+  formatCurrency, 
+  parsePaymentFile 
+} from '@/services/calculatorService';
+import { DefaultValues, processingRatesType } from '@/types/calculator';
 
 const ROICalculator = () => {
-  // Default values - changed to 0
-  const defaultValues = {
+  // Default values
+  const defaultValues: DefaultValues = {
     annualSales: 0,
     basicMonthlyCost: 0,
     plusMonthlyCost: 0,
@@ -45,7 +47,6 @@ const ROICalculator = () => {
   
   // Basic inputs
   const [annualSales, setAnnualSales] = useState(defaultValues.annualSales);
-  // We no longer need to manage basicMonthlyCost in state since it's now derived from the plan
   const [plusMonthlyCost, setPlusMonthlyCost] = useState(defaultValues.plusMonthlyCost);
   const [plusTerm, setPlusTerm] = useState(defaultValues.plusTerm);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -87,39 +88,8 @@ const ROICalculator = () => {
   const [b2bVpf, setB2bVpf] = useState(0);
   const [retailVpf, setRetailVpf] = useState(0);
   
-  // Reset calculator to default values
-  const resetCalculator = () => {
-    setAnnualSales(defaultValues.annualSales);
-    updateSelectedPlan("basic"); // Update through context
-    setPlusMonthlyCost(defaultValues.plusMonthlyCost);
-    setPlusTerm(defaultValues.plusTerm);
-    setD2cPercentage(defaultValues.d2cPercentage);
-    setB2bPercentage(defaultValues.b2bPercentage);
-    setRetailPercentage(defaultValues.retailPercentage);
-    setD2cRate(defaultValues.d2cRate);
-    setB2bRate(defaultValues.b2bRate);
-    setRetailRate(defaultValues.retailRate);
-    setCurrentConversionRate(defaultValues.currentConversionRate);
-    setCurrentAOV(defaultValues.currentAOV);
-    setReachedCheckout(defaultValues.reachedCheckout);
-    setCompletedCheckout(defaultValues.completedCheckout);
-    setFileData(null);
-    
-    // Clear file upload
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    setFileName(null);
-    
-    // Recalculate with default values
-    setTimeout(() => {
-      calculateROI();
-      toast.success("Calculator values have been reset to defaults");
-    }, 100);
-  };
-
   // Processing rates based on Shopify's website
-  const processingRates = {
+  const processingRates: processingRatesType = {
     basic: {
       standardDomestic: 2.9,
       standardInternational: 3.9,
@@ -190,114 +160,35 @@ const ROICalculator = () => {
     }
   }, [plusTerm, annualSales, d2cPercentage, b2bPercentage, retailPercentage, plusMonthlyCost, d2cRate, b2bRate, retailRate]);
 
-  // Calculate processing fees using the rates table data
-  const calculateProcessingFees = () => {
-    // Get the base plan name for accessing processing rates
-    const basePlan = selectedPlan.split('-')[0];
+  // Reset calculator to default values
+  const resetCalculator = () => {
+    setAnnualSales(defaultValues.annualSales);
+    updateSelectedPlan("basic"); // Update through context
+    setPlusMonthlyCost(defaultValues.plusMonthlyCost);
+    setPlusTerm(defaultValues.plusTerm);
+    setD2cPercentage(defaultValues.d2cPercentage);
+    setB2bPercentage(defaultValues.b2bPercentage);
+    setRetailPercentage(defaultValues.retailPercentage);
+    setD2cRate(defaultValues.d2cRate);
+    setB2bRate(defaultValues.b2bRate);
+    setRetailRate(defaultValues.retailRate);
+    setCurrentConversionRate(defaultValues.currentConversionRate);
+    setCurrentAOV(defaultValues.currentAOV);
+    setReachedCheckout(defaultValues.reachedCheckout);
+    setCompletedCheckout(defaultValues.completedCheckout);
+    setFileData(null);
     
-    // If we have file data, use it for calculations
-    if (fileData) {
-      // Simple example - in a real implementation this would parse and analyze the file data
-      // For now, we'll just use a placeholder implementation
-      return {
-        basicProcessingFee: fileData.totalAmount * (processingRates[basePlan].standardDomestic / 100) + (fileData.transactions * 0.30),
-        plusProcessingFee: fileData.totalAmount * (processingRates.plus.standardDomestic / 100) + (fileData.transactions * 0.30),
-      };
-    } else {
-      // No file uploaded - use the standard calculation based on annual sales
-      const avgOrderValue = currentAOV > 0 ? currentAOV : 50; // Use current AOV if available, otherwise default to $50
-      const transactionsCount = annualSales / avgOrderValue;
-      const transactionFee = 0.30;
-      
-      // Use the selected plan's standard domestic rate and Plus plan's rate
-      const basicRate = processingRates[basePlan].standardDomestic;
-      const plusRate = processingRates.plus.standardDomestic;
-      
-      const basicProcessingFee = (annualSales * basicRate / 100) + (transactionFee * transactionsCount);
-      const plusProcessingFee = (annualSales * plusRate / 100) + (transactionFee * transactionsCount);
-      
-      return {
-        basicProcessingFee,
-        plusProcessingFee
-      };
+    // Clear file upload
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
-  };
-  
-  // Calculate Revenue Uplift with different scenarios using completed checkout sessions
-  const calculateRevenueUplift = () => {
-    // If we have checkout data, use it as the baseline
-    if (reachedCheckout > 0 && completedCheckout > 0) {
-      // Calculate current revenue from completed checkouts
-      const currentMonthlyRevenue = completedCheckout * currentAOV;
-      
-      // Use configurable percentages for uplift scenarios
-      // Low uplift scenario
-      const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
-      const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
-      
-      // Calculate improved completed checkouts based on improved CR
-      const lowImprovedCompleted = reachedCheckout * (lowCR / 100);
-      const lowMonthlyRevenue = lowImprovedCompleted * lowAOV;
-      const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
-      
-      // Average uplift scenario
-      const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
-      const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
-      
-      const avgImprovedCompleted = reachedCheckout * (avgCR / 100);
-      const avgMonthlyRevenue = avgImprovedCompleted * avgAOV;
-      const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
-      
-      // Good uplift scenario
-      const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
-      const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
-      
-      const goodImprovedCompleted = reachedCheckout * (goodCR / 100);
-      const goodMonthlyRevenue = goodImprovedCompleted * goodAOV;
-      const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
-      
-      setMonthlyUpliftLow(lowUplift);
-      setMonthlyUpliftAverage(avgUplift);
-      setMonthlyUpliftGood(goodUplift);
-      
-      // Annualized uplift (average scenario * 12) for the existing total calculation
-      const annualUplift = avgUplift * 12;
-      
-      return annualUplift;
-    } else {
-      // Fallback to original calculation when no checkout data is available
-      // Calculate monthly base metrics
-      const monthlyVisitors = (annualSales / 12) / (currentAOV * (currentConversionRate / 100));
-  
-      // Use configurable percentages from context
-      // Low uplift scenario
-      const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
-      const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
-      const lowUplift = lowMonthlyRevenue - currentMonthlyRevenue;
-      
-      // Average uplift scenario
-      const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
-      const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
-      const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
-      const avgUplift = avgMonthlyRevenue - currentMonthlyRevenue;
-      
-      // Good uplift scenario
-      const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
-      const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
-      const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
-      const goodUplift = goodMonthlyRevenue - currentMonthlyRevenue;
-      
-      setMonthlyUpliftLow(lowUplift);
-      setMonthlyUpliftAverage(avgUplift);
-      setMonthlyUpliftGood(goodUplift);
-      
-      // Annualized uplift (average scenario * 12) for the existing total calculation
-      const annualUplift = avgUplift * 12;
-      
-      return annualUplift;
-    }
+    setFileName(null);
+    
+    // Recalculate with default values
+    setTimeout(() => {
+      calculateROI();
+      toast.success("Calculator values have been reset to defaults");
+    }, 100);
   };
   
   // Calculate ROI
@@ -307,10 +198,16 @@ const ROICalculator = () => {
     const billingPeriod = selectedPlan.includes('-') ? selectedPlan.split('-')[1] : 'monthly';
     
     // Get the current plan's monthly cost
-    const basicMonthlyCost = getPlanMonthlyCost(basePlan, billingPeriod);
+    const basicMonthlyCost = getPlanMonthlyCost(basePlan, billingPeriod, plans);
     
     // Get processing fees using the processing rates
-    const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees();
+    const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees(
+      annualSales,
+      selectedPlan,
+      processingRates,
+      currentAOV,
+      fileData
+    );
     
     // Calculate the savings in processing fees
     const processingFeeSavings = basicProcessingFee - plusProcessingFee;
@@ -323,7 +220,19 @@ const ROICalculator = () => {
     const totalSavings = basicAnnual - plusAnnual;
     
     // Calculate projected revenue uplift
-    const upliftRevenue = calculateRevenueUplift();
+    const upliftRevenue = calculateRevenueUplift(
+      reachedCheckout,
+      completedCheckout,
+      currentConversionRate,
+      currentAOV,
+      annualSales,
+      lowUpliftPercentage,
+      averageUpliftPercentage,
+      goodUpliftPercentage,
+      setMonthlyUpliftLow,
+      setMonthlyUpliftAverage,
+      setMonthlyUpliftGood
+    );
     
     setBasicAnnualCost(basicAnnual);
     setPlusAnnualCost(plusAnnual);
@@ -364,16 +273,6 @@ const ROICalculator = () => {
       calculateROI();
     }
   }, []);
-  
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
-  };
   
   // Handle sales input change
   const handleSalesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -437,33 +336,6 @@ const ROICalculator = () => {
     }
   };
 
-  // Parse the uploaded file and extract payment data
-  const parsePaymentFile = (file: File) => {
-    // For demo purposes, we'll create a simplified mock parsing
-    // In a real app, you would use Papa Parse or ExcelJS to parse CSV/Excel files
-    
-    // Mock file analysis result - this would come from actual file parsing
-    const mockData = {
-      totalAmount: annualSales > 0 ? annualSales : 1000000, // Use entered amount or default to $1M
-      transactions: 5000,
-      avgOrderValue: 200,
-      paymentTypes: {
-        standard: 0.7,
-        premium: 0.2,
-        international: 0.1
-      }
-    };
-    
-    setFileData(mockData);
-    
-    // Update current AOV if available from file
-    if (mockData.avgOrderValue && currentAOV === 0) {
-      setCurrentAOV(mockData.avgOrderValue);
-    }
-    
-    return mockData;
-  };
-
   // Handle file upload
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -471,7 +343,13 @@ const ROICalculator = () => {
       setFileName(file.name);
       
       // Parse the file
-      const data = parsePaymentFile(file);
+      const data = parsePaymentFile(file, annualSales, currentAOV);
+      setFileData(data);
+      
+      // Update current AOV if available from file
+      if (data.avgOrderValue && currentAOV === 0) {
+        setCurrentAOV(data.avgOrderValue);
+      }
       
       toast.success(`File uploaded: ${file.name}`, {
         description: "Your payment data has been analyzed for ROI calculation."
@@ -483,47 +361,6 @@ const ROICalculator = () => {
   const triggerFileUpload = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
-    }
-  };
-
-  // Fixed function to update calculator values using the correct context function
-  const updateCalculatorContext = (values: any) => {
-    updateCalculatorValues(values);
-  };
-
-  // Function to extract monthly cost for any plan, including non-monthly plans
-  const getPlanMonthlyCost = (planId: string, billingType: string = 'monthly') => {
-    if (billingType === 'monthly') {
-      const priceString = plans[planId].price;
-      const priceMatch = priceString.match(/\$(\d+)/);
-      
-      if (priceMatch && priceMatch[1]) {
-        return parseInt(priceMatch[1], 10);
-      }
-      return 0;
-    } 
-    else {
-      // Annual billing prices
-      if (billingType === 'annual') {
-        if (planId === 'basic') return 29;
-        if (planId === 'shopify') return 79;
-        if (planId === 'advanced') return 299;
-      }
-      // Biennial billing prices
-      else if (billingType === 'biennial') {
-        if (planId === 'basic') return Math.round(558 / 24);
-        if (planId === 'shopify') return Math.round(1518 / 24);
-        if (planId === 'advanced') return Math.round(5640 / 24);
-      }
-      // Triennial billing prices
-      else if (billingType === 'triennial') {
-        if (planId === 'basic') return Math.round(783 / 36);
-        if (planId === 'shopify') return Math.round(2133 / 36);
-        if (planId === 'advanced') return Math.round(7884 / 36);
-      }
-      
-      // Fallback to regular monthly price
-      return getPlanMonthlyCost(planId, 'monthly');
     }
   };
 
@@ -593,49 +430,13 @@ const ROICalculator = () => {
         
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="border-gray-100 shadow-md">
-            <CardContent className="pt-6">
-              <h3 className="text-xl font-semibold mb-6">Input Your Numbers</h3>
-              
-              <BasicInputs 
-                calculatorState={calculatorState} 
-              />
-
-              <GmvBreakdown 
-                calculatorState={calculatorState} 
-              />
-
-              <CheckoutDropOff
-                calculatorState={calculatorState}
-              />
-
-              <FileUpload 
-                fileInputRef={fileInputRef}
-                fileName={fileName}
-                handleFileUpload={handleFileUpload}
-                triggerFileUpload={triggerFileUpload}
-              />
-
-              <UpliftProjections 
-                calculatorState={calculatorState}
-              />
-
-              <Button 
-                onClick={calculateROI} 
-                className="w-full mb-4"
-                size="lg"
-              >
-                <Calculator className="mr-2" /> Calculate ROI
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={resetCalculator}
-                className="w-full flex items-center justify-center gap-1 text-sm"
-              >
-                <RotateCcw className="h-4 w-4" /> Reset Values
-              </Button>
-            </CardContent>
+            <CalculatorControls
+              calculatorState={calculatorState}
+              fileInputRef={fileInputRef}
+              fileName={fileName}
+              handleFileUpload={handleFileUpload}
+              triggerFileUpload={triggerFileUpload}
+            />
           </Card>
           
           <div className="flex flex-col gap-6">
