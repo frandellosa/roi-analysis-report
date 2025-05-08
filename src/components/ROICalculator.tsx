@@ -10,6 +10,7 @@ import { UpliftProjections } from './calculator/UpliftProjections';
 import { FileUpload } from './calculator/FileUpload';
 import { ROIResults } from './calculator/ROIResults';
 import { ProcessingRatesTable } from './calculator/ProcessingRatesTable';
+import { CheckoutDropOff } from './calculator/CheckoutDropOff';
 
 const ROICalculator = () => {
   // Default values - changed to 0
@@ -25,7 +26,9 @@ const ROICalculator = () => {
     plusTerm: "3year",
     d2cRate: 0,
     b2bRate: 0,
-    retailRate: 0
+    retailRate: 0,
+    reachedCheckout: 0,
+    completedCheckout: 0
   };
   
   // Get selectedPlan from context
@@ -57,6 +60,10 @@ const ROICalculator = () => {
   const [monthlyUpliftLow, setMonthlyUpliftLow] = useState(0);
   const [monthlyUpliftAverage, setMonthlyUpliftAverage] = useState(0);
   const [monthlyUpliftGood, setMonthlyUpliftGood] = useState(0);
+  
+  // Checkout drop-off metrics
+  const [reachedCheckout, setReachedCheckout] = useState(defaultValues.reachedCheckout);
+  const [completedCheckout, setCompletedCheckout] = useState(defaultValues.completedCheckout);
 
   // Calculated values
   const [basicAnnualCost, setBasicAnnualCost] = useState(0);
@@ -86,6 +93,8 @@ const ROICalculator = () => {
     setRetailRate(defaultValues.retailRate);
     setCurrentConversionRate(defaultValues.currentConversionRate);
     setCurrentAOV(defaultValues.currentAOV);
+    setReachedCheckout(defaultValues.reachedCheckout);
+    setCompletedCheckout(defaultValues.completedCheckout);
     setFileData(null);
     
     // Clear file upload
@@ -294,7 +303,9 @@ const ROICalculator = () => {
       monthlyUpliftGood: monthlyUpliftGood,
       currentConversionRate,
       currentAOV,
-      selectedPlan
+      selectedPlan,
+      reachedCheckout,
+      completedCheckout
     });
 
     toast.success("ROI calculation complete", {
@@ -459,6 +470,10 @@ const ROICalculator = () => {
     monthlyUpliftLow,
     monthlyUpliftAverage,
     monthlyUpliftGood,
+    reachedCheckout,
+    setReachedCheckout,
+    completedCheckout,
+    setCompletedCheckout,
     basicAnnualCost,
     plusAnnualCost,
     feeSavings,
@@ -472,6 +487,7 @@ const ROICalculator = () => {
     handleD2CChange,
     handleB2BChange,
     handleRateChange,
+    handleCheckoutChange,
     formatCurrency,
     setMonthlyUpliftLow,
     setMonthlyUpliftAverage,
@@ -500,6 +516,10 @@ const ROICalculator = () => {
 
               <GmvBreakdown 
                 calculatorState={calculatorState} 
+              />
+
+              <CheckoutDropOff
+                calculatorState={calculatorState}
               />
 
               <FileUpload 

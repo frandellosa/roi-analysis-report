@@ -17,7 +17,9 @@ type CalculatorContextType = {
   currentConversionRate: number;
   currentAOV: number;
   selectedPlan: string;
-  updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues'>>) => void;
+  reachedCheckout: number;
+  completedCheckout: number;
+  updateCalculatorValues: (values: Partial<Omit<CalculatorContextType, 'updateCalculatorValues' | 'updateSelectedPlan'>>) => void;
   updateSelectedPlan: (plan: string) => void;
 };
 
@@ -37,6 +39,8 @@ const defaultValues: CalculatorContextType = {
   currentConversionRate: 0,
   currentAOV: 0,
   selectedPlan: 'basic',
+  reachedCheckout: 0,
+  completedCheckout: 0,
   updateCalculatorValues: () => {},
   updateSelectedPlan: () => {},
 };
@@ -63,6 +67,8 @@ export const CalculatorProvider = ({ children }: { children: ReactNode }) => {
       currentConversionRate: defaultValues.currentConversionRate,
       currentAOV: defaultValues.currentAOV,
       selectedPlan: defaultValues.selectedPlan,
+      reachedCheckout: defaultValues.reachedCheckout,
+      completedCheckout: defaultValues.completedCheckout,
     }
   );
 

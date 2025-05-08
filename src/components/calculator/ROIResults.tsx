@@ -12,8 +12,18 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
     monthlyUpliftLow, 
     monthlyUpliftAverage, 
     monthlyUpliftGood,
+    reachedCheckout,
+    completedCheckout,
+    currentAOV,
     formatCurrency
   } = calculatorState;
+
+  // Calculate checkout drop-off metrics if available
+  const showCheckoutMetrics = reachedCheckout > 0;
+  const dropOffRate = reachedCheckout > 0 
+    ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
+    : 0;
+  const potentialRevenueLost = (reachedCheckout - completedCheckout) * currentAOV;
 
   return (
     <Card className="border-gray-100 shadow-md bg-gray-50">
@@ -40,6 +50,25 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
                 : "Annual cost after accounting for plan difference"}
             </p>
           </div>
+          
+          {showCheckoutMetrics && (
+            <div className="bg-white p-6 rounded-lg border border-gray-200 mb-4">
+              <h4 className="text-lg font-medium mb-2">Checkout Abandonment Impact</h4>
+              <div className="grid grid-cols-2 gap-4 mb-2">
+                <div>
+                  <p className="text-sm font-semibold text-gray-600">Drop-Off Rate</p>
+                  <p className="text-2xl font-bold text-amber-600">{dropOffRate.toFixed(1)}%</p>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-600">Lost Revenue</p>
+                  <p className="text-2xl font-bold text-red-500">{formatCurrency(potentialRevenueLost)}</p>
+                </div>
+              </div>
+              <p className="text-sm text-shopify-muted mt-1">
+                Potential revenue lost to checkout abandonment
+              </p>
+            </div>
+          )}
           
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h4 className="text-lg font-medium mb-2">Projected Revenue Uplift</h4>
