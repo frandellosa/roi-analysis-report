@@ -18,7 +18,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
   return (
     <Card className="border-gray-100 shadow-md">
       <CardContent className="pt-6">
-        <h3 className="text-xl font-semibold mb-4">Processing Rate Comparison</h3>
+        <h3 className="text-xl font-semibold mb-4">Credit Card Processing Rate Comparison</h3>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
@@ -71,3 +71,4 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
     </Card>
   );
 };
+
