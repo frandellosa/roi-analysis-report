@@ -16,7 +16,7 @@ const ComparisonTable = () => {
   const [selectedPlan, setSelectedPlan] = useState("basic");
   
   return (
-    <div className="bg-white py-16">
+    <div className="bg-gradient-to-b from-white to-gray-100 py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="shopify-heading">Plan Comparison</h2>
