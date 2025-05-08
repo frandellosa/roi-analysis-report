@@ -5,7 +5,7 @@ import {
   BadgeDollarSign, 
   ChartBarIncreasing, 
   Wallet,
-  ShoppingCart
+  CreditCard
 } from "lucide-react";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { formatCurrency } from "@/utils/formatters";
@@ -45,6 +45,9 @@ const Stats = () => {
     ? ((reachedCheckout - completedCheckout) / reachedCheckout) * 100 
     : 0;
   const potentialRevenueLost = (reachedCheckout - completedCheckout) * currentAOV;
+  
+  // Calculate current annual processing fees
+  const currentAnnualProcessingFees = (annualSales * basicFeeRate / 100);
 
   return (
     <div className="bg-white py-16" id="business-stats">
@@ -72,11 +75,11 @@ const Stats = () => {
           />
           
           <StatCard 
-            icon={ChartBarIncreasing} 
-            title="Fee Savings Rate" 
-            value={`${(basicFeeRate - plusFeeRate).toFixed(2)}%`}
-            previousValue="Plus vs Basic Plan Difference"
-            valueColor="text-shopify-green"
+            icon={CreditCard} 
+            title="Annual Processing Fees" 
+            value={formatCurrency(currentAnnualProcessingFees)}
+            previousValue={`At ${basicFeeRate.toFixed(2)}% rate`}
+            valueColor="text-shopify-black"
           />
         </div>
 
