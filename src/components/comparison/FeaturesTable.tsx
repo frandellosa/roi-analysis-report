@@ -1,4 +1,3 @@
-
 import { Check, Crown, Award, Star } from "lucide-react";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 
@@ -145,7 +144,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
       <div className={`rounded-2xl border p-6 flex flex-col h-full ${currentPlan.highlight ? 'border-shopify-blue shadow-md' : 'border-gray-200'}`}>
         {currentPlan.isPopular && (
           <div className="mb-2">
-            <span className="bg-green-400 text-xs text-black font-semibold py-1 px-3 rounded-full">
+            <span className="bg-gray-400 text-xs text-black font-semibold py-1 px-3 rounded-full">
               Most Popular
             </span>
           </div>
@@ -194,11 +193,11 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
           
           <ul className="space-y-2">
             <li className="flex items-start">
-              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <Check className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
               <span className="text-sm">In-person rate: {currentPlan.inPersonRate}</span>
             </li>
             <li className="flex items-start">
-              <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+              <Check className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
               <span className="text-sm">3rd-party payment providers: {currentPlan.thirdPartyProviderRate}</span>
             </li>
           </ul>
@@ -209,7 +208,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
           <ul className="space-y-2">
             {currentPlan.features.map((feature, i) => (
               <li key={i} className="flex items-start">
-                <Check className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                <Check className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
                 <span className="text-sm">{feature}</span>
               </li>
             ))}
@@ -217,10 +216,10 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         </div>
       </div>
 
-      {/* Plus plan card - updated with hero banner color palette */}
+      {/* Plus plan card - updated with dark gray instead of orange */}
       <div className="relative rounded-2xl border-2 border-shopify-teal p-6 flex flex-col h-full shadow-lg shadow-shopify-teal-dark/20 bg-gradient-to-br from-shopify-teal-light to-shopify-teal">
-        {/* Updated badge text with hero banner colors */}
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-shopify-teal to-shopify-green text-white text-xs font-bold py-1.5 px-6 rounded-full shadow-md flex items-center">
+        {/* Updated badge with dark gray instead of orange */}
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-gray-700 to-gray-900 text-white text-xs font-bold py-1.5 px-6 rounded-full shadow-md flex items-center">
           <Crown className="h-3.5 w-3.5 mr-1.5" />
           RECOMMENDED
         </div>
@@ -240,7 +239,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
             <span className="text-sm text-gray-300 ml-1">{plusPlan.billing}</span>
           </div>
           <div className="mt-2">
-            <span className="text-xs font-medium bg-shopify-teal-light text-gray-300 px-3 py-1 rounded-full inline-flex items-center">
+            <span className="text-xs font-medium bg-gray-700 text-gray-300 px-3 py-1 rounded-full inline-flex items-center">
               <Award className="h-3 w-3 mr-1" /> Best Value for High-Volume Merchants
             </span>
           </div>
@@ -299,7 +298,7 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
           <ul className="space-y-3">
             {plusPlan.features.map((feature, i) => (
               <li key={i} className="flex items-start">
-                <div className="bg-shopify-teal-dark rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
+                <div className="bg-gray-700 rounded-full p-1 mr-2 mt-0.5 flex-shrink-0">
                   <Check className="h-4 w-4 text-gray-300" />
                 </div>
                 <span className="text-sm text-gray-200">{feature}</span>
