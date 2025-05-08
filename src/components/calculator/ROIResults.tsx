@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
 import { ArrowDown, ChevronDown, ChevronUp } from "lucide-react";
@@ -95,7 +96,7 @@ export const ROIResults = ({ calculatorState }: ROIResultsProps) => {
                 <span className="text-sm font-medium">Fee Reduction</span>
                 <div className="flex items-center">
                   <ArrowDown className="h-4 w-4 mr-1 text-green-600" />
-                  <span className="text-green-600 font-semibold">{processingFeesPercentReduction.toFixed(1)}%</span>
+                  <span className="text-green-600 font-semibold">{processingFeesPercentReduction.toFixed(2)}%</span>
                   <span className="ml-2 text-gray-500">({formatCurrency(processingFeesDifference)} savings)</span>
                 </div>
               </div>

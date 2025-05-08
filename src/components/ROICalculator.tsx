@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { toast } from 'sonner';
@@ -191,7 +190,7 @@ const ROICalculator = () => {
     }, 100);
   };
   
-  // Calculate ROI
+  // Update ROI calculation to ensure the proper fee rates are stored in context
   const calculateROI = () => {
     // Get the base plan name for accessing processing rates
     const basePlan = selectedPlan.split('-')[0];
