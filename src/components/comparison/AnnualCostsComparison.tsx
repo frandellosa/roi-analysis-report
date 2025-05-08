@@ -43,7 +43,7 @@ export const AnnualCostsComparison = () => {
           + {formatCurrency(basicAnnualPlanCost)}/year plan cost
         </p>
         <p className="text-xs text-shopify-muted mt-1">
-          ({basicFeeRate.toFixed(1)}% processing rate)
+          ({basicFeeRate.toFixed(2)}% processing rate)
         </p>
       </div>
       <div className="p-6 border-l text-center bg-shopify-light">
@@ -54,7 +54,7 @@ export const AnnualCostsComparison = () => {
           + {formatCurrency(plusAnnualPlanCost)}/year plan cost
         </p>
         <p className="text-xs text-shopify-muted mt-1">
-          ({plusFeeRate.toFixed(1)}% processing rate)
+          ({plusFeeRate.toFixed(2)}% processing rate)
         </p>
       </div>
     </div>

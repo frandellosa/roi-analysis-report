@@ -8,7 +8,7 @@ interface FeeSavingsComparisonProps {
 
 export const FeeSavingsComparison = ({ processingFeeSavings }: FeeSavingsComparisonProps) => {
   const { basicFeeRate, plusFeeRate } = useCalculatorContext();
-  const savingsPercentage = ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(1);
+  const savingsPercentage = ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(2);
   
   return (
     <div className="grid grid-cols-3 bg-gray-50">
