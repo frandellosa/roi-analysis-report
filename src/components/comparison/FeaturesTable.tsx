@@ -20,6 +20,10 @@ type Plan = {
   
   features: string[];
   highlight: boolean;
+  cta?: string;
+  ctaLink?: string;
+  secondaryCta?: string;
+  secondaryCtaLink?: string;
 };
 
 type FeaturesTableProps = {
@@ -53,14 +57,16 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "Localized global selling (3 markets)",
         "POS Lite"
       ],
-      highlight: false
+      highlight: false,
+      cta: "Learn more",
+      ctaLink: "#",
     },
     shopify: {
       name: "Shopify Grow",
       description: "For small teams",
       price: "$105",
       billing: "/month billed once yearly",
-      isPopular: true,
+      isPopular: false,  // Changed from true to false
       
       // Card rates from the provided reference image
       standardDomestic: "2.7% + $0.30",
@@ -79,7 +85,9 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "5 additional staff accounts",
         "POS Lite"
       ],
-      highlight: false
+      highlight: false,
+      cta: "Learn more",
+      ctaLink: "#",
     },
     advanced: {
       name: "Shopify Advanced",
@@ -106,7 +114,9 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "10x checkout capacity",
         "POS Lite"
       ],
-      highlight: false
+      highlight: false,
+      cta: "Learn more",
+      ctaLink: "#",
     },
     plus: {
       name: "Shopify Plus",
@@ -134,7 +144,9 @@ export const FeaturesTable = ({ selectedPlan }: FeaturesTableProps) => {
         "Up to 200 POS Pro locations",
         "Sell wholesale/B2B"
       ],
-      highlight: true
+      highlight: true,
+      cta: "Learn more",
+      ctaLink: "#",
     }
   };
 
