@@ -17,7 +17,8 @@ const Stats = () => {
     basicFeeRate, 
     plusFeeRate, 
     processingFeeSavings, 
-    annualNetSavings 
+    annualNetSavings,
+    monthlyUpliftAverage
   } = useCalculatorContext();
   
   // Calculate savings rate for display
@@ -25,6 +26,15 @@ const Stats = () => {
 
   // Calculate quarterly sales (90 days) from annual sales
   const quarterlySales = annualSales / 4;
+  
+  // Calculate 90-day savings (quarterly)
+  const quarterlySavings = annualNetSavings / 4;
+  
+  // Calculate quarterly uplift (90-day uplift)
+  const quarterlyUplift = monthlyUpliftAverage * 3;
+  
+  // Combined quarterly savings + uplift
+  const combinedQuarterlySavings = quarterlySavings + quarterlyUplift;
 
   return (
     <div className="bg-white py-16">
@@ -61,10 +71,10 @@ const Stats = () => {
           
           <StatCard 
             icon={Wallet} 
-            title={annualNetSavings >= 0 ? "Annual Net Savings" : "Annual Cost to Upgrade"} 
-            value={formatCurrency(Math.abs(annualNetSavings))}
-            previousValue="After new plan costs"
-            valueColor={annualNetSavings >= 0 ? "text-shopify-green" : "text-shopify-black"}
+            title="Last 90 Days Savings + Uplift" 
+            value={formatCurrency(combinedQuarterlySavings)}
+            previousValue="Fee savings and revenue gain"
+            valueColor={combinedQuarterlySavings >= 0 ? "text-shopify-green" : "text-shopify-black"}
           />
         </div>
       </div>
