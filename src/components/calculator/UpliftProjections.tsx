@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, DollarSign, Percent } from "lucide-react";
@@ -50,21 +49,17 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   // Calculate the monthly revenue difference for CR improvement only - Based on annual metrics
   const getCROnlyUplift = (improvedCR: number) => {
     if (reachedCheckout > 0) {
-      // Calculate using annual reached checkout sessions
+      // Calculate using monthly reached checkout sessions
       const monthlyReachedCheckout = reachedCheckout / 12;
       
-      // Current conversion rate is completedCheckout / reachedCheckout
-      const actualCR = completedCheckout / reachedCheckout;
+      // Calculate projected revenue using improved CR
+      const projectedMonthlyRevenue = monthlyReachedCheckout * (improvedCR / 100) * currentAOV;
       
-      // Calculate improved completed checkouts based on improved CR - monthly
-      const improvedMonthlyCompleted = monthlyReachedCheckout * (improvedCR / 100);
-      const currentMonthlyCompleted = completedCheckout / 12;
+      // Calculate current revenue using current CR
+      const currentMonthlyRevenue = monthlyReachedCheckout * (currentConversionRate / 100) * currentAOV;
       
-      // Calculate additional monthly completions from CR improvement
-      const additionalMonthlyCompletions = improvedMonthlyCompleted - currentMonthlyCompleted;
-      
-      // Monthly revenue uplift from additional completions at current AOV
-      return additionalMonthlyCompletions * currentAOV;
+      // Return the difference
+      return projectedMonthlyRevenue - currentMonthlyRevenue;
     } else {
       const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
         ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
@@ -107,18 +102,15 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     if (reachedCheckout > 0) {
       // Convert to monthly metrics
       const monthlyReachedCheckout = reachedCheckout / 12;
-      const monthlyCompletedCheckout = completedCheckout / 12;
       
-      // Calculate improved monthly completed checkouts based on improved CR
-      const improvedMonthlyCompleted = monthlyReachedCheckout * (improvedCR / 100);
+      // Calculate improved monthly revenue with new CR and AOV
+      const projectedMonthlyRevenue = monthlyReachedCheckout * (improvedCR / 100) * improvedAOV;
       
-      // Current monthly revenue
-      const currentMonthlyRevenue = monthlyCompletedCheckout * currentAOV;
+      // Calculate current monthly revenue
+      const currentMonthlyRevenue = monthlyReachedCheckout * (currentConversionRate / 100) * currentAOV;
       
-      // Improved monthly revenue with both CR and AOV improvements
-      const improvedMonthlyRevenue = improvedMonthlyCompleted * improvedAOV;
-      
-      return improvedMonthlyRevenue - currentMonthlyRevenue;
+      // Return the difference
+      return projectedMonthlyRevenue - currentMonthlyRevenue;
     } else {
       // Fallback to the original calculation if no checkout data
       const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
@@ -277,12 +269,14 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
         </div>
         
         <div className="space-y-4">
-          {/* Monthly completed checkouts info if available */}
-          {completedCheckout > 0 && (
+          {/* Monthly reached checkout info if available */}
+          {reachedCheckout > 0 && (
             <div className="bg-white p-3 rounded border border-gray-100 mb-2">
               <p className="text-sm font-medium">Based on {reachedCheckout.toLocaleString()} annual reached checkout sessions</p>
-              <p className="text-xs text-gray-500">Current annual revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
-              <p className="text-xs text-gray-500">Monthly average: {formatCurrency((completedCheckout * currentAOV) / 12)}</p>
+              <p className="text-xs text-gray-500">Monthly reached checkout sessions: {(reachedCheckout / 12).toLocaleString()}</p>
+              {completedCheckout > 0 && (
+                <p className="text-xs text-gray-500">Current annual revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
+              )}
             </div>
           )}
           
@@ -418,4 +412,3 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     </div>
   );
 };
-
