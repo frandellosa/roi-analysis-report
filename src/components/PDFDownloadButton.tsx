@@ -23,11 +23,42 @@ const PDFDownloadButton = () => {
       };
       notify();
       
+      // Add a class to the body to hide elements not needed in PDF
+      document.body.classList.add('creating-pdf');
+      
+      // Create a style element to hide elements with the logo-change-btn class
+      const styleElement = document.createElement('style');
+      styleElement.textContent = `
+        .creating-pdf [data-pdf-hide="true"] {
+          display: none !important;
+        }
+      `;
+      document.head.appendChild(styleElement);
+      
+      // Find logo change button and add data attribute
+      const logoChangeButtons = document.querySelectorAll('button:has(.h-4.w-4)');
+      logoChangeButtons.forEach(btn => {
+        if (btn.textContent?.includes('Change Logo')) {
+          btn.setAttribute('data-pdf-hide', 'true');
+        }
+      });
+      
       const canvas = await html2canvas(contentElement, {
         scale: 2,
         useCORS: true,
         logging: false,
         allowTaint: true,
+      });
+      
+      // Remove the temporary styling
+      document.body.classList.remove('creating-pdf');
+      document.head.removeChild(styleElement);
+      
+      // Remove the data attributes
+      logoChangeButtons.forEach(btn => {
+        if (btn.hasAttribute('data-pdf-hide')) {
+          btn.removeAttribute('data-pdf-hide');
+        }
       });
       
       const imgData = canvas.toDataURL('image/png');

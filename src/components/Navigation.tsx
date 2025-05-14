@@ -57,7 +57,12 @@ const Navigation = () => {
         <div className="flex-1 flex justify-end">
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2 opacity-10 hover:opacity-100 transition-opacity">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-2 opacity-10 hover:opacity-100 transition-opacity" 
+                data-pdf-hide="true"
+              >
                 <ImagePlus className="h-4 w-4" />
                 Change Logo
               </Button>
