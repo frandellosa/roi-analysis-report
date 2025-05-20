@@ -1,3 +1,4 @@
+
 import { processingRatesType } from "@/types/calculator";
 
 /**
@@ -17,21 +18,24 @@ export const calculateProcessingFees = (
   if (fileData) {
     // Simple example - in a real implementation this would parse and analyze the file data
     return {
-      basicProcessingFee: fileData.totalAmount * (processingRates[basePlan].standardDomestic / 100) + (fileData.transactions * 0.30),
-      plusProcessingFee: fileData.totalAmount * (processingRates.plus.standardDomestic / 100) + (fileData.transactions * 0.30),
+      basicProcessingFee: fileData.totalAmount * (processingRates[basePlan].standardDomestic / 100) + (fileData.transactions * processingRates[basePlan].transactionFee),
+      plusProcessingFee: fileData.totalAmount * (processingRates.plus.standardDomestic / 100) + (fileData.transactions * processingRates.plus.transactionFee),
     };
   } else {
     // No file uploaded - use the standard calculation based on annual sales
     const avgOrderValue = currentAOV > 0 ? currentAOV : 50; // Use current AOV if available, otherwise default to $50
     const transactionsCount = annualSales / avgOrderValue;
-    const transactionFee = 0.30;
+    
+    // Get dynamic transaction fees from the processing rates
+    const basicTransactionFee = processingRates[basePlan].transactionFee;
+    const plusTransactionFee = processingRates.plus.transactionFee;
     
     // Use the selected plan's standard domestic rate and Plus plan's rate
     const basicRate = processingRates[basePlan].standardDomestic;
     const plusRate = processingRates.plus.standardDomestic;
     
-    const basicProcessingFee = (annualSales * basicRate / 100) + (transactionFee * transactionsCount);
-    const plusProcessingFee = (annualSales * plusRate / 100) + (transactionFee * transactionsCount);
+    const basicProcessingFee = (annualSales * basicRate / 100) + (basicTransactionFee * transactionsCount);
+    const plusProcessingFee = (annualSales * plusRate / 100) + (plusTransactionFee * transactionsCount);
     
     return {
       basicProcessingFee,

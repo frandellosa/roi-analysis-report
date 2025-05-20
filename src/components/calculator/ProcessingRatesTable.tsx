@@ -41,11 +41,29 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
       const { plan, rate } = editingCell;
       const newValue = parseFloat(editValue);
       
-      if (!isNaN(newValue) && newValue >= 0 && newValue <= 10) {
-        updateProcessingRate(plan, rate, newValue);
-        toast.success(`Updated ${rate} rate for ${formatPlanName(plan)}`);
+      if (!isNaN(newValue) && newValue >= 0) {
+        // Apply different validation based on rate type
+        if (rate === 'transactionFee') {
+          // For transaction fees, allow values between 0 and 1
+          if (newValue <= 1) {
+            updateProcessingRate(plan, rate, newValue);
+            toast.success(`Updated ${rate} for ${formatPlanName(plan)}`);
+          } else {
+            toast.error("Please enter a valid transaction fee between 0 and 1");
+            setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+          }
+        } else {
+          // For percentage rates, allow values between 0 and 10
+          if (newValue <= 10) {
+            updateProcessingRate(plan, rate, newValue);
+            toast.success(`Updated ${rate} for ${formatPlanName(plan)}`);
+          } else {
+            toast.error("Please enter a valid rate between 0 and 10");
+            setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+          }
+        }
       } else {
-        toast.error("Please enter a valid rate between 0 and 10");
+        toast.error("Please enter a valid number");
         setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
       }
       
@@ -75,8 +93,52 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
           onKeyDown={handleKeyDown}
           autoFocus
           min="0"
-          max="10"
-          step="0.05"
+          max={rate === 'transactionFee' ? "1" : "10"}
+          step={rate === 'transactionFee' ? "0.01" : "0.05"}
+          className="w-24 h-7 p-1 text-sm"
+        />
+      );
+    }
+    
+    // Display with appropriate format based on rate type
+    if (rate === 'transactionFee') {
+      return (
+        <span 
+          className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
+          onClick={() => handleCellClick(plan, rate)}
+        >
+          ${processingRates[plan][rate].toFixed(2)}
+        </span>
+      );
+    }
+    
+    return (
+      <span 
+        className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
+        onClick={() => handleCellClick(plan, rate)}
+      >
+        {processingRates[plan][rate]}% + ${processingRates[plan].transactionFee.toFixed(2)}
+      </span>
+    );
+  };
+
+  // Render transaction fee cell separately
+  const renderTransactionFeeCell = (plan: string) => {
+    const rate = 'transactionFee';
+    const isEditing = editingCell?.plan === plan && editingCell?.rate === rate;
+    
+    if (isEditing) {
+      return (
+        <Input
+          type="number"
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          autoFocus
+          min="0"
+          max="1"
+          step="0.01"
           className="w-24 h-7 p-1 text-sm"
         />
       );
@@ -87,7 +149,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
         className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
         onClick={() => handleCellClick(plan, rate)}
       >
-        {processingRates[plan][rate]}% + 30¢
+        ${processingRates[plan][rate].toFixed(2)}
       </span>
     );
   };
@@ -136,6 +198,12 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'shopPayInstallments')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'shopPayInstallments')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="px-4 py-2 text-sm font-medium">Transaction Fee</td>
+                <td className="px-4 py-2 text-sm">{renderTransactionFeeCell(basePlan)}</td>
+                <td className="px-4 py-2 text-sm">{renderTransactionFeeCell('plus')}</td>
+                <td className="px-4 py-2 text-sm text-green-600">${(processingRates[basePlan].transactionFee - processingRates.plus.transactionFee).toFixed(2)}</td>
               </tr>
             </tbody>
           </table>

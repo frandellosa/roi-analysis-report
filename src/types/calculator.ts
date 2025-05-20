@@ -60,6 +60,7 @@ export interface ProcessingRate {
   premiumDomestic: number;
   premiumInternational: number;
   shopPayInstallments: number;
+  transactionFee: number; // Added transaction fee
 }
 
 export interface processingRatesType {
