@@ -18,9 +18,10 @@ export const FeeSavingsComparison = ({ processingFeeSavings }: FeeSavingsCompari
   const basePlan = selectedPlan.split('-')[0];
   
   // Calculate percentage savings on the rate
-  const savingsPercentage = ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(2);
+  const savingsPercentage = basicFeeRate && plusFeeRate ? 
+    ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(2) : "0.00";
   
-  // Get transaction fee savings
+  // Get transaction fee savings - with null checks
   const basicTransactionFee = processingRates[basePlan]?.transactionFee || 0.30;
   const plusTransactionFee = processingRates.plus?.transactionFee || 0.30;
   const transactionFeeSavings = basicTransactionFee - plusTransactionFee;

@@ -32,8 +32,11 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
   };
 
   const handleCellClick = (plan: string, rate: keyof ProcessingRate) => {
-    setEditingCell({ plan, rate });
-    setEditValue(processingRates[plan][rate].toString());
+    // Make sure the plan and rate exist before setting editing state
+    if (processingRates[plan] && rate in processingRates[plan]) {
+      setEditingCell({ plan, rate });
+      setEditValue(processingRates[plan][rate].toString());
+    }
   };
 
   const handleBlur = () => {
@@ -50,7 +53,10 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
             toast.success(`Updated ${rate} for ${formatPlanName(plan)}`);
           } else {
             toast.error("Please enter a valid transaction fee between 0 and 1");
-            setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+            // Only set if the value exists
+            if (processingRates[plan] && processingRates[plan][rate as keyof ProcessingRate]) {
+              setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+            }
           }
         } else {
           // For percentage rates, allow values between 0 and 10
@@ -59,12 +65,18 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
             toast.success(`Updated ${rate} for ${formatPlanName(plan)}`);
           } else {
             toast.error("Please enter a valid rate between 0 and 10");
-            setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+            // Only set if the value exists
+            if (processingRates[plan] && processingRates[plan][rate as keyof ProcessingRate]) {
+              setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+            }
           }
         }
       } else {
         toast.error("Please enter a valid number");
-        setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+        // Only set if the value exists
+        if (processingRates[plan] && processingRates[plan][rate as keyof ProcessingRate]) {
+          setEditValue(processingRates[plan][rate as keyof ProcessingRate].toString());
+        }
       }
       
       setEditingCell(null);
@@ -81,6 +93,11 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
 
   // Render a cell with either the value or an input field
   const renderRateCell = (plan: string, rate: keyof ProcessingRate) => {
+    // Check if the plan and rate exist in processingRates
+    if (!processingRates[plan] || !(rate in processingRates[plan])) {
+      return <span>N/A</span>;
+    }
+    
     const isEditing = editingCell?.plan === plan && editingCell?.rate === rate;
     
     if (isEditing) {
@@ -117,7 +134,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
         className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
         onClick={() => handleCellClick(plan, rate)}
       >
-        {processingRates[plan][rate]}% + ${processingRates[plan].transactionFee.toFixed(2)}
+        {processingRates[plan][rate]}% + ${processingRates[plan].transactionFee?.toFixed(2) || "0.00"}
       </span>
     );
   };
@@ -125,6 +142,12 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
   // Render transaction fee cell separately
   const renderTransactionFeeCell = (plan: string) => {
     const rate = 'transactionFee';
+    
+    // Check if the plan and rate exist in processingRates
+    if (!processingRates[plan] || !(rate in processingRates[plan])) {
+      return <span>N/A</span>;
+    }
+    
     const isEditing = editingCell?.plan === plan && editingCell?.rate === rate;
     
     if (isEditing) {
@@ -149,7 +172,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
         className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
         onClick={() => handleCellClick(plan, rate)}
       >
-        ${processingRates[plan][rate].toFixed(2)}
+        ${processingRates[plan][rate]?.toFixed(2) || "0.00"}
       </span>
     );
   };
@@ -173,37 +196,61 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">Standard Domestic</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'standardDomestic')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'standardDomestic')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].standardDomestic - processingRates.plus.standardDomestic).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.standardDomestic && processingRates.plus?.standardDomestic 
+                    ? (processingRates[basePlan].standardDomestic - processingRates.plus.standardDomestic).toFixed(2) + '%'
+                    : 'N/A'}
+                </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Standard International</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'standardInternational')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'standardInternational')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].standardInternational - processingRates.plus.standardInternational).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.standardInternational && processingRates.plus?.standardInternational 
+                    ? (processingRates[basePlan].standardInternational - processingRates.plus.standardInternational).toFixed(2) + '%'
+                    : 'N/A'}
+                </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Premium Domestic</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'premiumDomestic')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'premiumDomestic')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.premiumDomestic && processingRates.plus?.premiumDomestic 
+                    ? (processingRates[basePlan].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2) + '%'
+                    : 'N/A'}
+                </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Premium International</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'premiumInternational')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'premiumInternational')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].premiumInternational - processingRates.plus.premiumInternational).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.premiumInternational && processingRates.plus?.premiumInternational 
+                    ? (processingRates[basePlan].premiumInternational - processingRates.plus.premiumInternational).toFixed(2) + '%'
+                    : 'N/A'}
+                </td>
               </tr>
               <tr>
                 <td className="px-4 py-2 text-sm">Shop Pay Installments</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'shopPayInstallments')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'shopPayInstallments')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">{(processingRates[basePlan].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2)}%</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.shopPayInstallments && processingRates.plus?.shopPayInstallments 
+                    ? (processingRates[basePlan].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2) + '%'
+                    : 'N/A'}
+                </td>
               </tr>
               <tr className="bg-gray-50">
                 <td className="px-4 py-2 text-sm font-medium">Transaction Fee</td>
                 <td className="px-4 py-2 text-sm">{renderTransactionFeeCell(basePlan)}</td>
                 <td className="px-4 py-2 text-sm">{renderTransactionFeeCell('plus')}</td>
-                <td className="px-4 py-2 text-sm text-green-600">${(processingRates[basePlan].transactionFee - processingRates.plus.transactionFee).toFixed(2)}</td>
+                <td className="px-4 py-2 text-sm text-green-600">
+                  {processingRates[basePlan]?.transactionFee && processingRates.plus?.transactionFee 
+                    ? '$' + (processingRates[basePlan].transactionFee - processingRates.plus.transactionFee).toFixed(2)
+                    : 'N/A'}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -211,7 +258,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
         <div className="mt-4 text-xs text-gray-500">
           <p>* Additional rates for Shop Pay Express and other payment methods apply.</p>
           <p>* All rates shown are for USA market.</p>
-          <p>* Rates used for calculations: {basicFeeRate.toFixed(1)}% ({formatPlanName(basePlan)}) and {plusFeeRate.toFixed(1)}% (Plus)</p>
+          <p>* Rates used for calculations: {basicFeeRate?.toFixed(1) || "0.0"}% ({formatPlanName(basePlan)}) and {plusFeeRate?.toFixed(1) || "0.0"}% (Plus)</p>
           <p className="mt-1 italic">Click on any rate to edit it. Changes will be reflected in calculations.</p>
         </div>
       </CardContent>

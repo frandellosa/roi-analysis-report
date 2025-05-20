@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card } from "@/components/ui/card";
 import { toast } from 'sonner';
@@ -96,28 +95,32 @@ const ROICalculator = () => {
       standardInternational: 3.9,
       premiumDomestic: 3.5,
       premiumInternational: 4.5,
-      shopPayInstallments: 5.9
+      shopPayInstallments: 5.9,
+      transactionFee: 0.30 // Added missing transaction fee
     },
     shopify: {
       standardDomestic: 2.7,
       standardInternational: 3.7,
       premiumDomestic: 3.3,
       premiumInternational: 4.3,
-      shopPayInstallments: 5.9
+      shopPayInstallments: 5.9,
+      transactionFee: 0.30 // Added missing transaction fee
     },
     advanced: {
       standardDomestic: 2.5,
       standardInternational: 3.5,
       premiumDomestic: 3.1,
       premiumInternational: 4.1,
-      shopPayInstallments: 5.9
+      shopPayInstallments: 5.9,
+      transactionFee: 0.30 // Added missing transaction fee
     },
     plus: {
       standardDomestic: 2.25,
       standardInternational: 3.25,
       premiumDomestic: 2.95,
       premiumInternational: 3.95,
-      shopPayInstallments: 5.0
+      shopPayInstallments: 5.0,
+      transactionFee: 0.30 // Added missing transaction fee
     }
   };
 
