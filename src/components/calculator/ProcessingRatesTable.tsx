@@ -124,17 +124,21 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
           className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
           onClick={() => handleCellClick(plan, rate)}
         >
-          ${processingRates[plan][rate].toFixed(2)}
+          ${processingRates[plan][rate]?.toFixed(2) || "0.00"}
         </span>
       );
     }
+    
+    // Make sure to check if transactionFee exists before accessing it
+    const transactionFee = processingRates[plan].transactionFee;
+    const formattedTransactionFee = transactionFee !== undefined ? transactionFee.toFixed(2) : "0.00";
     
     return (
       <span 
         className="cursor-pointer hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
         onClick={() => handleCellClick(plan, rate)}
       >
-        {processingRates[plan][rate]}% + ${processingRates[plan].transactionFee?.toFixed(2) || "0.00"}
+        {processingRates[plan][rate]}% + ${formattedTransactionFee}
       </span>
     );
   };
@@ -177,6 +181,32 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
     );
   };
 
+  // Calculate savings for display
+  const calculateSavings = (rate: keyof ProcessingRate) => {
+    if (!processingRates[basePlan] || !processingRates.plus || 
+        !(rate in processingRates[basePlan]) || !(rate in processingRates.plus)) {
+      return 'N/A';
+    }
+
+    if (rate === 'transactionFee') {
+      const basicRate = processingRates[basePlan][rate];
+      const plusRate = processingRates.plus[rate];
+      
+      if (basicRate !== undefined && plusRate !== undefined) {
+        return '$' + (basicRate - plusRate).toFixed(2);
+      }
+      return 'N/A';
+    } else {
+      const basicRate = processingRates[basePlan][rate];
+      const plusRate = processingRates.plus[rate];
+      
+      if (basicRate !== undefined && plusRate !== undefined) {
+        return (basicRate - plusRate).toFixed(2) + '%';
+      }
+      return 'N/A';
+    }
+  };
+
   return (
     <Card className="border-gray-100 shadow-md">
       <CardContent className="pt-6">
@@ -197,9 +227,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'standardDomestic')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'standardDomestic')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.standardDomestic && processingRates.plus?.standardDomestic 
-                    ? (processingRates[basePlan].standardDomestic - processingRates.plus.standardDomestic).toFixed(2) + '%'
-                    : 'N/A'}
+                  {calculateSavings('standardDomestic')}
                 </td>
               </tr>
               <tr>
@@ -207,9 +235,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'standardInternational')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'standardInternational')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.standardInternational && processingRates.plus?.standardInternational 
-                    ? (processingRates[basePlan].standardInternational - processingRates.plus.standardInternational).toFixed(2) + '%'
-                    : 'N/A'}
+                  {calculateSavings('standardInternational')}
                 </td>
               </tr>
               <tr>
@@ -217,9 +243,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'premiumDomestic')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'premiumDomestic')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.premiumDomestic && processingRates.plus?.premiumDomestic 
-                    ? (processingRates[basePlan].premiumDomestic - processingRates.plus.premiumDomestic).toFixed(2) + '%'
-                    : 'N/A'}
+                  {calculateSavings('premiumDomestic')}
                 </td>
               </tr>
               <tr>
@@ -227,9 +251,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'premiumInternational')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'premiumInternational')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.premiumInternational && processingRates.plus?.premiumInternational 
-                    ? (processingRates[basePlan].premiumInternational - processingRates.plus.premiumInternational).toFixed(2) + '%'
-                    : 'N/A'}
+                  {calculateSavings('premiumInternational')}
                 </td>
               </tr>
               <tr>
@@ -237,9 +259,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderRateCell(basePlan, 'shopPayInstallments')}</td>
                 <td className="px-4 py-2 text-sm">{renderRateCell('plus', 'shopPayInstallments')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.shopPayInstallments && processingRates.plus?.shopPayInstallments 
-                    ? (processingRates[basePlan].shopPayInstallments - processingRates.plus.shopPayInstallments).toFixed(2) + '%'
-                    : 'N/A'}
+                  {calculateSavings('shopPayInstallments')}
                 </td>
               </tr>
               <tr className="bg-gray-50">
@@ -247,9 +267,7 @@ export const ProcessingRatesTable = ({ processingRates, selectedPlan }: Processi
                 <td className="px-4 py-2 text-sm">{renderTransactionFeeCell(basePlan)}</td>
                 <td className="px-4 py-2 text-sm">{renderTransactionFeeCell('plus')}</td>
                 <td className="px-4 py-2 text-sm text-green-600">
-                  {processingRates[basePlan]?.transactionFee && processingRates.plus?.transactionFee 
-                    ? '$' + (processingRates[basePlan].transactionFee - processingRates.plus.transactionFee).toFixed(2)
-                    : 'N/A'}
+                  {calculateSavings('transactionFee')}
                 </td>
               </tr>
             </tbody>

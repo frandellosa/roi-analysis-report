@@ -17,7 +17,7 @@ export const FeeSavingsComparison = ({ processingFeeSavings }: FeeSavingsCompari
   // Get the base plan name (removing any billing suffix)
   const basePlan = selectedPlan.split('-')[0];
   
-  // Calculate percentage savings on the rate
+  // Calculate percentage savings on the rate with null checks
   const savingsPercentage = basicFeeRate && plusFeeRate ? 
     ((basicFeeRate - plusFeeRate) / basicFeeRate * 100).toFixed(2) : "0.00";
   
