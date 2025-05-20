@@ -12,7 +12,7 @@ import {
   formatCurrency, 
   parsePaymentFile 
 } from '@/services/calculatorService';
-import { DefaultValues, processingRatesType } from '@/types/calculator';
+import { DefaultValues } from '@/types/calculator';
 
 const ROICalculator = () => {
   // Default values
@@ -41,7 +41,8 @@ const ROICalculator = () => {
     plans,
     lowUpliftPercentage, 
     averageUpliftPercentage, 
-    goodUpliftPercentage 
+    goodUpliftPercentage,
+    processingRates
   } = useCalculatorContext();
   
   // Basic inputs
@@ -88,42 +89,6 @@ const ROICalculator = () => {
   const [b2bVpf, setB2bVpf] = useState(0);
   const [retailVpf, setRetailVpf] = useState(0);
   
-  // Processing rates based on Shopify's website
-  const processingRates: processingRatesType = {
-    basic: {
-      standardDomestic: 2.9,
-      standardInternational: 3.9,
-      premiumDomestic: 3.5,
-      premiumInternational: 4.5,
-      shopPayInstallments: 5.9,
-      transactionFee: 0.30 // Added missing transaction fee
-    },
-    shopify: {
-      standardDomestic: 2.7,
-      standardInternational: 3.7,
-      premiumDomestic: 3.3,
-      premiumInternational: 4.3,
-      shopPayInstallments: 5.9,
-      transactionFee: 0.30 // Added missing transaction fee
-    },
-    advanced: {
-      standardDomestic: 2.5,
-      standardInternational: 3.5,
-      premiumDomestic: 3.1,
-      premiumInternational: 4.1,
-      shopPayInstallments: 5.9,
-      transactionFee: 0.30 // Added missing transaction fee
-    },
-    plus: {
-      standardDomestic: 2.25,
-      standardInternational: 3.25,
-      premiumDomestic: 2.95,
-      premiumInternational: 3.95,
-      shopPayInstallments: 5.0,
-      transactionFee: 0.30 // Added missing transaction fee
-    }
-  };
-
   // Update Plus monthly cost based on term selection
   useEffect(() => {
     if (plusTerm === "3year") {
@@ -207,7 +172,7 @@ const ROICalculator = () => {
     // Update the state with the calculated monthly cost
     setBasicMonthlyCost(currentBasicMonthlyCost);
     
-    // Get processing fees using the processing rates
+    // Get processing fees using the processing rates from context
     const { basicProcessingFee, plusProcessingFee } = calculateProcessingFees(
       annualSales,
       selectedPlan,
