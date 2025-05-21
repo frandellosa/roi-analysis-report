@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, DollarSign, Percent } from "lucide-react";
@@ -28,7 +29,8 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     formatCurrency,
     completedCheckout,
     reachedCheckout,
-    calculateROI
+    calculateROI,
+    annualSales
   } = calculatorState;
   
   // Get the configurable percentages from the context
@@ -41,10 +43,10 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   
   // Recalculate uplift when necessary inputs change
   useEffect(() => {
-    if (currentConversionRate > 0 && currentAOV > 0 && (reachedCheckout > 0 || completedCheckout > 0)) {
+    if (currentConversionRate > 0 && currentAOV > 0 && (reachedCheckout > 0 || completedCheckout > 0 || annualSales > 0)) {
       calculateROI();
     }
-  }, [currentConversionRate, currentAOV, reachedCheckout, completedCheckout, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage]);
+  }, [currentConversionRate, currentAOV, reachedCheckout, completedCheckout, annualSales, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage]);
   
   // Calculate individual uplift metrics for conversion rate and AOV
   const getLowUpliftCR = () => currentConversionRate * (1 + lowUpliftPercentage / 100);
@@ -70,13 +72,13 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       // Return the difference
       return projectedMonthlyRevenue - currentMonthlyRevenue;
     } else {
-      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
+      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 && annualSales > 0
+        ? (annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
       const monthlyVisitors = annualVisitors / 12;
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * currentAOV;
+      const currentMonthlyRevenue = monthlyVisitors * (currentConversionRate / 100) * currentAOV;
+      const improvedMonthlyRevenue = monthlyVisitors * (improvedCR / 100) * currentAOV;
       
       return improvedMonthlyRevenue - currentMonthlyRevenue;
     }
@@ -94,13 +96,15 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       
       return improvedMonthlyRevenue - currentMonthlyRevenue;
     } else {
-      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
+      const annualVisitors = currentConversionRate > 0 && currentAOV > 0 && annualSales > 0
+        ? (annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
       const monthlyVisitors = annualVisitors / 12;
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * improvedAOV;
+      const monthlyTransactions = monthlyVisitors * (currentConversionRate / 100);
+      
+      const currentMonthlyRevenue = monthlyTransactions * currentAOV;
+      const improvedMonthlyRevenue = monthlyTransactions * improvedAOV;
       
       return improvedMonthlyRevenue - currentMonthlyRevenue;
     }
@@ -120,19 +124,21 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
       
       // Return the difference
       return projectedMonthlyRevenue - currentMonthlyRevenue;
-    } else {
-      // Fallback to the original calculation if no checkout data
+    } else if (annualSales > 0) {
+      // Fallback to the original calculation using annual sales
       const annualVisitors = currentConversionRate > 0 && currentAOV > 0 
-        ? (calculatorState.annualSales) / (currentAOV * (currentConversionRate / 100))
+        ? (annualSales) / (currentAOV * (currentConversionRate / 100))
         : 0;
       
       const monthlyVisitors = annualVisitors / 12;
       
-      const currentMonthlyRevenue = monthlyVisitors * currentConversionRate / 100 * currentAOV;
-      const improvedMonthlyRevenue = monthlyVisitors * improvedCR / 100 * improvedAOV;
+      const currentMonthlyRevenue = monthlyVisitors * (currentConversionRate / 100) * currentAOV;
+      const improvedMonthlyRevenue = monthlyVisitors * (improvedCR / 100) * improvedAOV;
       
       return improvedMonthlyRevenue - currentMonthlyRevenue;
     }
+    
+    return 0; // Fallback if no valid input data
   };
   
   // Handle percentage changes

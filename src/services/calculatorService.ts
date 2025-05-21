@@ -109,34 +109,37 @@ export const calculateRevenueUplift = (
     // Fallback to original calculation when no checkout data is available
     // Calculate base metrics (annual)
     const annualVisitors = (validAnnualSales) / (validAOV * (validConversionRate / 100));
+    
+    // Monthly visitors
+    const monthlyVisitors = annualVisitors / 12;
+    const currentMonthlyRevenue = monthlyVisitors * validConversionRate / 100 * validAOV;
 
     // Use configurable percentages
-    // Low uplift scenario
+    // Low uplift scenario - calculate directly as monthly values
     const lowCR = validConversionRate * (1 + lowUpliftPercentage / 100);
     const lowAOV = validAOV * (1 + lowUpliftPercentage / 100);
-    const currentAnnualRevenue = annualVisitors * validConversionRate / 100 * validAOV;
-    const lowAnnualRevenue = annualVisitors * lowCR / 100 * lowAOV;
-    const lowUplift = lowAnnualRevenue - currentAnnualRevenue;
+    const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
+    const lowMonthlyUplift = lowMonthlyRevenue - currentMonthlyRevenue;
     
     // Average uplift scenario
     const avgCR = validConversionRate * (1 + averageUpliftPercentage / 100);
     const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
-    const avgAnnualRevenue = annualVisitors * avgCR / 100 * avgAOV;
-    const avgUplift = avgAnnualRevenue - currentAnnualRevenue;
+    const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
+    const avgMonthlyUplift = avgMonthlyRevenue - currentMonthlyRevenue;
     
     // Good uplift scenario
     const goodCR = validConversionRate * (1 + goodUpliftPercentage / 100);
     const goodAOV = validAOV * (1 + goodUpliftPercentage / 100);
-    const goodAnnualRevenue = annualVisitors * goodCR / 100 * goodAOV;
-    const goodUplift = goodAnnualRevenue - currentAnnualRevenue;
+    const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
+    const goodMonthlyUplift = goodMonthlyRevenue - currentMonthlyRevenue;
     
-    // Convert annual uplift to monthly for display
-    setMonthlyUpliftLow(lowUplift / 12);
-    setMonthlyUpliftAverage(avgUplift / 12);
-    setMonthlyUpliftGood(goodUplift / 12);
+    // Set the monthly uplift values
+    setMonthlyUpliftLow(lowMonthlyUplift);
+    setMonthlyUpliftAverage(avgMonthlyUplift);
+    setMonthlyUpliftGood(goodMonthlyUplift);
     
     // Return annual uplift (average scenario) for the existing total calculation
-    return avgUplift;
+    return avgMonthlyUplift * 12;
   }
 };
 
