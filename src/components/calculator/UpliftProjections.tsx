@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, DollarSign, Percent } from "lucide-react";
@@ -160,7 +159,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   const monthlyAverageUplift = calculateMonthlyUplift(getAvgUpliftCR(), getAvgUpliftAOV());
   const monthlyGoodUplift = calculateMonthlyUplift(getGoodUpliftCR(), getGoodUpliftAOV());
 
-  // Calculate annual uplift values
+  // Calculate annual uplift values correctly
   const annualLowUplift = monthlyLowUplift * 12;
   const annualAverageUplift = monthlyAverageUplift * 12;
   const annualGoodUplift = monthlyGoodUplift * 12;
@@ -334,7 +333,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-amber-500">{formatCurrency(monthlyLowUplift * 12)}/year</p>
+              <p className="text-xs font-semibold text-amber-500">{formatCurrency(annualLowUplift)}/year</p>
             </div>
           </div>
           
@@ -375,7 +374,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-blue-500">{formatCurrency(monthlyAverageUplift * 12)}/year</p>
+              <p className="text-xs font-semibold text-blue-500">{formatCurrency(annualAverageUplift)}/year</p>
             </div>
           </div>
           
@@ -416,7 +415,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-green-600">{formatCurrency(monthlyGoodUplift * 12)}/year</p>
+              <p className="text-xs font-semibold text-green-600">{formatCurrency(annualGoodUplift)}/year</p>
             </div>
           </div>
           
