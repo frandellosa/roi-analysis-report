@@ -61,6 +61,11 @@ export const calculateRevenueUplift = (
   setMonthlyUpliftAverage: (value: number) => void,
   setMonthlyUpliftGood: (value: number) => void
 ) => {
+  // Ensure we have valid input values to prevent NaN results
+  const validConversionRate = currentConversionRate > 0 ? currentConversionRate : 1;
+  const validAOV = currentAOV > 0 ? currentAOV : 100;
+  const validAnnualSales = annualSales > 0 ? annualSales : 1000000;
+  
   // If we have checkout data, use it as the baseline
   if (reachedCheckout > 0 && completedCheckout > 0) {
     // Convert annual checkout metrics to monthly
@@ -69,26 +74,26 @@ export const calculateRevenueUplift = (
     
     // Use configurable percentages for uplift scenarios
     // Low uplift scenario
-    const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
-    const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
+    const lowCR = validConversionRate * (1 + lowUpliftPercentage / 100);
+    const lowAOV = validAOV * (1 + lowUpliftPercentage / 100);
     
     // Calculate projected monthly revenue with improved CR and AOV
     const lowProjectedRevenue = monthlyReachedCheckout * (lowCR / 100) * lowAOV;
     // Calculate current monthly revenue
-    const currentMonthlyRevenue = monthlyReachedCheckout * (currentConversionRate / 100) * currentAOV;
+    const currentMonthlyRevenue = monthlyReachedCheckout * (validConversionRate / 100) * validAOV;
     // Calculate monthly uplift
     const lowMonthlyUplift = lowProjectedRevenue - currentMonthlyRevenue;
     
     // Average uplift scenario
-    const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
-    const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
+    const avgCR = validConversionRate * (1 + averageUpliftPercentage / 100);
+    const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
     
     const avgProjectedRevenue = monthlyReachedCheckout * (avgCR / 100) * avgAOV;
     const avgMonthlyUplift = avgProjectedRevenue - currentMonthlyRevenue;
     
     // Good uplift scenario
-    const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
-    const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
+    const goodCR = validConversionRate * (1 + goodUpliftPercentage / 100);
+    const goodAOV = validAOV * (1 + goodUpliftPercentage / 100);
     
     const goodProjectedRevenue = monthlyReachedCheckout * (goodCR / 100) * goodAOV;
     const goodMonthlyUplift = goodProjectedRevenue - currentMonthlyRevenue;
@@ -103,25 +108,25 @@ export const calculateRevenueUplift = (
   } else {
     // Fallback to original calculation when no checkout data is available
     // Calculate base metrics (annual)
-    const annualVisitors = (annualSales) / (currentAOV * (currentConversionRate / 100));
+    const annualVisitors = (validAnnualSales) / (validAOV * (validConversionRate / 100));
 
     // Use configurable percentages
     // Low uplift scenario
-    const lowCR = currentConversionRate * (1 + lowUpliftPercentage / 100);
-    const lowAOV = currentAOV * (1 + lowUpliftPercentage / 100);
-    const currentAnnualRevenue = annualVisitors * currentConversionRate / 100 * currentAOV;
+    const lowCR = validConversionRate * (1 + lowUpliftPercentage / 100);
+    const lowAOV = validAOV * (1 + lowUpliftPercentage / 100);
+    const currentAnnualRevenue = annualVisitors * validConversionRate / 100 * validAOV;
     const lowAnnualRevenue = annualVisitors * lowCR / 100 * lowAOV;
     const lowUplift = lowAnnualRevenue - currentAnnualRevenue;
     
     // Average uplift scenario
-    const avgCR = currentConversionRate * (1 + averageUpliftPercentage / 100);
-    const avgAOV = currentAOV * (1 + averageUpliftPercentage / 100);
+    const avgCR = validConversionRate * (1 + averageUpliftPercentage / 100);
+    const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
     const avgAnnualRevenue = annualVisitors * avgCR / 100 * avgAOV;
     const avgUplift = avgAnnualRevenue - currentAnnualRevenue;
     
     // Good uplift scenario
-    const goodCR = currentConversionRate * (1 + goodUpliftPercentage / 100);
-    const goodAOV = currentAOV * (1 + goodUpliftPercentage / 100);
+    const goodCR = validConversionRate * (1 + goodUpliftPercentage / 100);
+    const goodAOV = validAOV * (1 + goodUpliftPercentage / 100);
     const goodAnnualRevenue = annualVisitors * goodCR / 100 * goodAOV;
     const goodUplift = goodAnnualRevenue - currentAnnualRevenue;
     

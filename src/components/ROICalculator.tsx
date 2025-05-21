@@ -215,7 +215,7 @@ const ROICalculator = () => {
     const currentRate = processingRates[basePlan]?.standardDomestic || 0;
     const plusRate = processingRates.plus?.standardDomestic || 0;
 
-    // Update the context with new values, including the correct fee rates
+    // Update the context with new values, including uplift values
     updateCalculatorValues({
       annualSales,
       basicFeeRate: currentRate,
@@ -327,8 +327,13 @@ const ROICalculator = () => {
         setCurrentAOV(data.avgOrderValue);
       }
       
+      // Trigger ROI calculation to update uplift projections
+      setTimeout(() => {
+        calculateROI();
+      }, 100);
+      
       toast.success(`File uploaded: ${file.name}`, {
-        description: "Your payment data has been analyzed for ROI calculation."
+        description: "Your payment data has been analyzed and ROI calculations updated."
       });
     }
   };

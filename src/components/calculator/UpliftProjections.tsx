@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Info, DollarSign, Percent } from "lucide-react";
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Slider } from "@/components/ui/slider";
 import { useCalculatorContext } from "@/contexts/CalculatorContext";
+import { useEffect } from "react";
 
 interface UpliftProjectionsProps {
   calculatorState: any;
@@ -26,7 +28,8 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     setCurrentAOV,
     formatCurrency,
     completedCheckout,
-    reachedCheckout
+    reachedCheckout,
+    calculateROI
   } = calculatorState;
   
   // Get the configurable percentages from the context
@@ -36,6 +39,13 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     goodUpliftPercentage,
     updateCalculatorValues
   } = useCalculatorContext();
+  
+  // Recalculate uplift when necessary inputs change
+  useEffect(() => {
+    if (currentConversionRate > 0 && currentAOV > 0 && (reachedCheckout > 0 || completedCheckout > 0)) {
+      calculateROI();
+    }
+  }, [currentConversionRate, currentAOV, reachedCheckout, completedCheckout, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage]);
   
   // Calculate individual uplift metrics for conversion rate and AOV
   const getLowUpliftCR = () => currentConversionRate * (1 + lowUpliftPercentage / 100);
@@ -140,13 +150,20 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     }
     
     // Recalculate uplift values with new percentages
-    calculatorState.calculateROI();
+    setTimeout(() => {
+      calculateROI();
+    }, 100);
   };
 
   // Calculate monthly uplift values directly
   const monthlyLowUplift = calculateMonthlyUplift(getLowUpliftCR(), getLowUpliftAOV());
   const monthlyAverageUplift = calculateMonthlyUplift(getAvgUpliftCR(), getAvgUpliftAOV());
   const monthlyGoodUplift = calculateMonthlyUplift(getGoodUpliftCR(), getGoodUpliftAOV());
+
+  // Calculate annual uplift values
+  const annualLowUplift = monthlyLowUplift * 12;
+  const annualAverageUplift = monthlyAverageUplift * 12;
+  const annualGoodUplift = monthlyGoodUplift * 12;
 
   return (
     <div className="mb-6 border-t border-gray-200 pt-6">
