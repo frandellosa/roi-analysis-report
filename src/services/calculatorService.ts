@@ -77,26 +77,42 @@ export const calculateRevenueUplift = (
     const lowCR = validConversionRate * (1 + lowUpliftPercentage / 100);
     const lowAOV = validAOV * (1 + lowUpliftPercentage / 100);
     
-    // Calculate projected monthly revenue with improved CR and AOV
-    const lowProjectedRevenue = monthlyReachedCheckout * (lowCR / 100) * lowAOV;
-    // Calculate current monthly revenue
-    const currentMonthlyRevenue = monthlyReachedCheckout * (validConversionRate / 100) * validAOV;
-    // Calculate monthly uplift
-    const lowMonthlyUplift = lowProjectedRevenue - currentMonthlyRevenue;
+    // Calculate projected monthly revenue with improved CR
+    const currentCRRevenue = monthlyReachedCheckout * (validConversionRate / 100) * validAOV;
+    const improvedCRRevenue = monthlyReachedCheckout * (lowCR / 100) * validAOV;
+    const crLowImpact = improvedCRRevenue - currentCRRevenue;
     
-    // Average uplift scenario
+    // Calculate AOV impact on current completed checkouts
+    const currentAOVRevenue = monthlyCompletedCheckout * validAOV;
+    const improvedAOVRevenue = monthlyCompletedCheckout * lowAOV;
+    const aovLowImpact = improvedAOVRevenue - currentAOVRevenue;
+    
+    // Combined impact (CR + AOV)
+    const lowMonthlyUplift = crLowImpact + aovLowImpact;
+    
+    // Average uplift scenario - calculate both CR and AOV impacts
     const avgCR = validConversionRate * (1 + averageUpliftPercentage / 100);
     const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
     
-    const avgProjectedRevenue = monthlyReachedCheckout * (avgCR / 100) * avgAOV;
-    const avgMonthlyUplift = avgProjectedRevenue - currentMonthlyRevenue;
+    const improvedAvgCRRevenue = monthlyReachedCheckout * (avgCR / 100) * validAOV;
+    const crAvgImpact = improvedAvgCRRevenue - currentCRRevenue;
     
-    // Good uplift scenario
+    const improvedAvgAOVRevenue = monthlyCompletedCheckout * avgAOV;
+    const aovAvgImpact = improvedAvgAOVRevenue - currentAOVRevenue;
+    
+    const avgMonthlyUplift = crAvgImpact + aovAvgImpact;
+    
+    // Good uplift scenario - calculate both CR and AOV impacts
     const goodCR = validConversionRate * (1 + goodUpliftPercentage / 100);
     const goodAOV = validAOV * (1 + goodUpliftPercentage / 100);
     
-    const goodProjectedRevenue = monthlyReachedCheckout * (goodCR / 100) * goodAOV;
-    const goodMonthlyUplift = goodProjectedRevenue - currentMonthlyRevenue;
+    const improvedGoodCRRevenue = monthlyReachedCheckout * (goodCR / 100) * validAOV;
+    const crGoodImpact = improvedGoodCRRevenue - currentCRRevenue;
+    
+    const improvedGoodAOVRevenue = monthlyCompletedCheckout * goodAOV;
+    const aovGoodImpact = improvedGoodAOVRevenue - currentAOVRevenue;
+    
+    const goodMonthlyUplift = crGoodImpact + aovGoodImpact;
     
     // Set the monthly uplift values
     setMonthlyUpliftLow(lowMonthlyUplift);
@@ -114,24 +130,40 @@ export const calculateRevenueUplift = (
     const monthlyVisitors = annualVisitors / 12;
     const currentMonthlyRevenue = monthlyVisitors * validConversionRate / 100 * validAOV;
 
-    // Use configurable percentages
-    // Low uplift scenario - calculate directly as monthly values
+    // Low uplift scenario - Calculate CR impact
     const lowCR = validConversionRate * (1 + lowUpliftPercentage / 100);
+    const lowCRRevenue = monthlyVisitors * lowCR / 100 * validAOV;
+    const lowCRImpact = lowCRRevenue - currentMonthlyRevenue;
+    
+    // Low uplift scenario - Calculate AOV impact
     const lowAOV = validAOV * (1 + lowUpliftPercentage / 100);
-    const lowMonthlyRevenue = monthlyVisitors * lowCR / 100 * lowAOV;
-    const lowMonthlyUplift = lowMonthlyRevenue - currentMonthlyRevenue;
+    const lowAOVRevenue = monthlyVisitors * validConversionRate / 100 * lowAOV;
+    const lowAOVImpact = lowAOVRevenue - currentMonthlyRevenue;
     
-    // Average uplift scenario
+    // Combined low uplift
+    const lowMonthlyUplift = lowCRImpact + lowAOVImpact;
+    
+    // Average uplift scenario - Similar calculations
     const avgCR = validConversionRate * (1 + averageUpliftPercentage / 100);
-    const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
-    const avgMonthlyRevenue = monthlyVisitors * avgCR / 100 * avgAOV;
-    const avgMonthlyUplift = avgMonthlyRevenue - currentMonthlyRevenue;
+    const avgCRRevenue = monthlyVisitors * avgCR / 100 * validAOV;
+    const avgCRImpact = avgCRRevenue - currentMonthlyRevenue;
     
-    // Good uplift scenario
+    const avgAOV = validAOV * (1 + averageUpliftPercentage / 100);
+    const avgAOVRevenue = monthlyVisitors * validConversionRate / 100 * avgAOV;
+    const avgAOVImpact = avgAOVRevenue - currentMonthlyRevenue;
+    
+    const avgMonthlyUplift = avgCRImpact + avgAOVImpact;
+    
+    // Good uplift scenario - Similar calculations
     const goodCR = validConversionRate * (1 + goodUpliftPercentage / 100);
+    const goodCRRevenue = monthlyVisitors * goodCR / 100 * validAOV;
+    const goodCRImpact = goodCRRevenue - currentMonthlyRevenue;
+    
     const goodAOV = validAOV * (1 + goodUpliftPercentage / 100);
-    const goodMonthlyRevenue = monthlyVisitors * goodCR / 100 * goodAOV;
-    const goodMonthlyUplift = goodMonthlyRevenue - currentMonthlyRevenue;
+    const goodAOVRevenue = monthlyVisitors * validConversionRate / 100 * goodAOV;
+    const goodAOVImpact = goodAOVRevenue - currentMonthlyRevenue;
+    
+    const goodMonthlyUplift = goodCRImpact + goodAOVImpact;
     
     // Set the monthly uplift values
     setMonthlyUpliftLow(lowMonthlyUplift);
