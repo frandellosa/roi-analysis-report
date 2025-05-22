@@ -11,6 +11,7 @@ import { ROIResults } from "@/components/calculator/ROIResults";
 import { ProcessingRatesTable } from "@/components/calculator/ProcessingRatesTable";
 import Timeline from "@/components/Timeline";
 import { ArrowLeft } from "lucide-react";
+import { formatCurrency } from "@/utils/formatters";
 
 const Results = () => {
   const navigate = useNavigate();
@@ -19,13 +20,7 @@ const Results = () => {
   // Extract necessary properties from context
   const { 
     processingRates, 
-    selectedPlan, 
-    formatCurrency = (val: number) => new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(val)
+    selectedPlan
   } = calculatorContext;
 
   // Create a simplified calculatorState object with just what ROIResults needs
