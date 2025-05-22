@@ -17,6 +17,7 @@ const Index = () => {
       <Separator className="max-w-7xl mx-auto my-6 bg-gray-200" />
       <ComparisonTable />
       <ROICalculator />
+      <Timeline />
       <Footer />
     </div>
   );

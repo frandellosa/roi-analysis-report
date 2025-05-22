@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calculator, RotateCcw } from 'lucide-react';
@@ -26,14 +25,6 @@ export const CalculatorControls = ({
   handleFileUpload,
   triggerFileUpload
 }: CalculatorControlsProps) => {
-  const navigate = useNavigate();
-  
-  const handleCalculateROI = () => {
-    calculatorState.calculateROI();
-    // Navigate to results page after calculation
-    navigate('/results');
-  };
-  
   return (
     <CardContent className="pt-6">
       <h3 className="text-xl font-semibold mb-6">Input Your Numbers</h3>
@@ -52,7 +43,7 @@ export const CalculatorControls = ({
       <UpliftProjections calculatorState={calculatorState} />
 
       <Button 
-        onClick={handleCalculateROI} 
+        onClick={calculatorState.calculateROI} 
         className="w-full mb-4"
         size="lg"
       >
