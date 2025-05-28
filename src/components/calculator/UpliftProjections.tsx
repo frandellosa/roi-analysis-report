@@ -49,9 +49,16 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   const [aovImpactAvg, setAovImpactAvg] = useState(0);
   const [aovImpactGood, setAovImpactGood] = useState(0);
   
+  // Check if we have meaningful data to calculate uplift
+  const hasValidData = () => {
+    return currentConversionRate > 0 && 
+           currentAOV > 0 && 
+           (reachedCheckout > 0 || completedCheckout > 0 || annualSales > 0);
+  };
+  
   // Recalculate uplift when necessary inputs change
   useEffect(() => {
-    if (currentConversionRate > 0 && currentAOV > 0 && (reachedCheckout > 0 || completedCheckout > 0 || annualSales > 0)) {
+    if (hasValidData()) {
       calculateROI();
     }
   }, [currentConversionRate, currentAOV, reachedCheckout, completedCheckout, annualSales, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage]);
@@ -67,6 +74,8 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   
   // Calculate the monthly revenue difference for CR improvement only - Based on annual metrics
   const getCROnlyUplift = (improvedCR: number) => {
+    if (!hasValidData()) return 0;
+    
     if (reachedCheckout > 0) {
       // Calculate using monthly reached checkout sessions
       const monthlyReachedCheckout = reachedCheckout / 12;
@@ -94,6 +103,8 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   
   // Revenue impact from AOV improvement only - Monthly metrics
   const getAOVOnlyUplift = (improvedAOV: number) => {
+    if (!hasValidData()) return 0;
+    
     if (completedCheckout > 0) {
       // Convert annual completed checkouts to monthly
       const monthlyCompletedCheckout = completedCheckout / 12;
@@ -120,6 +131,23 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   
   // Calculate the true combined monthly uplift (CR impact + AOV impact)
   useEffect(() => {
+    if (!hasValidData()) {
+      // Reset all values to zero when there's no valid data
+      setCrImpactLow(0);
+      setCrImpactAvg(0);
+      setCrImpactGood(0);
+      setAovImpactLow(0);
+      setAovImpactAvg(0);
+      setAovImpactGood(0);
+      
+      updateCalculatorValues({
+        monthlyUpliftLow: 0,
+        monthlyUpliftAverage: 0,
+        monthlyUpliftGood: 0
+      });
+      return;
+    }
+    
     // Calculate CR impacts
     const crLowImpact = getCROnlyUplift(getLowUpliftCR());
     const crAvgImpact = getCROnlyUplift(getAvgUpliftCR());
@@ -281,162 +309,174 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
         </div>
       </div>
       
-      <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <h5 className="font-medium">Projected Monthly Revenue Uplift</h5>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                <Info className="h-4 w-4 text-gray-400" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs">
-                <p>Monthly revenue projections calculated from annual checkout data.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      {!hasValidData() ? (
+        <div className="bg-yellow-50 p-4 rounded-md border border-yellow-200 mb-4">
+          <div className="flex items-center mb-2">
+            <Info className="h-5 w-5 text-yellow-600 mr-2" />
+            <h5 className="font-medium text-yellow-800">Missing Required Data</h5>
+          </div>
+          <p className="text-sm text-yellow-700">
+            Please enter your current conversion rate, AOV, and either checkout data or annual sales to see projected revenue uplift calculations.
+          </p>
         </div>
-        
-        <div className="space-y-4">
-          {/* Monthly reached checkout info if available */}
-          {reachedCheckout > 0 && (
-            <div className="bg-white p-3 rounded border border-gray-100 mb-2">
-              <p className="text-sm font-medium">Based on {reachedCheckout.toLocaleString()} annual reached checkout sessions</p>
-              <p className="text-xs text-gray-500">Monthly reached checkout sessions: {(reachedCheckout / 12).toLocaleString()}</p>
-              {completedCheckout > 0 && (
-                <p className="text-xs text-gray-500">Current annual revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
-              )}
-            </div>
-          )}
-          
-          {/* Low estimate section */}
-          <div className="bg-white p-3 rounded border border-gray-100">
-            <h6 className="flex items-center text-sm font-semibold text-amber-500 mb-2">
-              <DollarSign className="h-4 w-4 mr-1" />
-              Low Estimate ({lowUpliftPercentage}% Improvement)
-            </h6>
-            
-            <div className="grid grid-cols-2 gap-2 mb-2">
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">Conversion Rate Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
-                  <span className="font-medium text-amber-500"> {getLowUpliftCR().toFixed(2)}%</span>
-                </p>
-                <p className="text-xs font-medium text-amber-500 mt-1">
-                  +{formatCurrency(crImpactLow)}/mo
-                </p>
-              </div>
-              
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">AOV Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
-                  <span className="font-medium text-amber-500"> ${getLowUpliftAOV().toFixed(0)}</span>
-                </p>
-                <p className="text-xs font-medium text-amber-500 mt-1">
-                  +{formatCurrency(aovImpactLow)}/mo
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
-              <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-amber-500">{formatCurrency(monthlyUpliftLow)}/mo</p>
-            </div>
-            <div className="flex justify-between items-center pt-1">
-              <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-amber-500">{formatCurrency(annualLowUplift)}/year</p>
-            </div>
+      ) : (
+        <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <h5 className="font-medium">Projected Monthly Revenue Uplift</h5>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info className="h-4 w-4 text-gray-400" />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <p>Monthly revenue projections calculated from annual checkout data.</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
           
-          {/* Average estimate section */}
-          <div className="bg-white p-3 rounded border border-gray-100">
-            <h6 className="flex items-center text-sm font-semibold text-blue-500 mb-2">
-              <DollarSign className="h-4 w-4 mr-1" />
-              Average Estimate ({averageUpliftPercentage}% Improvement)
-            </h6>
+          <div className="space-y-4">
+            {/* Monthly reached checkout info if available */}
+            {reachedCheckout > 0 && (
+              <div className="bg-white p-3 rounded border border-gray-100 mb-2">
+                <p className="text-sm font-medium">Based on {reachedCheckout.toLocaleString()} annual reached checkout sessions</p>
+                <p className="text-xs text-gray-500">Monthly reached checkout sessions: {(reachedCheckout / 12).toLocaleString()}</p>
+                {completedCheckout > 0 && (
+                  <p className="text-xs text-gray-500">Current annual revenue: {formatCurrency(completedCheckout * currentAOV)}</p>
+                )}
+              </div>
+            )}
             
-            <div className="grid grid-cols-2 gap-2 mb-2">
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">Conversion Rate Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
-                  <span className="font-medium text-blue-500"> {getAvgUpliftCR().toFixed(2)}%</span>
-                </p>
-                <p className="text-xs font-medium text-blue-500 mt-1">
-                  +{formatCurrency(crImpactAvg)}/mo
-                </p>
+            {/* Low estimate section */}
+            <div className="bg-white p-3 rounded border border-gray-100">
+              <h6 className="flex items-center text-sm font-semibold text-amber-500 mb-2">
+                <DollarSign className="h-4 w-4 mr-1" />
+                Low Estimate ({lowUpliftPercentage}% Improvement)
+              </h6>
+              
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">Conversion Rate Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
+                    <span className="font-medium text-amber-500"> {getLowUpliftCR().toFixed(2)}%</span>
+                  </p>
+                  <p className="text-xs font-medium text-amber-500 mt-1">
+                    +{formatCurrency(crImpactLow)}/mo
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">AOV Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
+                    <span className="font-medium text-amber-500"> ${getLowUpliftAOV().toFixed(0)}</span>
+                  </p>
+                  <p className="text-xs font-medium text-amber-500 mt-1">
+                    +{formatCurrency(aovImpactLow)}/mo
+                  </p>
+                </div>
               </div>
               
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">AOV Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
-                  <span className="font-medium text-blue-500"> ${getAvgUpliftAOV().toFixed(0)}</span>
-                </p>
-                <p className="text-xs font-medium text-blue-500 mt-1">
-                  +{formatCurrency(aovImpactAvg)}/mo
-                </p>
+              <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
+                <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
+                <p className="text-sm font-semibold text-amber-500">{formatCurrency(monthlyUpliftLow)}/mo</p>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <p className="text-xs text-gray-600">Annual Total:</p>
+                <p className="text-xs font-semibold text-amber-500">{formatCurrency(annualLowUplift)}/year</p>
               </div>
             </div>
             
-            <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
-              <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-blue-500">{formatCurrency(monthlyUpliftAverage)}/mo</p>
-            </div>
-            <div className="flex justify-between items-center pt-1">
-              <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-blue-500">{formatCurrency(annualAverageUplift)}/year</p>
-            </div>
-          </div>
-          
-          {/* Good estimate section */}
-          <div className="bg-white p-3 rounded border border-gray-100">
-            <h6 className="flex items-center text-sm font-semibold text-green-600 mb-2">
-              <DollarSign className="h-4 w-4 mr-1" />
-              Good Estimate ({goodUpliftPercentage}% Improvement)
-            </h6>
-            
-            <div className="grid grid-cols-2 gap-2 mb-2">
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">Conversion Rate Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
-                  <span className="font-medium text-green-600"> {getGoodUpliftCR().toFixed(2)}%</span>
-                </p>
-                <p className="text-xs font-medium text-green-600 mt-1">
-                  +{formatCurrency(crImpactGood)}/mo
-                </p>
+            {/* Average estimate section */}
+            <div className="bg-white p-3 rounded border border-gray-100">
+              <h6 className="flex items-center text-sm font-semibold text-blue-500 mb-2">
+                <DollarSign className="h-4 w-4 mr-1" />
+                Average Estimate ({averageUpliftPercentage}% Improvement)
+              </h6>
+              
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">Conversion Rate Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
+                    <span className="font-medium text-blue-500"> {getAvgUpliftCR().toFixed(2)}%</span>
+                  </p>
+                  <p className="text-xs font-medium text-blue-500 mt-1">
+                    +{formatCurrency(crImpactAvg)}/mo
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">AOV Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
+                    <span className="font-medium text-blue-500"> ${getAvgUpliftAOV().toFixed(0)}</span>
+                  </p>
+                  <p className="text-xs font-medium text-blue-500 mt-1">
+                    +{formatCurrency(aovImpactAvg)}/mo
+                  </p>
+                </div>
               </div>
               
-              <div className="bg-gray-50 p-2 rounded">
-                <p className="text-xs text-gray-600">AOV Impact</p>
-                <p className="text-sm">
-                  <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
-                  <span className="font-medium text-green-600"> ${getGoodUpliftAOV().toFixed(0)}</span>
-                </p>
-                <p className="text-xs font-medium text-green-600 mt-1">
-                  +{formatCurrency(aovImpactGood)}/mo
-                </p>
+              <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
+                <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
+                <p className="text-sm font-semibold text-blue-500">{formatCurrency(monthlyUpliftAverage)}/mo</p>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <p className="text-xs text-gray-600">Annual Total:</p>
+                <p className="text-xs font-semibold text-blue-500">{formatCurrency(annualAverageUplift)}/year</p>
               </div>
             </div>
             
-            <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
-              <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-green-600">{formatCurrency(monthlyUpliftGood)}/mo</p>
+            {/* Good estimate section */}
+            <div className="bg-white p-3 rounded border border-gray-100">
+              <h6 className="flex items-center text-sm font-semibold text-green-600 mb-2">
+                <DollarSign className="h-4 w-4 mr-1" />
+                Good Estimate ({goodUpliftPercentage}% Improvement)
+              </h6>
+              
+              <div className="grid grid-cols-2 gap-2 mb-2">
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">Conversion Rate Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">{currentConversionRate.toFixed(2)}%</span> → 
+                    <span className="font-medium text-green-600"> {getGoodUpliftCR().toFixed(2)}%</span>
+                  </p>
+                  <p className="text-xs font-medium text-green-600 mt-1">
+                    +{formatCurrency(crImpactGood)}/mo
+                  </p>
+                </div>
+                
+                <div className="bg-gray-50 p-2 rounded">
+                  <p className="text-xs text-gray-600">AOV Impact</p>
+                  <p className="text-sm">
+                    <span className="font-medium">${currentAOV.toFixed(0)}</span> → 
+                    <span className="font-medium text-green-600"> ${getGoodUpliftAOV().toFixed(0)}</span>
+                  </p>
+                  <p className="text-xs font-medium text-green-600 mt-1">
+                    +{formatCurrency(aovImpactGood)}/mo
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
+                <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
+                <p className="text-sm font-semibold text-green-600">{formatCurrency(monthlyUpliftGood)}/mo</p>
+              </div>
+              <div className="flex justify-between items-center pt-1">
+                <p className="text-xs text-gray-600">Annual Total:</p>
+                <p className="text-xs font-semibold text-green-600">{formatCurrency(annualGoodUplift)}/year</p>
+              </div>
             </div>
-            <div className="flex justify-between items-center pt-1">
-              <p className="text-xs text-gray-600">Annual Total:</p>
-              <p className="text-xs font-semibold text-green-600">{formatCurrency(annualGoodUplift)}/year</p>
+            
+            <div className="text-xs text-gray-500 mt-2">
+              <p>Based on your annual checkout metrics divided by 12 for monthly projections.</p>
+              <p className="mt-1">Conversion rate impact applies to monthly reached checkout sessions, and AOV impact applies to completed checkouts.</p>
             </div>
-          </div>
-          
-          <div className="text-xs text-gray-500 mt-2">
-            <p>Based on your annual checkout metrics divided by 12 for monthly projections.</p>
-            <p className="mt-1">Conversion rate impact applies to monthly reached checkout sessions, and AOV impact applies to completed checkouts.</p>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
