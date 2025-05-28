@@ -33,10 +33,10 @@ export const allPlans: Record<string, Plan> = {
     billing: "/month",
     isPopular: false,
     
-    standardDomestic: "2.7% + $0.30",
-    standardInternational: "3.7% + $0.30",
-    premiumDomestic: "3.3% + $0.30",
-    premiumInternational: "4.3% + $0.30",
+    standardDomestic: "2.6% + $0.30",
+    standardInternational: "3.6% + $0.30",
+    premiumDomestic: "2.6% + $0.30",
+    premiumInternational: "3.6% + $0.30",
     
     inPersonRate: "2.5% + $0",
     thirdPartyProviderRate: "1%",
