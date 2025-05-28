@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { allPlans } from '@/components/comparison/PlanData';
 import { Plan } from '@/components/comparison/types';
@@ -35,7 +34,7 @@ type CalculatorContextType = {
   updateProcessingRate: (planId: string, rateType: string, newValue: number) => void;
 };
 
-// Default processing rates
+// Default processing rates with updated biennial grow plan rates
 const defaultProcessingRates: processingRatesType = {
   basic: {
     standardDomestic: 2.9,
@@ -43,15 +42,15 @@ const defaultProcessingRates: processingRatesType = {
     premiumDomestic: 3.5,
     premiumInternational: 4.5,
     shopPayInstallments: 5.9,
-    transactionFee: 0.30 // Added default transaction fee for basic plan
+    transactionFee: 0.30
   },
   shopify: {
-    standardDomestic: 2.7,
-    standardInternational: 3.7,
-    premiumDomestic: 3.3,
-    premiumInternational: 4.3,
-    shopPayInstallments: 5.9,
-    transactionFee: 0.30 // Added default transaction fee for shopify plan
+    standardDomestic: 2.6, // Updated from 2.7 to 2.6
+    standardInternational: 3.6, // Updated from 3.7 to 3.6
+    premiumDomestic: 2.6, // Updated from 3.3 to 2.6 (mapping Premium Domestic Online Rate)
+    premiumInternational: 3.6, // Updated from 4.3 to 3.6 (mapping Premium International Online Rate)
+    shopPayInstallments: 5.5, // Updated from 5.9 to 5.5 (mapping Installments Financing)
+    transactionFee: 0.30 // Keeping the same transaction fee
   },
   advanced: {
     standardDomestic: 2.5,
@@ -59,7 +58,7 @@ const defaultProcessingRates: processingRatesType = {
     premiumDomestic: 3.1,
     premiumInternational: 4.1,
     shopPayInstallments: 5.9,
-    transactionFee: 0.30 // Added default transaction fee for advanced plan
+    transactionFee: 0.30
   },
   plus: {
     standardDomestic: 2.25,
@@ -67,7 +66,7 @@ const defaultProcessingRates: processingRatesType = {
     premiumDomestic: 2.95,
     premiumInternational: 3.95,
     shopPayInstallments: 5.0,
-    transactionFee: 0.30 // Added default transaction fee for plus plan
+    transactionFee: 0.30
   }
 };
 
