@@ -48,9 +48,6 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
   const [aovImpactLow, setAovImpactLow] = useState(0);
   const [aovImpactAvg, setAovImpactAvg] = useState(0);
   const [aovImpactGood, setAovImpactGood] = useState(0);
-  const [combinedMonthlyLow, setCombinedMonthlyLow] = useState(0);
-  const [combinedMonthlyAvg, setCombinedMonthlyAvg] = useState(0);
-  const [combinedMonthlyGood, setCombinedMonthlyGood] = useState(0);
   
   // Recalculate uplift when necessary inputs change
   useEffect(() => {
@@ -146,12 +143,14 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     const combinedAvg = crAvgImpact + aovAvgImpact;
     const combinedGood = crGoodImpact + aovGoodImpact;
     
-    // Update the combined monthly values
-    setCombinedMonthlyLow(combinedLow);
-    setCombinedMonthlyAvg(combinedAvg);
-    setCombinedMonthlyGood(combinedGood);
+    // Update the context with the calculated monthly uplift values
+    updateCalculatorValues({
+      monthlyUpliftLow: combinedLow,
+      monthlyUpliftAverage: combinedAvg,
+      monthlyUpliftGood: combinedGood
+    });
     
-  }, [currentConversionRate, currentAOV, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage, reachedCheckout, completedCheckout, annualSales]);
+  }, [currentConversionRate, currentAOV, lowUpliftPercentage, averageUpliftPercentage, goodUpliftPercentage, reachedCheckout, completedCheckout, annualSales, updateCalculatorValues]);
   
   // Handle percentage changes
   const handlePercentageChange = (value: number, type: 'low' | 'average' | 'good') => {
@@ -172,10 +171,10 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
     }, 100);
   };
 
-  // Calculate annual uplift values from monthly values
-  const annualLowUplift = combinedMonthlyLow * 12;
-  const annualAverageUplift = combinedMonthlyAvg * 12;
-  const annualGoodUplift = combinedMonthlyGood * 12;
+  // Use the monthly values from context to calculate annual values
+  const annualLowUplift = monthlyUpliftLow * 12;
+  const annualAverageUplift = monthlyUpliftAverage * 12;
+  const annualGoodUplift = monthlyUpliftGood * 12;
 
   return (
     <div className="mb-6 border-t border-gray-200 pt-6">
@@ -342,7 +341,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-amber-500">{formatCurrency(combinedMonthlyLow)}/mo</p>
+              <p className="text-sm font-semibold text-amber-500">{formatCurrency(monthlyUpliftLow)}/mo</p>
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
@@ -383,7 +382,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-blue-500">{formatCurrency(combinedMonthlyAvg)}/mo</p>
+              <p className="text-sm font-semibold text-blue-500">{formatCurrency(monthlyUpliftAverage)}/mo</p>
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
@@ -424,7 +423,7 @@ export const UpliftProjections = ({ calculatorState }: UpliftProjectionsProps) =
             
             <div className="flex justify-between items-center border-t border-gray-100 pt-2 mt-2">
               <p className="text-xs text-gray-600">Combined Monthly Uplift:</p>
-              <p className="text-sm font-semibold text-green-600">{formatCurrency(combinedMonthlyGood)}/mo</p>
+              <p className="text-sm font-semibold text-green-600">{formatCurrency(monthlyUpliftGood)}/mo</p>
             </div>
             <div className="flex justify-between items-center pt-1">
               <p className="text-xs text-gray-600">Annual Total:</p>
